@@ -1,0 +1,696 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Customer;
+use App\Notification;
+use App\Order;
+use App\OrderProducts;
+use App\Ip;
+use App\Color;
+use App\Option;
+use App\Size;
+use App\Product;
+use App\ShippingCharge;
+use App\User;
+use Illuminate\Http\Request;
+use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Setting;
+
+class CartController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
+     */
+    public function index()
+    {
+        session_start();
+        error_reporting(0);
+        $charge = ShippingCharge::first();
+        $_SESSION['delivery'] =  0;
+        // if(!$_SESSION['delivery']){
+        //   // $_SESSION['delivery'] =  $$charge->charge??0;
+        //     $_SESSION['delivery'] =  0;
+        // }
+
+        return view('website.checkout');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+
+    public function store(Request $request)
+    {
+        // Validate the incoming request with custom messages for product ID
+        try {
+            $request->validate([
+                'id' => 'required|exists:products,id',
+            ], [
+                'id.required' => 'Product ID is required.',
+                'id.exists' => 'The selected product does not exist.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->validator->errors()
+            ]);
+        }
+        $qty=  $request->quantity??1;
+        // Retrieve the product
+        $product = Product::find($request->id);
+    
+        // Prepare conditional validation rules and messages for color and size
+        $rules = [];
+        $messages = [];
+    
+        if ($product->colors->isNotEmpty()) {
+            $rules['color_id'] = 'required|exists:colors,id';
+            $messages['color_id.required'] = 'Please select a color.';
+            $messages['color_id.exists'] = 'The selected color is invalid.';
+        }
+    
+        if ($product->sizes->isNotEmpty()) {
+            $rules['size_id'] = 'required|exists:sizes,id';
+            $messages['size_id.required'] = 'Please select a size.';
+            $messages['size_id.exists'] = 'The selected size is invalid.';
+        }
+        if ($product->options->isNotEmpty()) {
+            $rules['option_id'] = 'required|exists:options,id';
+            $messages['option_id.required'] = 'Please select a option.';
+            $messages['option_id.exists'] = 'The selected option is invalid.';
+        }
+    
+        // Perform the additional validation for color and size
+        if (!empty($rules)) {
+            try {
+                $request->validate($rules, $messages);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $e->validator->errors()->first(),
+                    'errors' => $e->validator->errors()
+                ]);
+            }
+        }
+         // Retrieve selected color and size names if applicable
+        if ($request->color_id) {
+            $color = Color::find($request->color_id);
+        }
+        $price = $product->price();
+        if ($request->size_id) {
+            $size = Size::find($request->size_id);
+        }
+        if ($request->option_id) {
+            $option = Option::find($request->option_id);
+            $price = DB::table('option_product')->where('product_id', $product->id)->where('option_id', $option->id)->value('price');
+        }
+    
+        // Add product to the cart with color and size if applicable
+        Cart::add([
+            'id' => $product->id,
+            'name' => $product->productName,
+            'qty' => $qty,
+            'isFreeDelivery' => $product->isFreeDelivery,
+            'price' => $price,
+            'options' => [
+                'colorName' => $color->colorName ?? null,
+                'sizeName' => $size->sizeName ?? null,
+                'optionName' => $option->optionName ?? null,
+            ]
+        ])->associate(Product::class);
+    
+        // Return success response with cart content
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product added to cart successfully.',
+            'cart' => Cart::content()
+        ]);
+    }
+
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy($id)
+    {
+        Cart::remove($id);
+        $response['reload'] = 'true';
+        if (Cart::count() > 0 ){
+            $response['reload'] = 'false';
+        }
+        $response['status'] = 'success';
+        $response['message'] = 'Successfully Add Product';
+        return response()->json($response, 201);
+    }
+
+    public function mini_cart()
+    {
+        $response['count'] = Cart::count();
+        $response['data'] = Cart::content();
+        return response()->json($response, 200);
+    }
+    public function miniCart()
+    {
+        return view('partials.mini_cart');
+    
+    }
+
+    public function updateQuantity(Request $request)
+    {
+        session_start();
+        if($request->quantity > 0){
+            Cart::update($request->key, $request->quantity);
+        }
+         // Calculate delivery discount if any product has free delivery
+        $freeDeliveryDiscount = 0;
+        foreach (Cart::content() as $item) {
+            if( $item->model->isFreeDelivery) {
+                $freeDeliveryDiscount = $_SESSION['delivery']; // discount equals delivery charge
+                break; // only need to apply once
+            }
+        }
+        ?>
+        <aside class="card">
+            <article class="card-body">
+                <header class="mb-4">
+                    <h4 class="card-title" style="font-size: 16px;">আপনার অর্ডার</h4>
+                </header>
+                <div class="row">
+                    <div class="table-responsive bg-white">
+                        <table class="table border-bottom">
+                            <thead>
+                            <tr>
+                                <th class="product-image">Image</th>
+                                <th class="product-name">Product</th>
+                                <th class="product-price">Price</th>
+                                <th class="product-quanity">Quantity</th>
+                                <th class="product-total">Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach(Cart::content() as $item) {  ?>
+                                <tr class="cart-item">
+                                    <td class="product-image" style="display: flex; flex-direction: row-reverse;">
+                                        <a href="#" >
+                                            <img class="lazyload" src="<?php echo url('/public/product/thumbnail/'.$item->model->productImage) ?>" style="max-width: 50px">
+                                        </a>
+                                        <button href="#"  onclick="removeFromCart('<?php echo $item->rowId ?>')" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </td>
+
+                                    <td class="product-name">
+                                        <span class="d-block"><?php echo $item->model->productName ?></span>
+                                           
+                                        <?php if($item->options->colorName){ ?>
+                                            <small class="text-muted">Color: <?php echo $item->options->colorName; ?></small>
+                                        <?php } ?>
+                                        <?php if($item->options->colorName){ ?>
+                                            <small class="text-muted">Size: <?php echo $item->options->sizeName; ?></small>
+                                        <?php } ?>
+                                        <?php if($item->options->optionName){ ?>
+                                            <small class="text-muted">Option: <?php echo $item->options->optionName; ?></small>
+                                        <?php } ?>
+                                    </td>
+
+                                    <td class="product-price">
+                                        <span class="d-block">TK <?php echo $item->price ?></span>
+                                    </td>
+
+                                    <td class="product-quantity">
+                                        <div class="input-group input-spinner">
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-light btn-number" type="button" data-type="plus" data-field="quantity[<?php echo $item->id ?>]"> + </button>
+                                            </div>
+                                            <input type="text" name="quantity[<?php echo $item->id ?>]" class="form-control input-number" placeholder="1" value="<?php echo $item->qty ?>" min="1" max="10" onchange="updateQuantity('<?php echo $item->rowId ?>', this)">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-light btn-number" type="button" data-type="minus"  data-field="quantity[<?php echo $item->id ?>]"> − </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="product-total">
+                                        <span>TK <?php echo Cart::subtotal('0','','')?></span>
+                                    </td>
+
+                                </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+            <article class="card-body border-top">
+                <dl class="row">
+                    <dt class="col-sm-8">Subtotal: </dt>
+                    <dd class="col-sm-4 text-right"><strong>TK <?php echo Cart::total('0') ?></strong></dd>
+
+                    <dt class="col-sm-8">Delivery charge: </dt>
+                    <dd class="col-sm-4 text-danger text-right"><strong>TK <?php echo $_SESSION['delivery'] ?></strong></dd>
+                    
+                    <dt class="col-sm-8">Discount: </dt>
+                    <dd class="col-sm-4 text-success text-right"><strong>- TK <?php echo $freeDeliveryDiscount ?></strong></dd>
+
+                    <dt class="col-sm-8">Total Taka:</dt>
+                    <dd class="col-sm-4 text-right"><strong class="h5 text-dark">  <?php echo Cart::subtotal('0','','') - $freeDeliveryDiscount + $_SESSION['delivery']; ?></strong></dd>
+                </dl>
+
+            </article>
+            <script type="text/javascript">
+                cartQuantityInitialize();
+            </script>
+
+        </aside>
+    <?php }
+
+    public function updateDeliveryCharge(Request $request)
+    {
+        session_start();
+        $_SESSION['delivery'] = $request->selectCourier;
+
+    }
+
+    public function placeOrder(Request $request)
+    {
+        
+        $sessionId = session('checkout_session');
+     
+        $ipAddress = $request->ip();
+        
+        $blockHours = (float) Setting::get('order_blocking_hour');
+        
+        $order = Order::where('session_id', $sessionId)
+            ->where('status', '!=', 'Incomplete')
+            ->latest()
+            ->first();
+            
+        if ($blockHours > 0 && $order) {
+            $nextAllowedTime = $order->created_at
+                ->copy()
+                ->addMinutes($blockHours * 60); // supports decimal hours
+        
+            if (now()->lt($nextAllowedTime)) {
+                return response()->json([
+                    'status' => 'blocked',
+                    'message' => 'You already placed an order recently. Please try later.'
+                ], 201);
+            }
+        }    
+        
+        if(Ip::where('ip_address',$ipAddress)->first()){
+            $response['status'] = 'blocked';
+            $response['message'] = 'You Can not place any order at this moment';
+            return response()->json($response, 201);
+        }
+        $user = DB::table('users')->where([
+            ['status', 'like', 'Active'],
+            ['role_id', '=', '3']
+        ])->inRandomOrder()->first();
+        if (!$user) {
+            $user = User::find(1);
+        }
+        $freeDeliveryDiscount = 0;
+        foreach (Cart::content() as $item) {
+            if( $item->model->isFreeDelivery) {
+                $freeDeliveryDiscount = $request->selectCourier ; // discount equals delivery charge
+                break; // only need to apply once
+            }
+        }
+        $tempOrder = Order::orderBy('id','desc')->where('session_id',$sessionId)->where('status','Incomplete')->first();
+        OrderProducts::where('order_id', $tempOrder->id)->forceDelete();
+        $tempOrder->forceDelete();
+        
+        $order = new Order();
+        $order->ip_address = $ipAddress;
+        $order->invoiceID = $this->uniqueID();
+        $order->store_id = 1;
+        $order->session_id = $sessionId;
+        $order->deliveryCharge = $request->selectCourier - $freeDeliveryDiscount;
+        $order->orderDate = date('d-m-Y, h:i A');
+        $order->subTotal = Cart::subtotal('0','','')+$request->selectCourier- $freeDeliveryDiscount;
+        $order->user_id = $user->id;
+        $order->save();
+        if($order->id){
+            $customer = new Customer();
+            $customer->order_id = $order->id;
+            $customer->customerName = $request->customerName??'-';
+            $customer->customerPhone = $request->customerPhone;
+            $customer->customerAddress = $request->customerAddress??'-';
+            $customer->save();
+            foreach(Cart::content() as $item) {
+
+                $orderProducts = new OrderProducts();
+                $orderProducts->order_id = $order->id;
+                $orderProducts->product_id = $item->model->id;
+                $orderProducts->productCode = $item->model->productCode;
+                $orderProducts->productName = $item->model->productName;
+                $orderProducts->quantity = $item->qty;
+                $orderProducts->productPrice = $item->price;
+                // Include colorName and sizeName from the cart options
+                $orderProducts->colorName = $item->options->colorName ?? null;
+                $orderProducts->sizeName = $item->options->sizeName ?? null;
+                $orderProducts->optionName = $item->options->optionName ?? null;
+                $orderProducts->save();
+
+                $response['link'] = url('/checkout/order-received/'.$order->id);
+                $response['status'] = 'success';
+                $response['message'] = 'Successfully Placed Order';
+            }
+            $notification = new Notification();
+            $notification->order_id = $order->id;
+            $notification->notificaton = '#SD' . $order->id . ' Order Has Been Created by ' . $user->name;
+            $notification->user_id = $user->id;
+            $notification->save();
+        } else{
+            Customer::where('order_id', '=', $order->id)->delete();
+            OrderProducts::where('order_id', '=', $order->id)->delete();
+            Notification::where('order_id', '=', $order->id)->delete();
+            Order::where('id', '=', $order->id)->delete();
+            $response['status'] = 'failed';
+            $response['message'] = 'Unsuccessful to Add Order';
+            $response['status'] = 'failed';
+            $response['message'] = 'Unsuccessful to Placed Order';
+        }
+        Cart::destroy();
+        return response()->json($response, 201);
+    }
+    public function saveOrderInput(Request $request){
+        
+        $phone = $request->customerPhone;
+
+        // Regex for Bangladeshi numbers: 01XXXXXXXXX (11 digits)
+        if (!preg_match('/^01[3-9][0-9]{8}$/', $phone)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid Bangladeshi phone number'
+            ]); 
+        }
+
+        $sessionId = session('checkout_session');
+        
+        $blockHours = (float) Setting::get('order_blocking_hour');
+        
+        $order = Order::where('session_id', $sessionId)
+            ->where('status', '!=', 'Incomplete')
+            ->latest()
+            ->first();
+        if ($blockHours > 0 && $order) {
+            $nextAllowedTime = $order->created_at
+                ->copy()
+                ->addMinutes($blockHours * 60); // supports decimal hours
+        
+            if (now()->lt($nextAllowedTime)) {
+                return response()->json([
+                    'status' => 'blocked',
+                    'message' => 'You already placed an order recently. Please try later.'
+                ], 201);
+            }
+        }   
+        
+        if(Cart::count() <= 0) {
+            return response()->json(['status' => 'Your shopping empty']);
+        }
+        
+        $ipAddress = $request->ip();
+        
+        if(Ip::where('ip_address',$ipAddress)->first()){
+            $response['status'] = 'blocked';
+            $response['message'] = 'You Can not place any order at this moment';
+            
+            return response()->json($response, 201);
+        }
+        $user = DB::table('users')->where([
+            ['status', 'like', 'Active'],
+            ['role_id', '=', '3']
+        ])->inRandomOrder()->first();
+        if (!$user) {
+            $user = User::find(1);
+        }
+        
+        
+        $order = Order::orderBy('id','desc')->where('session_id',$sessionId)->where('status','Incomplete')->first();
+        
+        if(!$order){
+            
+            $order = new Order();
+            $order->ip_address = $ipAddress;
+            $order->invoiceID = $this->uniqueID();
+            $order->store_id = 1;
+            $order->status = 'Incomplete';
+            $order->session_id = $sessionId;
+            $order->deliveryCharge = $request->selectCourier;
+            $order->orderDate = date('d-m-y, h:i A');
+            $order->subTotal = Cart::subtotal('0','','') +$request->selectCourier;
+            $order->user_id = $user->id;
+            $order->save(); 
+        }else{
+           
+            $order->ip_address = $ipAddress;
+            $order->invoiceID = $this->uniqueID();
+            $order->store_id = 1;
+            $order->status = 'Incomplete';
+            $order->session_id = $sessionId;
+            $order->deliveryCharge = $request->selectCourier;
+            $order->orderDate = date('d-m-y, h:i A');
+            $order->subTotal = Cart::subtotal('0','','') +$request->selectCourier;
+            $order->user_id = $user->id;
+            $order->save(); 
+        }
+       
+        if($order->id){
+            $customer = Customer::orderBy('id','desc')->where('session_id',$sessionId)->first();
+             
+            if(!$customer){
+                
+                $customer = new Customer();
+                $customer->session_id = $sessionId;
+                $customer->order_id = $order->id;
+                $customer->customerName = $request->customerName??'-';
+                $customer->customerPhone = $request->customerPhone;
+                $customer->customerAddress = $request->customerAddress??'-';
+                $customer->save();
+                
+                
+            }else{
+                
+                $customer->order_id = $order->id;
+                $customer->customerName = $request->customerName??'-';
+                $customer->customerPhone = $request->customerPhone;
+                $customer->customerAddress = $request->customerAddress??'-';
+                $customer->save();
+                
+            }
+          
+            OrderProducts::where('order_id', $order->id)->forceDelete();
+            foreach(Cart::content() as $item) {
+                $orderProducts = new OrderProducts();
+                $orderProducts->order_id = $order->id;
+                $orderProducts->product_id = $item->model->id;
+                $orderProducts->productCode = $item->model->productCode;
+                $orderProducts->productName = $item->model->productName;
+                $orderProducts->quantity = $item->qty;
+                $orderProducts->productPrice = $item->price;
+                // Include colorName and sizeName from the cart options
+                $orderProducts->colorName = $item->options->colorName ?? null;
+                $orderProducts->sizeName = $item->options->sizeName ?? null;
+                $orderProducts->optionName = $item->options->optionName ?? null;
+                $orderProducts->save();
+            }
+         
+        }
+        return response()->json(['status' => 'saved']);
+    }
+
+    public function orderRecived($id)
+    {
+        $order = Order::find($id);
+        $customer = Customer::where('order_id',$id)->first();
+        $orderProducts = OrderProducts::where('order_id',$id)->get();
+        return view('website.thankyou', compact(['order','orderProducts','customer']));
+
+    }
+    public function uniqueID()
+    {
+        $lastOrder = Order::latest('id')->first();
+        if ($lastOrder) {
+            $orderID = $lastOrder->id + 1;
+        } else {
+            $orderID = 1;
+        }
+
+        return 'BB-' . $orderID;
+    }
+    public function updateCartOptions(Request $request)
+    {
+        if ($request->has('key')) {
+            $cartItem = Cart::get($request->key);
+    
+            if ($cartItem) {
+                $existingOptions = $cartItem->options->toArray();
+                
+                // Extract new values from the request
+                $colorName = $request->input('colorName', $existingOptions['colorName']?? null);
+                $sizeName = $request->input('sizeName', $existingOptions['sizeName'] ?? null);
+                $optionName = $request->input('optionName', $existingOptions['optionName'] ?? null);
+    
+                // Update cart item with merged options (keeping existing ones if not overwritten)
+                Cart::update($cartItem->rowId, [
+                    'options' => array_merge($existingOptions, [
+                        'colorName' => $colorName,
+                        'sizeName' => $sizeName,
+                        'optionName' => $optionName,
+                    ])
+                ]);
+            }
+        }
+    
+        return $this->renderCart();
+    }
+
+    protected function renderCart()
+    {
+        ob_start(); // Start output buffering
+        ?>
+        <aside class="card">
+            <article class="card-body">
+                <header class="mb-4">
+                    <h4 class="card-title" style="font-size: 16px;">আপনার অর্ডার</h4>
+                </header>
+                <div class="row">
+                    <div class="table-responsive bg-white">
+                        <table class="table border-bottom">
+                            <thead>
+                                <tr>
+                                    <th class="product-image">Image</th>
+                                    <th class="product-name">Product</th>
+                                    <th class="product-price">Price</th>
+                                    <th class="product-quantity">Quantity</th>
+                                    <th class="product-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach (Cart::content() as $item){ ?>
+                                    <tr class="cart-item">
+                                        <td class="product-image" style="display: flex; flex-direction: row-reverse;">
+                                            <a href="#">
+                                                <img class="lazyload" src="<?php echo url('/public/product/thumbnail/' . $item->model->productImage); ?>" style="max-width: 50px">
+                                            </a>
+                                            <button onclick="removeFromCart('<?php echo $item->rowId; ?>')" class="btn btn-danger btn-sm">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+    
+                                        <td class="product-name">
+                                            <span class="d-block"><?php echo $item->model->productName; ?></span>
+                                            <?php if ($item->options->colorName){ ?>
+                                                <small class="text-muted">Color: <?php echo $item->options->colorName; ?>,</small>
+                                            <?php } ?>
+                                            <?php if ($item->options->sizeName){ ?>
+                                                <small class="text-muted">Size: <?php echo $item->options->sizeName; ?>,</small>
+                                            <?php } ?>
+                                            <?php if($item->options->optionName){ ?>
+                                                <small class="text-muted">Option: <?php echo $item->options->optionName; ?></small>
+                                            <?php } ?>
+    
+                                            
+                                        </td>
+    
+                                        <td class="product-price">
+                                            <span class="d-block">TK <?php echo $item->model->price(); ?></span>
+                                        </td>
+    
+                                        <td class="product-quantity">
+                                            <div class="input-group input-spinner">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-light btn-number" type="button" data-type="plus" data-field="quantity[<?php echo $item->id; ?>]"> + </button>
+                                                </div>
+                                                <input type="text" name="quantity[<?php echo $item->id; ?>]" class="form-control input-number" value="<?php echo $item->qty; ?>" min="1" max="10" onchange="updateQuantity('<?php echo $item->rowId; ?>', this)">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-light btn-number" type="button" data-type="minus" data-field="quantity[<?php echo $item->id; ?>]"> − </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="product-total">
+                                            <span>TK <?php echo $item->total(); ?></span>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+            <article class="card-body border-top">
+                <dl class="row">
+                    <dt class="col-sm-8">Subtotal:</dt>
+                    <dd class="col-sm-4 text-right"><strong>TK <?php echo Cart::subtotal(); ?></strong></dd>
+    
+                    <dt class="col-sm-8">Delivery charge:</dt>
+                    <dd class="col-sm-4 text-danger text-right"><strong>TK <?php echo session('delivery', 0); ?></strong></dd>
+    
+                    <dt class="col-sm-8">Total:</dt>
+                    <dd class="col-sm-4 text-right"><strong class="h5 text-dark">TK <?php echo Cart::subtotal() + session('delivery', 0); ?></strong></dd>
+                </dl>
+            </article>
+            <script type="text/javascript">
+                cartQuantityInitialize();
+            </script>
+        </aside>
+        <?php
+    
+        return ob_get_clean(); // Return the buffered content
+    }
+
+
+}

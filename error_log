@@ -1,0 +1,77 @@
+[17-Feb-2025 19:27:59 UTC] PHP Warning:  include(/home/ehatbaza/chinbd.com/vendor/composer/../../app/Http/Kernel.php): failed to open stream: No such file or directory in /home/ehatbaza/chinbd.com/vendor/composer/ClassLoader.php on line 571
+[17-Feb-2025 19:27:59 UTC] PHP Warning:  include(): Failed opening '/home/ehatbaza/chinbd.com/vendor/composer/../../app/Http/Kernel.php' for inclusion (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/ehatbaza/chinbd.com/vendor/composer/ClassLoader.php on line 571
+[17-Feb-2025 19:27:59 UTC] PHP Fatal error:  Uncaught ReflectionException: Class App\Http\Kernel does not exist in /home/ehatbaza/chinbd.com/vendor/laravel/framework/src/Illuminate/Container/Container.php:809
+Stack trace:
+#0 /home/ehatbaza/chinbd.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(809): ReflectionClass->__construct('App\\Http\\Kernel')
+#1 /home/ehatbaza/chinbd.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(691): Illuminate\Container\Container->build('App\\Http\\Kernel')
+#2 /home/ehatbaza/chinbd.com/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(796): Illuminate\Container\Container->resolve('App\\Http\\Kernel', Array, false)
+#3 /home/ehatbaza/chinbd.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(269): Illuminate\Foundation\Application->resolve('App\\Http\\Kernel', Array, false)
+#4 /home/ehatbaza/chinbd.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(805): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Illuminate\Founda in /home/ehatbaza/chinbd.com/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 811
+[06-Apr-2025 14:52:01 UTC] PHP Warning:  require_once(/home/bdhealt4/familyshopbd.com/public/index.php): failed to open stream: No such file or directory in /home/bdhealt4/familyshopbd.com/server.php on line 21
+[06-Apr-2025 14:52:01 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/bdhealt4/familyshopbd.com/public/index.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/bdhealt4/familyshopbd.com/server.php on line 21
+[08-Apr-2025 14:45:32 UTC] PHP Warning:  require_once(/home/bdhealt4/familyshopbd.com/public/index.php): failed to open stream: No such file or directory in /home/bdhealt4/familyshopbd.com/server.php on line 21
+[08-Apr-2025 14:45:32 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/bdhealt4/familyshopbd.com/public/index.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/bdhealt4/familyshopbd.com/server.php on line 21
+[09-Apr-2025 13:29:45 UTC] PHP Warning:  require_once(/home/bdhealt4/familyshopbd.com/public/index.php): failed to open stream: No such file or directory in /home/bdhealt4/familyshopbd.com/server.php on line 21
+[09-Apr-2025 13:29:45 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/bdhealt4/familyshopbd.com/public/index.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/bdhealt4/familyshopbd.com/server.php on line 21
+[09-Apr-2025 19:28:48 UTC] PHP Warning:  require_once(/home/bdhealt4/familyshopbd.com/public/index.php): failed to open stream: No such file or directory in /home/bdhealt4/familyshopbd.com/server.php on line 21
+[09-Apr-2025 19:28:48 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/bdhealt4/familyshopbd.com/public/index.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/bdhealt4/familyshopbd.com/server.php on line 21
+[14-Aug-2025 15:40:54 UTC] PHP Warning:  include(/home/khatibaj/azizwear.com/app/Http/Kernel.php): failed to open stream: No such file or directory in /home/khatibaj/azizwear.com/vendor/composer/ClassLoader.php on line 571
+[14-Aug-2025 15:40:54 UTC] PHP Warning:  include(): Failed opening '/home/khatibaj/azizwear.com/vendor/composer/../../app/Http/Kernel.php' for inclusion (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/khatibaj/azizwear.com/vendor/composer/ClassLoader.php on line 571
+[14-Aug-2025 15:40:54 UTC] PHP Fatal error:  Uncaught ReflectionException: Class App\Http\Kernel does not exist in /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php:809
+Stack trace:
+#0 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(809): ReflectionClass->__construct('App\\Http\\Kernel')
+#1 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(691): Illuminate\Container\Container->build('App\\Http\\Kernel')
+#2 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(796): Illuminate\Container\Container->resolve('App\\Http\\Kernel', Array, false)
+#3 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(269): Illuminate\Foundation\Application->resolve('App\\Http\\Kernel', Array, false)
+#4 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(805): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Illum in /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 811
+[14-Aug-2025 15:40:57 UTC] PHP Warning:  include(/home/khatibaj/azizwear.com/app/Http/Kernel.php): failed to open stream: No such file or directory in /home/khatibaj/azizwear.com/vendor/composer/ClassLoader.php on line 571
+[14-Aug-2025 15:40:57 UTC] PHP Warning:  include(): Failed opening '/home/khatibaj/azizwear.com/vendor/composer/../../app/Http/Kernel.php' for inclusion (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/khatibaj/azizwear.com/vendor/composer/ClassLoader.php on line 571
+[14-Aug-2025 15:40:57 UTC] PHP Fatal error:  Uncaught ReflectionException: Class App\Http\Kernel does not exist in /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php:809
+Stack trace:
+#0 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(809): ReflectionClass->__construct('App\\Http\\Kernel')
+#1 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(691): Illuminate\Container\Container->build('App\\Http\\Kernel')
+#2 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(796): Illuminate\Container\Container->resolve('App\\Http\\Kernel', Array, false)
+#3 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(269): Illuminate\Foundation\Application->resolve('App\\Http\\Kernel', Array, false)
+#4 /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php(805): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Illum in /home/khatibaj/azizwear.com/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 811
+[14-Aug-2025 15:42:37 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/khatibaj/azizwear.com/bootstrap/app.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/khatibaj/azizwear.com/index.php on line 38
+[14-Feb-2026 22:01:17 Asia/Dhaka] PHP Warning:  Uncaught ErrorException: require(/home/yaramall/naazshop.com/routes/web.php): failed to open stream: No such file or directory in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php:35
+Stack trace:
+#0 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(/home/y...', '/home/yaramall/...', 35, Array)
+#1 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): require()
+#2 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(417): Illuminate\Routing\RouteFileRegistrar->register('/home/yaramall/...')
+#3 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(374): Illuminate\Routing\Router->loadRoutes('/home/yaramall/...')
+#4 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(135): Illuminat in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[14-Feb-2026 22:01:17 Asia/Dhaka] PHP Fatal error:  Illuminate\Routing\RouteFileRegistrar::register(): Failed opening required '/home/yaramall/naazshop.com/routes/web.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[14-Feb-2026 22:01:17 Asia/Dhaka] PHP Warning:  Uncaught ErrorException: require(/home/yaramall/naazshop.com/routes/web.php): failed to open stream: No such file or directory in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php:35
+Stack trace:
+#0 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(/home/y...', '/home/yaramall/...', 35, Array)
+#1 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): require()
+#2 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(417): Illuminate\Routing\RouteFileRegistrar->register('/home/yaramall/...')
+#3 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(374): Illuminate\Routing\Router->loadRoutes('/home/yaramall/...')
+#4 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(135): Illuminat in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[14-Feb-2026 22:01:17 Asia/Dhaka] PHP Fatal error:  Illuminate\Routing\RouteFileRegistrar::register(): Failed opening required '/home/yaramall/naazshop.com/routes/web.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[14-Feb-2026 22:01:20 Asia/Dhaka] PHP Warning:  Uncaught ErrorException: require(/home/yaramall/naazshop.com/routes/web.php): failed to open stream: No such file or directory in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php:35
+Stack trace:
+#0 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(/home/y...', '/home/yaramall/...', 35, Array)
+#1 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): require()
+#2 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(417): Illuminate\Routing\RouteFileRegistrar->register('/home/yaramall/...')
+#3 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(374): Illuminate\Routing\Router->loadRoutes('/home/yaramall/...')
+#4 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(135): Illuminat in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[14-Feb-2026 22:01:20 Asia/Dhaka] PHP Fatal error:  Illuminate\Routing\RouteFileRegistrar::register(): Failed opening required '/home/yaramall/naazshop.com/routes/web.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[14-Feb-2026 22:01:21 Asia/Dhaka] PHP Warning:  Uncaught ErrorException: require(/home/yaramall/naazshop.com/routes/web.php): failed to open stream: No such file or directory in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php:35
+Stack trace:
+#0 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(/home/y...', '/home/yaramall/...', 35, Array)
+#1 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): require()
+#2 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(417): Illuminate\Routing\RouteFileRegistrar->register('/home/yaramall/...')
+#3 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(374): Illuminate\Routing\Router->loadRoutes('/home/yaramall/...')
+#4 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(135): Illuminat in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[14-Feb-2026 22:01:21 Asia/Dhaka] PHP Fatal error:  Illuminate\Routing\RouteFileRegistrar::register(): Failed opening required '/home/yaramall/naazshop.com/routes/web.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[01-Mar-2026 02:28:55 Asia/Dhaka] PHP Warning:  Uncaught ErrorException: require(/home/yaramall/naazshop.com/routes/web.php): failed to open stream: No such file or directory in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php:35
+Stack trace:
+#0 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(/home/y...', '/home/yaramall/...', 35, Array)
+#1 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php(35): require()
+#2 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(417): Illuminate\Routing\RouteFileRegistrar->register('/home/yaramall/...')
+#3 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/Router.php(374): Illuminate\Routing\Router->loadRoutes('/home/yaramall/...')
+#4 /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(135): Illuminat in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[01-Mar-2026 02:28:55 Asia/Dhaka] PHP Fatal error:  Illuminate\Routing\RouteFileRegistrar::register(): Failed opening required '/home/yaramall/naazshop.com/routes/web.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home/yaramall/naazshop.com/vendor/laravel/framework/src/Illuminate/Routing/RouteFileRegistrar.php on line 35
+[18-Mar-2026 12:34:10 Asia/Dhaka] PHP Fatal error:  Cannot use App\Category as Category because the name is already in use in /home/khatibaj/onbuyon.com/storage/framework/views/1cabc9351e5faf83eb86ef2ab50fc0972764d792.php on line 95

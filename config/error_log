@@ -1,0 +1,36 @@
+[21-May-2024 10:40:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/soikatmart/safeshopbd.com/config/cache.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/soikatmart/safeshopbd.com/config/cache.php on line 21
+[28-May-2024 08:38:30 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/soikatmart/safeshopbd.com/config/cache.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/soikatmart/safeshopbd.com/config/cache.php on line 21
+[02-Jun-2024 15:38:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/soikatmart/safeshopbd.com/config/cache.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/soikatmart/safeshopbd.com/config/cache.php on line 21
+[04-Jun-2024 05:28:58 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/soikatmart/safeshopbd.com/config/cache.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/soikatmart/safeshopbd.com/config/cache.php on line 21
+[05-Jun-2024 20:11:42 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/soikatmart/safeshopbd.com/config/cache.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/soikatmart/safeshopbd.com/config/cache.php on line 21
+[05-Jun-2024 20:24:32 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/soikatmart/safeshopbd.com/config/cache.php:21
+Stack trace:
+#0 {main}
+  thrown in /home/soikatmart/safeshopbd.com/config/cache.php on line 21
+[02-Sep-2024 14:31:56 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/soikatmart/safeshopbd.com/config/database.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/soikatmart/safeshopbd.com/config/database.php on line 18
+[02-Sep-2024 14:31:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/soikatmart/safeshopbd.com/config/database.php:18
+Stack trace:
+#0 {main}
+  thrown in /home/soikatmart/safeshopbd.com/config/database.php on line 18
+[09-Apr-2025 07:50:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home/bdhealt4/familyshopbd.com/config/app.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/bdhealt4/familyshopbd.com/config/app.php on line 16
