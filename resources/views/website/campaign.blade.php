@@ -29,6 +29,13 @@
              font-family: "Anek Bangla", sans-serif;
         }
     </style>
+    <style>
+        .shipping-options { display:flex; flex-direction:column; gap:8px; }
+        .shipping-option { display:flex; align-items:center; gap:8px; padding:10px 15px; border:1px solid #ccc; border-radius:8px; cursor:pointer; background-color:#f8f9fa; transition:background .2s ease,border .2s ease; }
+        .shipping-option input[type="radio"] { accent-color:green; }
+        .shipping-option.active { background-color:#28a745 !important; color:#fff; border-color:#28a745; font-weight:600; }
+        .campaign-option-selector .btn { white-space:normal; }
+    </style>
     @stack('css')
     {!! Settings::get('facebook_pixels') !!}
     
@@ -234,10 +241,10 @@
                 <h2 class=" py-2 py-md-4 fw-bolder" style="color:#FDDF31">{!! $campaign_data->banner_title  !!} </h2>
                 <h5 class="text-light fs-4 font-weight-normal">{!! $campaign_data->short_description !!}</h5>
                 <h4 class="text-light mt-3 text-center">
-                    রেগুলার মূল্য <span class="price-regular"> ৳ {{$campaign_data->product->productRegularPrice}} টাকা </span>
+                    রেগুলার মূল্য <span class="price-regular"> ৳ {{$product->productRegularPrice}} টাকা </span>
                 </h4>
                 <h4 class="text-light mt-3 text-center">
-                    অফার মূল্য <span class="price-sale price-sale-animated"> ৳ {{$campaign_data->product->productSalePrice}} টাকা </span>
+                    অফার মূল্য <span class="price-sale price-sale-animated"> ৳ {{$product->productSalePrice}} টাকা </span>
                 </h4>
                 <div style="text-align: center; margin: 40px 0;">
                     <a href="#order_form" style="
@@ -310,33 +317,50 @@
     <div class="container my-2 my-md-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
-               <h2 class="text-center p-2 p-md-4 rounded" style="background-color:#FBEFF7; border:2px dashed #F1ACE7;">
-                    আমাদের থেকে বিস্তারিত জানতে এই 
-                    <a href="tel:{{ Settings::get('phone_number') }}" style="color:#d63384; font-weight: bold; text-decoration: underline;">
-                        {{ Settings::get('phone_number') }}
-                    </a> 
-                    নাম্বারে কল করুন 
-                    
+                @php
+                    $campaignPhone = trim((string) $campaign_data->phone_number);
+                    $campaignWhatsapp = trim((string) $campaign_data->whatsapp_number);
+                    $campaignWhatsappLink = preg_replace('/\D+/', '', $campaignWhatsapp);
+                    if ($campaignWhatsappLink && substr($campaignWhatsappLink, 0, 1) === '0') {
+                        $campaignWhatsappLink = '88' . $campaignWhatsappLink;
+                    }
+                @endphp
+
+                <h2 class="text-center p-2 p-md-4 rounded" style="background-color:#FBEFF7; border:2px dashed #F1ACE7;">
+                    @if($campaignPhone)
+                        আমাদের থেকে বিস্তারিত জানতে এই
+                        <a href="tel:{{ $campaignPhone }}" style="color:#d63384; font-weight: bold; text-decoration: underline;">
+                            {{ $campaignPhone }}
+                        </a>
+                        নাম্বারে কল করুন
+                    @else
+                        আমাদের থেকে বিস্তারিত জানতে যোগাযোগ করুন
+                    @endif
                 </h2>
 
                 <div class="row justify-content-center my-2 my-md-4 gy-2">
+                    @if($campaignPhone)
                     <div class="col-md-6 custom_btn">
                         <div class="shadow-lg">
-                            <a href="tel:{{ Settings::get('phone_number') }}" 
-                            class="btn btn-danger btn-lg d-block py-md-3 fs-2 fw-bolder button-3d button-animated-border" >
-                                 আমাদের কল করুন <i class="fas fa-phone"></i></a>
-                        </div>
-                        
-                    </div>
-                    <div class="col-md-6">
-                    <div class="shadow-lg">
-                        <a href="https://wa.me/{{ Settings::get('whatsapp_number') }}" 
-                        class="btn btn-success btn-lg d-block py-md-3 fs-2 text-light fw-bolder button-3d button-animated-border">
-                            <i class="fab fa-whatsapp"></i> হোয়াটসঅ্যাপ  
+                            <a href="tel:{{ $campaignPhone }}"
+                               class="btn btn-danger btn-lg d-block py-md-3 fs-2 fw-bolder button-3d button-animated-border">
+                                আমাদের কল করুন <i class="fas fa-phone"></i>
                             </a>
-                     </div>
-                        
+                        </div>
                     </div>
+                    @endif
+
+                    @if($campaignWhatsappLink)
+                    <div class="col-md-6">
+                        <div class="shadow-lg">
+                            <a href="https://wa.me/{{ $campaignWhatsappLink }}"
+                               target="_blank" rel="noopener"
+                               class="btn btn-success btn-lg d-block py-md-3 fs-2 text-light fw-bolder button-3d button-animated-border">
+                                <i class="fab fa-whatsapp"></i> হোয়াটসঅ্যাপ
+                            </a>
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 <div style="text-align: center; margin: 40px 0;">
                     <a href="#order_form" style="
@@ -372,7 +396,7 @@
             <div class="col-sm-12">
                 <div class="campro_inn">
                     <div class="campro_head">
-                        <h2 class="text-center mb-3">{{$campaign_data->product->productName}}</h2>
+                        <h2 class="text-center mb-3">{{$product->productName}}</h2>
                     </div>
 
                     <div class="campro_img_slider owl-carousel">
@@ -446,16 +470,29 @@
                                            placeholder="আপনার ঠিকানা সম্পূর্ণ  লিখুন">
                                 </div>
                                 <div class="form-group col-sm-12">
-                                    <label>Select Area </label>
+                                    <label class="form-label d-block">Select Area <span class="text-danger">*</span></label>
                                     @php
-                                    $shipingCharges = App\ShippingCharge::all();
+                                        $shipingCharges = App\ShippingCharge::all();
                                     @endphp
-                                    <select onchange="saveInput()" name="area" id="selectCourier" class="form-control">
-                                       <option value=""> Select Area</option>
-                                        @foreach($shipingCharges as $shipingCharge)
-                                        <option value="{{$shipingCharge->charge}}"> {{$shipingCharge->name}} </option>
-                                        @endforeach
-                                    </select>
+                                    @if ($shipingCharges->isNotEmpty())
+                                        <div class="shipping-options">
+                                            @foreach ($shipingCharges as $index => $shipingCharge)
+                                                <label class="shipping-option {{ $index === 0 ? 'active' : '' }}">
+                                                    <input
+                                                        type="radio"
+                                                        name="area"
+                                                        id="area-{{ $shipingCharge->id }}"
+                                                        value="{{ $shipingCharge->charge }}"
+                                                        {{ $index === 0 ? 'checked' : '' }}
+                                                        required
+                                                    >
+                                                    {{ $shipingCharge->name }}
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p>No shipping charges available.</p>
+                                    @endif
                                 </div>
                                 {{--
                                 <div class="form-group col-sm-12">
@@ -498,113 +535,7 @@
                 </aside>
             </div>
             <div class="col-md-6 orderDetails">
-                <aside class="card">
-                    <article class="card-body">
-                        <header class="mb-4">
-                            <h4 class="card-title" style="font-size: 16px;">আপনার অর্ডার</h4>
-                        </header>
-                        <div class="row">
-                            <div class="table-responsive bg-white">
-                                <table class="table border-bottom">
-                                    <thead>
-                                    <tr>
-                                        <th class="product-image">Image</th>
-                                        <th class="product-name">Product</th>
-                                        <th class="product-price">Price</th>
-                                        <th class="product-quanity">Quantity</th>
-                                        <th class="product-total">Total</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                       
-                                    @foreach(Cart::content() as $item)
-                                
-                                    <tr class="cart-item">
-                                        <td class="product-image" style="display: flex; flex-direction: row-reverse;">
-                                            <a href="#" >
-                                                <img class="lazyload" src="{{ url('/public/product/thumbnail/'.$item->model->productImage) }}" style="max-width: 50px">
-                                            </a>
-                                            <button href="#"  onclick="removeFromCart('{{ $item->rowId }}')" class="btn btn-danger btn-sm">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                        </td>
-
-                                        <td class="product-name">
-                                            
-                                            <span class="d-block">{{ $item->model->productName }}</span>
-                                            <?php if($item->options->colorName){ ?>
-                                                <small class="text-muted" >Color: <?php echo $item->options->colorName; ?>,</small>
-                                            <?php } ?>
-                                            <?php if($item->options->colorName){ ?>
-                                                <small class="text-muted">Size: <?php echo $item->options->sizeName; ?></small>
-                                            <?php } ?>
-                                            {{--
-                                            @if ($item->model->colors->isNotEmpty())
-                                                <select onchange="updateCartOptions('{{ $item->rowId }}', this.value, 'colorName')" class="form-control form-control-sm mt-2">
-                                                    <option value="">Select Color</option>
-                                                    @foreach ($item->model->colors as $color)
-                                                        <option value="{{ $color->colorName }}" {{ $color->colorName == $item->options->colorName ? 'selected' : '' }}>
-                                                            {{ $color->colorName }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            @endif
-                                
-                                            @if ($item->model->sizes->isNotEmpty())
-                                                <select onchange="updateCartOptions('{{ $item->rowId }}', this.value, 'sizeName')" class="form-control form-control-sm mt-2">
-                                                    <option value="">Select Size</option>
-                                                    @foreach ($item->model->sizes as $size)
-                                                        <option value="{{ $size->sizeName }}" {{ $size->sizeName == $item->options->sizeName ? 'selected' : '' }}>
-                                                            {{ $size->sizeName }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            @endif
-                                            --}}
-                                        </td>
-
-                                        <td class="product-price">
-                                            <span class="d-block">TK {{ $item->model->price() }}</span>
-                                        </td>
-
-                                        <td class="product-quantity">
-                                            <div class="input-group input-spinner">
-                                                <div class="input-group-prepend">
-                                                    <button class="btn btn-light btn-number" type="button" data-type="plus" data-field="quantity[{{ $item->id }}]"> + </button>
-                                                </div>
-                                                <input type="text" name="quantity[{{ $item->id }}]" class="form-control input-number" placeholder="1" value="{{ $item->qty }}" min="1" max="10" onchange="updateQuantity('{{ $item->rowId }}', this)">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-light btn-number" type="button" data-type="minus"  data-field="quantity[{{ $item->id }}]"> − </button>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="product-total">
-                                            <span>TK {{Cart::subtotal('0','','')}}</span>
-                                        </td>
-
-                                    </tr>
-                                    @endforeach
-                                    </tbody>
-                                  
-                                </table>
-                                
-                            </div>
-                        </div>
-                    </article>
-                    <article class="card-body border-top">
-                        <dl class="row">
-                            <dt class="col-sm-8">Subtotal: </dt>
-                            <dd class="col-sm-4 text-right"><strong>TK <?php echo Cart::total('0') ?></strong></dd>
-
-                            <dt class="col-sm-8">Delivery charge: </dt>
-                            <dd class="col-sm-4 text-danger text-right"><strong>TK <?php echo $_SESSION['delivery'] ?></strong></dd>
-
-                            <dt class="col-sm-8">Total:</dt>
-                            <dd class="col-sm-4 text-right"><strong class="h5 text-dark">TK <?php echo Cart::subtotal('0','','')+$_SESSION['delivery']; ?></strong></dd>                            </dl>
-
-                    </article>
-                
-                </aside>
+                @include('website.partials.campaign_order_details')
             </div>
 
         </div>
@@ -695,11 +626,51 @@
     }
 
     function updateQuantity(key, element){
-        $.get("{{url('/updateQuantity')}}", { _token:'30aK3OPPMnzZeq8BKYZGsidbBTm5VsnwPGhJdtPl', key:key, quantity: element.value}, function(data){
+        var quantity = (element && typeof element === 'object' && typeof element.value !== 'undefined') ? element.value : 0;
+        $.get("{{ route('campaign.cart.quantity') }}", {
+            _token: '{{ csrf_token() }}',
+            key: key,
+            quantity: quantity
+        }, function(data){
             updateNavCart();
             $('.orderDetails').html(data);
         });
     }
+
+    function updateCampaignOption(key, optionId) {
+        $.get("{{ route('campaign.cart.option') }}", {
+            _token: '{{ csrf_token() }}',
+            key: key,
+            option_id: optionId
+        }, function(data) {
+            updateNavCart();
+            $('.orderDetails').html(data);
+        }).fail(function(xhr) {
+            var message = 'Could not update product option. Please try again.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                message = xhr.responseJSON.message;
+            }
+            showFrontendAlert('error', message);
+        });
+    }
+
+    function updateCampaignColor(key, colorId) {
+        $.post("{{ route('campaign.cart.color') }}", {
+            _token: '{{ csrf_token() }}',
+            key: key,
+            color_id: colorId
+        }, function(data) {
+            updateNavCart();
+            $('.orderDetails').html(data);
+        }).fail(function(xhr) {
+            var message = 'Could not update product color. Please try again.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                message = xhr.responseJSON.message;
+            }
+            showFrontendAlert('error', message);
+        });
+    }
+
     function updateCartOptions(key, value, optionType) {
       
         $.get("{{ route('updateCartOptions') }}", {
@@ -847,36 +818,29 @@
 <script>
         $(document).ready(function () {
             //updateQuantity(0,0);
-            $('#selectCourier').on('change',function (e) {
-                var selectCourier = +$('#selectCourier option:selected').val();
+            $('input[name="area"]').on('change', function () {
+                var selectedCourier = $('input[name="area"]:checked');
+                var selectCourier = selectedCourier.val();
+
+                $('.shipping-option').removeClass('active');
+                $(this).closest('.shipping-option').addClass('active');
+
+                saveInput();
+
                 $.ajax({
                     type: "get",
                     url: "{{url('/updateDeliveryCharge')}}",
                     data: {
-                        'selectCourier':selectCourier,
+                        'selectCourier': selectCourier,
                         '_token': '{{ csrf_token() }}'
                     },
                     success: function () {
-                        updateQuantity(0,0);
+                        updateQuantity('', 0);
                     }
                 });
             });
-            // $('input[name="area"]').on('change', function () {
-            //     var selectedCourier = $('input[name="area"]:checked'); // Get the checked radio button
-            //     var selectCourier = selectedCourier.val(); // Get the value of the checked radio button
-            
-            //     $.ajax({
-            //         type: "get",
-            //         url: "{{url('/updateDeliveryCharge')}}",
-            //         data: {
-            //             'selectCourier': selectCourier,
-            //             '_token': '{{ csrf_token() }}'
-            //         },
-            //         success: function () {
-            //             updateQuantity(0, 0); // Call the updateQuantity function upon successful response
-            //         }
-            //     });
-            // });
+
+            $('input[name="area"]:checked').trigger('change');
 
             $(document).on("click", "#orderConfirm", function () {
                 constantValue = 0;
@@ -884,7 +848,7 @@
                 var customerName = $('#customerName');
                 var customerAddress = $('#customerAddress');
                 var customerPhone = $('#customerPhone');
-                var selectCourier = $('#selectCourier option:selected');
+                var selectCourier = $('input[name="area"]:checked');
                 
                 // Log all values
                 
@@ -911,9 +875,9 @@
                     showFrontendAlert('error', 'Invalied Phone Number!');
                 }
                 
-                if (selectCourier.val() === '') {
-                    selectCourier.addClass("has-error");
-                    showFrontendAlert('error', 'Unsuccessful to Place order');
+                if (!selectCourier.length || !selectCourier.val()) {
+                    $('input[name="area"]').closest('.form-group').addClass("has-error");
+                    showFrontendAlert('error', 'Please Select Area');
                     constantValue = 1;
                 }
                 // console.log(selectCourier); // Log the selected charge value
@@ -975,7 +939,8 @@ function saveInput() {
     let customerPhone = document.querySelector('#customerPhone')?.value;
     let customerName = document.querySelector('#customerName')?.value;
     let customerAddress = document.querySelector('#customerAddress')?.value;
-    let selectCourier = document.querySelector('#selectCourier')?.value;
+    let selectedArea = document.querySelector('input[name="area"]:checked');
+    let selectCourier = selectedArea ? selectedArea.value : '';
     let csrfToken = '{{ csrf_token() }}';
     
     console.log("Customer Phone:", customerPhone);

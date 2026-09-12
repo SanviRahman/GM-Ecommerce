@@ -67,35 +67,86 @@ class WebsiteController extends Controller
         return view('website.page',compact('page','relatedProducts'));
     }
     
-    public function campaign($slug){
-        $campaign_data = Campaign::where('slug',$slug)->first();
-        if($campaign_data){
-           session_start();
-            error_reporting(0);
-            $charge = ShippingCharge::first();
-            if(!$_SESSION['delivery']){
-                $_SESSION['delivery'] =  $$charge->charge??120;
-            }
-            $product = Product::find($campaign_data->product_id);
-            //return $product;
-            // Add product to the cart with color and size if applicable
-            Cart::destroy();
-            Cart::add([
-                'id' => $product->id,
-                'name' => $product->productName,
-                'qty' => 1,
-                'price' => $product->price(),
-                'options' => [
-                    'colorName' => $color->colorName ?? null,
-                    'sizeName' => $size->sizeName ?? null,
-                ]
-            ])->associate(Product::class);
-            return view('website.campaign',compact('campaign_data','product')); 
-        }else{
+    public function campaign($slug)
+    {
+        $campaign_data = Campaign::with(['products.options', 'products.colors', 'product.options', 'product.colors'])
+            ->where('slug', $slug)
+            ->first();
+
+        if (!$campaign_data) {
             abort(404);
         }
-        
-        
+
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $charge = ShippingCharge::first();
+        $_SESSION['delivery'] = $charge ? (float) $charge->charge : 0;
+
+        // Prefer the new ordered many-to-many campaign products. Existing
+        // campaigns that only have product_id continue to work unchanged.
+        $campaignProducts = $campaign_data->products;
+        if ($campaignProducts->isEmpty() && $campaign_data->product) {
+            $campaignProducts = collect([$campaign_data->product]);
+        }
+
+        if ($campaignProducts->isEmpty()) {
+            abort(404);
+        }
+
+        Cart::destroy();
+
+        foreach ($campaignProducts->values() as $campaignPosition => $campaignProduct) {
+            $selectedOption = $campaignProduct->options->first();
+            $selectedColor = $campaignProduct->colors->first();
+            $price = $campaignProduct->price();
+            $optionName = null;
+            $optionId = null;
+            $colorName = null;
+            $colorId = null;
+
+            if ($selectedOption) {
+                $optionPrice = $selectedOption->pivot->price;
+                if ($optionPrice !== null && is_numeric($optionPrice)) {
+                    $price = (float) $optionPrice;
+                }
+
+                $optionName = $selectedOption->optionName;
+                $optionId = $selectedOption->id;
+            }
+
+            // Match the normal product-details behavior: when a product has
+            // colors, the first available color is selected initially. The
+            // customer can change it independently from the option/price.
+            if ($selectedColor) {
+                $colorName = $selectedColor->colorName;
+                $colorId = $selectedColor->id;
+            }
+
+            Cart::add([
+                'id' => $campaignProduct->id,
+                'name' => $campaignProduct->productName,
+                'qty' => 1,
+                'price' => $price,
+                'options' => [
+                    'colorName' => $colorName,
+                    'colorId' => $colorId,
+                    'sizeName' => null,
+                    'optionName' => $optionName,
+                    'optionId' => $optionId,
+                    // Keep the original campaign product order stable even when
+                    // changing options regenerates the ShoppingCart rowId.
+                    'campaignPosition' => $campaignPosition + 1,
+                ],
+            ])->associate(Product::class);
+        }
+
+        // The first selected product remains the campaign's primary product
+        // for the existing hero/banner UI.
+        $product = $campaignProducts->first();
+
+        return view('website.campaign', compact('campaign_data', 'product'));
     }
         public function loadProducts()
     {

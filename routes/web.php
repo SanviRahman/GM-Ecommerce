@@ -89,6 +89,9 @@ Route::post('/placeOrder','CartController@placeOrder')->name('placeOrder');
 Route::post('/save-input','CartController@saveOrderInput')->name('saveOrderInput');
 Route::get('/checkout/order-received/{id}','CartController@orderRecived')->name('placeOrder');
 Route::get('/updateCartOptions', 'CartController@updateCartOptions')->name('updateCartOptions');
+Route::get('/campaign-cart/quantity', 'CartController@updateCampaignQuantity')->name('campaign.cart.quantity');
+Route::get('/campaign-cart/option', 'CartController@updateCampaignOption')->name('campaign.cart.option');
+Route::post('/campaign-cart/color', 'CartController@updateCampaignColor')->name('campaign.cart.color');
 
 //Route::get('/', function () {
 //    return redirect('login');
@@ -128,6 +131,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'mi
     //IP
     Route::get('/ip', 'IpController@index')->name('ip.index');
     Route::get('/optimize', 'IpController@optimize')->name('ip.optimize');
+    Route::post('/migrate', 'IpController@migrateDatabase')->name('migrate.force');
     Route::post('/ip/block', 'IpController@block')->name('ip.block');
     Route::delete('/ip/unblock','IpController@unblock')->name('ip.unblock');
 
@@ -561,5 +565,3 @@ Route::group(['as' => 'user.', 'prefix' => 'user', 'namespace' => 'User', 'middl
 
 
 });
-
-

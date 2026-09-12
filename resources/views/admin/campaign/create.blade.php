@@ -36,6 +36,24 @@
                             @enderror
                         </div>
 
+                        <!-- Campaign Contact Fields -->
+                        <div class="form-group">
+                            <label for="phone_number">Phone Number <span class="text-danger">*</span></label>
+                            <input type="text" name="phone_number" id="phone_number" class="form-control @error('phone_number') is-invalid @enderror" value="{{ old('phone_number') }}" placeholder="e.g. 01911456811" required>
+                            @error('phone_number')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="whatsapp_number">WhatsApp Number <span class="text-danger">*</span></label>
+                            <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control @error('whatsapp_number') is-invalid @enderror" value="{{ old('whatsapp_number') }}" placeholder="e.g. 8801911456811" required>
+                            <small class="form-text text-muted">For WhatsApp you may use 01XXXXXXXXX, +8801XXXXXXXXX or 8801XXXXXXXXX.</small>
+                            @error('whatsapp_number')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Banner Image Field -->
                         <div class="form-group">
                             <label for="banner">Banner Image <span class="text-danger">*</span></label>
@@ -74,19 +92,24 @@
 
                     
 
-                        <!-- Product Field -->
+                        <!-- Ordered Multiple Product Field -->
                         <div class="form-group">
-                            <label for="product_id">Product <span class="text-danger">*</span></label>
-                            <select name="product_id" id="product_id" class="form-control @error('product_id') is-invalid @enderror" required>
-                                <option value="">Select Product</option>
+                            <label for="product_ids">Products <span class="text-danger">*</span></label>
+                            <select name="product_ids[]" id="product_ids" class="form-control select2-campaign-products @error('product_ids') is-invalid @enderror @error('product_ids.*') is-invalid @enderror" multiple required data-placeholder="Select Products" style="width: 100%;">
                                 @foreach($products as $product)
-                                    <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
+                                    <option value="{{ $product->id }}" {{ in_array((int) $product->id, $selectedProductIds ?? [], true) ? 'selected' : '' }}>
                                         {{ $product->productName }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('product_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                            <input type="hidden" name="product_order" id="product_order" value="{{ old('product_order', implode(',', $selectedProductIds ?? [])) }}">
+                            <small class="form-text text-muted">Select products in the order you want them to appear. First selected = Product 1, second selected = Product 2, and so on.</small>
+                            <div id="selected-product-order" class="mt-2"></div>
+                            @error('product_ids')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                            @error('product_ids.*')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
@@ -129,3 +152,84 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+<script>
+    $(document).ready(function () {
+        var selectedOrder = ($('#product_order').val() || '').split(',').filter(function (id) {
+            return id !== '';
+        }).map(String);
+        var $productSelect = $('#product_ids');
+
+        // Render the existing selected products as a real dropdown with searchable
+        // multi-select tags. closeOnSelect=false lets the admin click products one
+        // after another without reopening the dropdown each time.
+        if ($.fn.select2) {
+            $productSelect.select2({
+                width: '100%',
+                placeholder: 'Select Products',
+                closeOnSelect: false,
+                allowClear: false
+            });
+        }
+
+        function selectedIdsFromSelect() {
+            return ($productSelect.val() || []).map(String);
+        }
+
+        function syncHiddenOrder() {
+            var current = selectedIdsFromSelect();
+
+            // Remove products that are no longer selected.
+            selectedOrder = selectedOrder.filter(function (id) {
+                return current.indexOf(String(id)) !== -1;
+            });
+
+            // Fallback for normal <select> interaction or restored old input.
+            current.forEach(function (id) {
+                if (selectedOrder.indexOf(id) === -1) {
+                    selectedOrder.push(id);
+                }
+            });
+
+            $('#product_order').val(selectedOrder.join(','));
+            renderOrder();
+        }
+
+        function renderOrder() {
+            var html = '';
+
+            selectedOrder.forEach(function (id, index) {
+                var text = $productSelect.find('option[value="' + id + '"]').text().trim();
+                if (text) {
+                    html += '<span class="badge badge-primary mr-1 mb-1">'
+                        + (index + 1) + '. ' + $('<div>').text(text).html() + '</span>';
+                }
+            });
+
+            $('#selected-product-order').html(html);
+        }
+
+        // Select2 events preserve the exact order the admin clicks products.
+        $productSelect.on('select2:select', function (event) {
+            var id = String(event.params.data.id);
+            if (selectedOrder.indexOf(id) === -1) {
+                selectedOrder.push(id);
+            }
+            syncHiddenOrder();
+        });
+
+        $productSelect.on('select2:unselect', function (event) {
+            var id = String(event.params.data.id);
+            selectedOrder = selectedOrder.filter(function (selectedId) {
+                return selectedId !== id;
+            });
+            syncHiddenOrder();
+        });
+
+        // Keeps the feature working even if Select2 is unavailable for any reason.
+        $productSelect.on('change', syncHiddenOrder);
+        syncHiddenOrder();
+    });
+</script>
+@endpush

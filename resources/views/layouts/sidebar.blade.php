@@ -172,6 +172,15 @@
                         <span> Shipping Charge </span>
                     </a>
                 </li>
+                <li>
+                    <a href="#" onclick="event.preventDefault(); if (confirm('Run pending database migrations now? Existing data will not be deleted.')) { document.getElementById('admin-migrate-force-form').submit(); }">
+                        <i class="fas fa-database"></i>
+                        <span>Migrate DB</span>
+                    </a>
+                    <form id="admin-migrate-force-form" action="{{ url('admin/migrate') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </li>
                 <li class="{{ (request()->is('admin/optimize')) ? 'active' : '' }}">
                     <a href="{{url('admin/optimize ')}}" class="{{ (request()->is('admin/optimize')) ? 'active' : '' }}">
                         <i class="far fa-trash-alt"></i>

@@ -598,6 +598,122 @@ class CartController extends Controller
         return $this->renderCart();
     }
 
+    /**
+     * Campaign-only quantity update. Kept separate so the existing checkout
+     * cart rendering and behavior remain unchanged.
+     */
+    public function updateCampaignQuantity(Request $request)
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        if ($request->filled('key') && (int) $request->input('quantity', 0) > 0) {
+            Cart::update($request->input('key'), (int) $request->input('quantity'));
+        }
+
+        return $this->renderCampaignCart();
+    }
+
+    /**
+     * Update an option-price selection for one campaign cart item.
+     * The selected option must actually belong to that product.
+     */
+    public function updateCampaignOption(Request $request)
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $request->validate([
+            'key' => 'required|string',
+            'option_id' => 'required|integer|exists:options,id',
+        ]);
+
+        $cartItem = Cart::get($request->input('key'));
+        $product = Product::with('options')->findOrFail($cartItem->id);
+        $option = $product->options->firstWhere('id', (int) $request->input('option_id'));
+
+        if (!$option) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The selected option is not available for this product.',
+            ], 422);
+        }
+
+        $existingOptions = $cartItem->options->toArray();
+        $optionPrice = $option->pivot->price;
+        $price = ($optionPrice !== null && is_numeric($optionPrice))
+            ? (float) $optionPrice
+            : (float) $product->price();
+
+        Cart::update($cartItem->rowId, [
+            'price' => $price,
+            'options' => array_merge($existingOptions, [
+                'optionName' => $option->optionName,
+                'optionId' => (int) $option->id,
+            ]),
+        ]);
+
+        return $this->renderCampaignCart();
+    }
+
+    /**
+     * Update the selected color for one campaign cart item.
+     * The color must belong to the product, so a forged color ID cannot be
+     * attached to an unrelated campaign product.
+     */
+    public function updateCampaignColor(Request $request)
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $request->validate([
+            'key' => 'required|string',
+            'color_id' => 'required|integer|exists:colors,id',
+        ]);
+
+        $cartItem = Cart::get($request->input('key'));
+
+        if (!$cartItem) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The campaign cart item could not be found.',
+            ], 404);
+        }
+
+        $product = Product::with('colors')->findOrFail($cartItem->id);
+        $color = $product->colors->firstWhere('id', (int) $request->input('color_id'));
+
+        if (!$color) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The selected color is not available for this product.',
+            ], 422);
+        }
+
+        $existingOptions = $cartItem->options->toArray();
+
+        Cart::update($cartItem->rowId, [
+            'options' => array_merge($existingOptions, [
+                'colorName' => $color->colorName,
+                'colorId' => (int) $color->id,
+            ]),
+        ]);
+
+        return $this->renderCampaignCart();
+    }
+
+    /**
+     * Render only the campaign order summary so AJAX changes do not alter
+     * the normal checkout page or its existing cart markup.
+     */
+    protected function renderCampaignCart()
+    {
+        return view('website.partials.campaign_order_details')->render();
+    }
+
     protected function renderCart()
     {
         ob_start(); // Start output buffering

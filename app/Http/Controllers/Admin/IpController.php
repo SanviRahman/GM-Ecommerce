@@ -75,4 +75,36 @@ class IpController extends Controller
 
        
     }
+
+    /**
+     * Run pending database migrations safely in production.
+     * The route is protected by the existing auth + admin middleware group.
+     */
+    public function migrateDatabase()
+    {
+        try {
+            Artisan::call('migrate', [
+                '--force' => true,
+            ]);
+
+            $output = trim(Artisan::output());
+
+            \Log::info('Admin database migration executed.', [
+                'user_id' => auth()->id(),
+                'output' => $output,
+            ]);
+
+            return redirect()->back()->with(
+                'message',
+                $output !== '' ? 'Database migration completed successfully! ' . $output : 'Database migration completed successfully!'
+            );
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return redirect()->back()->with(
+                'message',
+                'Database migration failed. Please check storage/logs/laravel.log.'
+            );
+        }
+    }
 }

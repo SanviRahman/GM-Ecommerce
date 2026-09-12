@@ -172,6 +172,15 @@
                         <span> Shipping Charge </span>
                     </a>
                 </li>
+                <li>
+                    <a href="#" onclick="event.preventDefault(); if (confirm('Run pending database migrations now? Existing data will not be deleted.')) { document.getElementById('admin-migrate-force-form').submit(); }">
+                        <i class="fas fa-database"></i>
+                        <span>Migrate DB</span>
+                    </a>
+                    <form id="admin-migrate-force-form" action="<?php echo e(url('admin/migrate')); ?>" method="POST" style="display: none;">
+                        <?php echo csrf_field(); ?>
+                    </form>
+                </li>
                 <li class="<?php echo e((request()->is('admin/optimize')) ? 'active' : ''); ?>">
                     <a href="<?php echo e(url('admin/optimize ')); ?>" class="<?php echo e((request()->is('admin/optimize')) ? 'active' : ''); ?>">
                         <i class="far fa-trash-alt"></i>

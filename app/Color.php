@@ -8,6 +8,6 @@ class Color extends Model
 {
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'product_color');
+        return $this->belongsToMany(Product::class, 'color_product')->withTimestamps();
     }
 }
