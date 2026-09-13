@@ -6,6 +6,8 @@ use App\User;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 
 // Route to clear all cache
@@ -31,7 +33,8 @@ Route::get('/cc', function () {
 Route::post('/fraud-check', function (Request $request) {
 
     $request->validate([
-        'phone' => 'required|string'
+        'phone'    => 'required|string',
+        'order_id' => 'nullable|integer|exists:orders,id',
     ]);
 
     $phone  = $request->phone;
@@ -67,8 +70,36 @@ Route::post('/fraud-check', function (Request $request) {
 
     curl_close($ch);
 
-    return response()->json(json_decode($response, true));
-});
+    $decoded = json_decode($response, true);
+
+    if (!is_array($decoded)) {
+        return response()->json([
+            'status' => 'error',
+            'error'  => 'Invalid fraud-check API response',
+        ], 502);
+    }
+
+    // Persist only a successful summary. A temporary API failure/no-data
+    // response never wipes the last known fraud-check result.
+    if (
+        $request->filled('order_id') &&
+        ($decoded['status'] ?? null) === 'success' &&
+        isset($decoded['data']['summary']) &&
+        Schema::hasColumn('orders', 'fraud_success_count') &&
+        Schema::hasColumn('orders', 'fraud_fail_count')
+    ) {
+        $summary = $decoded['data']['summary'];
+
+        DB::table('orders')
+            ->where('id', (int) $request->order_id)
+            ->update([
+                'fraud_success_count' => (int) ($summary['success_parcel'] ?? 0),
+                'fraud_fail_count'    => (int) ($summary['cancelled_parcel'] ?? 0),
+            ]);
+    }
+
+    return response()->json($decoded);
+})->middleware('auth');
 
 
 Route::get('/', 'WebsiteController@index')->name('home');
@@ -89,6 +120,7 @@ Route::post('/placeOrder','CartController@placeOrder')->name('placeOrder');
 Route::post('/save-input','CartController@saveOrderInput')->name('saveOrderInput');
 Route::get('/checkout/order-received/{id}','CartController@orderRecived')->name('placeOrder');
 Route::get('/updateCartOptions', 'CartController@updateCartOptions')->name('updateCartOptions');
+Route::post('/campaign-cart/product', 'CartController@updateCampaignProduct')->name('campaign.cart.product');
 Route::get('/campaign-cart/quantity', 'CartController@updateCampaignQuantity')->name('campaign.cart.quantity');
 Route::get('/campaign-cart/option', 'CartController@updateCampaignOption')->name('campaign.cart.option');
 Route::post('/campaign-cart/color', 'CartController@updateCampaignColor')->name('campaign.cart.color');

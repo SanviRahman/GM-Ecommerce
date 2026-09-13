@@ -11,6 +11,7 @@ use App\Color;
 use App\Option;
 use App\Size;
 use App\Product;
+use App\Campaign;
 use App\ShippingCharge;
 use App\User;
 use Illuminate\Http\Request;
@@ -596,6 +597,110 @@ class CartController extends Controller
         }
     
         return $this->renderCart();
+    }
+
+    /**
+     * Add or remove one product from the current campaign selection.
+     * Only products assigned to the requested campaign can be selected.
+     */
+    public function updateCampaignProduct(Request $request)
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $request->validate([
+            'campaign_id' => 'required|integer|exists:campaigns,id',
+            'product_id' => 'required|integer|exists:products,id',
+            'selected' => 'required|in:0,1',
+        ]);
+
+        $campaign = Campaign::with(['products.options', 'products.colors', 'product.options', 'product.colors'])
+            ->findOrFail((int) $request->input('campaign_id'));
+
+        $campaignProducts = $campaign->products;
+        if ($campaignProducts->isEmpty() && $campaign->product) {
+            $campaignProducts = collect([$campaign->product]);
+        }
+
+        $productId = (int) $request->input('product_id');
+        $campaignProduct = $campaignProducts->firstWhere('id', $productId);
+
+        if (!$campaignProduct) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The selected product is not part of this campaign.',
+            ], 422);
+        }
+
+        $selected = (string) $request->input('selected') === '1';
+        $existingCartItem = Cart::content()->first(function ($item) use ($productId) {
+            return (int) $item->id === $productId;
+        });
+
+        if ($selected && !$existingCartItem) {
+            $selectedOption = $campaignProduct->options->first();
+            $selectedColor = $campaignProduct->colors->first();
+            $price = $campaignProduct->price();
+            $optionName = null;
+            $optionId = null;
+            $colorName = null;
+            $colorId = null;
+
+            if ($selectedOption) {
+                $optionPrice = $selectedOption->pivot->price;
+                if ($optionPrice !== null && is_numeric($optionPrice)) {
+                    $price = (float) $optionPrice;
+                }
+
+                $optionName = $selectedOption->optionName;
+                $optionId = $selectedOption->id;
+            }
+
+            if ($selectedColor) {
+                $colorName = $selectedColor->colorName;
+                $colorId = $selectedColor->id;
+            }
+
+            $campaignPosition = $campaignProducts->search(function ($product) use ($productId) {
+                return (int) $product->id === $productId;
+            });
+            $campaignPosition = $campaignPosition === false ? 1 : $campaignPosition + 1;
+
+            Cart::add([
+                'id' => $campaignProduct->id,
+                'name' => $campaignProduct->productName,
+                'qty' => 1,
+                'price' => $price,
+                'options' => [
+                    'colorName' => $colorName,
+                    'colorId' => $colorId,
+                    'sizeName' => null,
+                    'optionName' => $optionName,
+                    'optionId' => $optionId,
+                    'campaignPosition' => $campaignPosition,
+                ],
+            ])->associate(Product::class);
+        }
+
+        if (!$selected && $existingCartItem) {
+            // Keep at least one product selected so campaign checkout can never
+            // be submitted with an empty cart.
+            if (Cart::content()->count() <= 1) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'At least one campaign product must remain selected.',
+                ], 422);
+            }
+
+            Cart::remove($existingCartItem->rowId);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'selected' => $selected,
+            'html' => $this->renderCampaignCart(),
+        ]);
     }
 
     /**

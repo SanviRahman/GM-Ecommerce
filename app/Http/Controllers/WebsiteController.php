@@ -97,56 +97,54 @@ class WebsiteController extends Controller
 
         Cart::destroy();
 
-        foreach ($campaignProducts->values() as $campaignPosition => $campaignProduct) {
-            $selectedOption = $campaignProduct->options->first();
-            $selectedColor = $campaignProduct->colors->first();
-            $price = $campaignProduct->price();
-            $optionName = null;
-            $optionId = null;
-            $colorName = null;
-            $colorId = null;
+        // Campaign can contain many products, but only Product 1 is selected
+        // by default. Customers can add more campaign products from the large
+        // product selector in the order section.
+        $campaignProduct = $campaignProducts->values()->first();
+        $selectedOption = $campaignProduct->options->first();
+        $selectedColor = $campaignProduct->colors->first();
+        $price = $campaignProduct->price();
+        $optionName = null;
+        $optionId = null;
+        $colorName = null;
+        $colorId = null;
 
-            if ($selectedOption) {
-                $optionPrice = $selectedOption->pivot->price;
-                if ($optionPrice !== null && is_numeric($optionPrice)) {
-                    $price = (float) $optionPrice;
-                }
-
-                $optionName = $selectedOption->optionName;
-                $optionId = $selectedOption->id;
+        if ($selectedOption) {
+            $optionPrice = $selectedOption->pivot->price;
+            if ($optionPrice !== null && is_numeric($optionPrice)) {
+                $price = (float) $optionPrice;
             }
 
-            // Match the normal product-details behavior: when a product has
-            // colors, the first available color is selected initially. The
-            // customer can change it independently from the option/price.
-            if ($selectedColor) {
-                $colorName = $selectedColor->colorName;
-                $colorId = $selectedColor->id;
-            }
-
-            Cart::add([
-                'id' => $campaignProduct->id,
-                'name' => $campaignProduct->productName,
-                'qty' => 1,
-                'price' => $price,
-                'options' => [
-                    'colorName' => $colorName,
-                    'colorId' => $colorId,
-                    'sizeName' => null,
-                    'optionName' => $optionName,
-                    'optionId' => $optionId,
-                    // Keep the original campaign product order stable even when
-                    // changing options regenerates the ShoppingCart rowId.
-                    'campaignPosition' => $campaignPosition + 1,
-                ],
-            ])->associate(Product::class);
+            $optionName = $selectedOption->optionName;
+            $optionId = $selectedOption->id;
         }
 
-        // The first selected product remains the campaign's primary product
-        // for the existing hero/banner UI.
-        $product = $campaignProducts->first();
+        if ($selectedColor) {
+            $colorName = $selectedColor->colorName;
+            $colorId = $selectedColor->id;
+        }
 
-        return view('website.campaign', compact('campaign_data', 'product'));
+        Cart::add([
+            'id' => $campaignProduct->id,
+            'name' => $campaignProduct->productName,
+            'qty' => 1,
+            'price' => $price,
+            'options' => [
+                'colorName' => $colorName,
+                'colorId' => $colorId,
+                'sizeName' => null,
+                'optionName' => $optionName,
+                'optionId' => $optionId,
+                'campaignPosition' => 1,
+            ],
+        ])->associate(Product::class);
+
+        // Product 1 remains the campaign's primary product for the existing
+        // hero/banner UI. The complete ordered collection is also passed to
+        // the view so customers can select additional campaign products.
+        $product = $campaignProduct;
+
+        return view('website.campaign', compact('campaign_data', 'product', 'campaignProducts'));
     }
         public function loadProducts()
     {

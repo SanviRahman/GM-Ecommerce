@@ -16,13 +16,13 @@
         </header>
         <div class="row">
             <div class="table-responsive bg-white">
-                <table class="table border-bottom">
+                <table class="table border-bottom campaign-order-table">
                     <thead>
                     <tr>
                         <th class="product-image">Image</th>
                         <th class="product-name">Product</th>
                         <th class="product-price">Price</th>
-                        <th class="product-quanity">Quantity</th>
+                        <th class="product-quantity">Quantity</th>
                         <th class="product-total">Total</th>
                     </tr>
                     </thead>
@@ -39,7 +39,7 @@
                                 <a href="#">
                                     <img class="lazyload" src="{{ url('/public/product/thumbnail/'.$item->model->productImage) }}" style="max-width: 50px">
                                 </a>
-                                <button type="button" onclick="removeFromCart('{{ $item->rowId }}')" class="btn btn-danger btn-sm">
+                                <button type="button" onclick="removeCampaignProduct('{{ $item->id }}')" class="btn btn-danger btn-sm">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>

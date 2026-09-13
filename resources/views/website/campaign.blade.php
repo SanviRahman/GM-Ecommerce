@@ -34,7 +34,229 @@
         .shipping-option { display:flex; align-items:center; gap:8px; padding:10px 15px; border:1px solid #ccc; border-radius:8px; cursor:pointer; background-color:#f8f9fa; transition:background .2s ease,border .2s ease; }
         .shipping-option input[type="radio"] { accent-color:green; }
         .shipping-option.active { background-color:#28a745 !important; color:#fff; border-color:#28a745; font-weight:600; }
-        .campaign-option-selector .btn { white-space:normal; }
+        .campaign-color-selector .btn-group-toggle,
+        .campaign-option-selector .btn-group-toggle {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px;
+        }
+        .campaign-color-selector .btn,
+        .campaign-option-selector .btn {
+            flex: 0 0 auto;
+            margin: 0 !important;
+            white-space: nowrap;
+        }
+
+        .campaign-product-picker {
+            border: 1px solid #e6e6e6;
+            border-radius: 8px;
+            background: #fff;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        .campaign-product-picker-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .campaign-product-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .campaign-product-choice {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 190px;
+            min-height: 58px;
+            padding: 10px 12px;
+            margin: 0;
+            border: 2px solid #d9dee5;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+        }
+        .campaign-product-choice:hover {
+            border-color: #28a745;
+        }
+        .campaign-product-choice.active {
+            border-color: #28a745;
+            background: #eefbf2;
+            box-shadow: 0 0 0 1px rgba(40, 167, 69, .08);
+        }
+        .campaign-product-choice input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .campaign-product-check {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #adb5bd;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 24px;
+            color: transparent;
+            background: #fff;
+        }
+        .campaign-product-choice.active .campaign-product-check {
+            border-color: #28a745;
+            background: #28a745;
+            color: #fff;
+        }
+        .campaign-product-meta {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+        .campaign-product-name {
+            display: block;
+            font-weight: 700;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+        .campaign-product-price {
+            display: block;
+            margin-top: 4px;
+            font-size: 15px;
+            line-height: 1.2;
+            font-weight: 700;
+            color: #212529;
+        }
+        .campaign-product-state {
+            display: inline-block;
+            min-width: 58px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #6c757d;
+        }
+        .campaign-product-choice.active .campaign-product-state {
+            color: #218838;
+        }
+
+        @media (max-width: 767.98px) {
+            .campaign-product-picker { padding: 10px; }
+            .campaign-product-options {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                gap: 8px;
+            }
+            .campaign-product-choice {
+                flex: 0 0 auto;
+                width: 100%;
+                min-width: 100%;
+                min-height: 58px;
+                padding: 10px 10px;
+                gap: 8px;
+                box-sizing: border-box;
+            }
+            .campaign-product-check {
+                width: 21px;
+                height: 21px;
+                flex-basis: 21px;
+            }
+            .campaign-product-name { font-size: 13px; }
+            .campaign-product-price {
+                font-size: 14px;
+                font-weight: 700;
+            }
+            .campaign-product-state { font-size: 11px; }
+
+            /* Keep Color and Option buttons horizontal on mobile as on desktop. */
+            .campaign-color-selector .btn-group-toggle,
+            .campaign-option-selector .btn-group-toggle {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 3px;
+            }
+            .campaign-color-selector .btn,
+            .campaign-option-selector .btn {
+                margin: 0 !important;
+                padding: .2rem .3rem;
+                font-size: 9.5px;
+                line-height: 1.25;
+                white-space: nowrap;
+            }
+
+            .campaign-order-table {
+                table-layout: fixed;
+                width: 100%;
+                font-size: 10.5px;
+            }
+            .campaign-order-table th,
+            .campaign-order-table td {
+                padding: .35rem .15rem;
+                vertical-align: top;
+                word-break: break-word;
+            }
+            .campaign-order-table .product-image { width: 44px; }
+            .campaign-order-table td.product-image {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center;
+                gap: 3px;
+            }
+            .campaign-order-table .product-image img {
+                max-width: 36px !important;
+                height: auto;
+            }
+            .campaign-order-table .product-image .btn {
+                padding: .15rem .3rem;
+                line-height: 1.1;
+            }
+            .campaign-order-table .product-name { width: 100px; }
+            .campaign-order-table .product-price { width: 40px; }
+            .campaign-order-table .product-quantity {
+                width: 38px;
+                text-align: center;
+            }
+            .campaign-order-table .product-total { width: 44px; }
+
+            /* Mobile quantity control: +, quantity and - are stacked vertically. */
+            .campaign-order-table .input-spinner {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                width: 34px;
+                min-width: 34px;
+                max-width: 34px;
+                margin: 0 auto;
+                flex-wrap: nowrap;
+            }
+            .campaign-order-table .input-spinner .input-group-prepend,
+            .campaign-order-table .input-spinner .input-group-append {
+                display: block;
+                width: 100%;
+                margin: 0;
+            }
+            .campaign-order-table .input-spinner .btn {
+                display: block;
+                width: 100%;
+                min-width: 34px;
+                padding: .12rem .2rem;
+                line-height: 1.2;
+                border-radius: 0;
+            }
+            .campaign-order-table .input-spinner .form-control {
+                display: block;
+                width: 100%;
+                min-width: 34px;
+                max-width: 34px;
+                height: 28px;
+                flex: 0 0 28px;
+                padding: .1rem;
+                text-align: center;
+                border-radius: 0;
+            }
+        }
     </style>
     @stack('css')
     {!! Settings::get('facebook_pixels') !!}
@@ -445,7 +667,7 @@
     <div class="container">
         <h2 class="campaign_offer text-center mb-4">অফারটি সীমিত সময়ের জন্য, তাই অফার শেষ হওয়ার আগেই অর্ডার করুন</h2>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6 order-2 order-md-1">
                 <aside class="card mb-4">
                     <article class="card-body">
                         <header class="mb-4">
@@ -534,8 +756,40 @@
                     </article> <!-- card-body.// -->
                 </aside>
             </div>
-            <div class="col-md-6 orderDetails">
-                @include('website.partials.campaign_order_details')
+            <div class="col-md-6 order-1 order-md-2 mb-4 mb-md-0">
+                <div class="campaign-product-picker">
+                    <div class="campaign-product-picker-title">Select Product</div>
+                    <div class="campaign-product-options">
+                        @foreach($campaignProducts->values() as $campaignProductIndex => $campaignProductItem)
+                            @php
+                                $campaignProductPrice = $campaignProductItem->price();
+                                $campaignFirstOption = $campaignProductItem->options->first();
+                                if ($campaignFirstOption && $campaignFirstOption->pivot->price !== null && is_numeric($campaignFirstOption->pivot->price)) {
+                                    $campaignProductPrice = (float) $campaignFirstOption->pivot->price;
+                                }
+                                $campaignProductSelected = $campaignProductIndex === 0;
+                            @endphp
+                            <label class="campaign-product-choice {{ $campaignProductSelected ? 'active' : '' }}" data-product-id="{{ $campaignProductItem->id }}">
+                                <input
+                                    type="checkbox"
+                                    class="campaign-product-checkbox"
+                                    value="{{ $campaignProductItem->id }}"
+                                    {{ $campaignProductSelected ? 'checked' : '' }}
+                                    onchange="toggleCampaignProduct(this)"
+                                >
+                                <span class="campaign-product-check"><i class="fas fa-check"></i></span>
+                                <span class="campaign-product-meta">
+                                    <span class="campaign-product-name">{{ $campaignProductItem->productName }}</span>
+                                    <span class="campaign-product-price">TK {{ number_format((float) $campaignProductPrice, 0, '.', '') }}</span>
+                                </span>
+                                <span class="campaign-product-state">{{ $campaignProductSelected ? 'Selected' : 'Select' }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="orderDetails">
+                    @include('website.partials.campaign_order_details')
+                </div>
             </div>
 
         </div>
@@ -623,6 +877,59 @@
 
             }
         });
+    }
+
+    function setCampaignProductChoiceState($choice, selected) {
+        $choice.toggleClass('active', selected);
+        $choice.find('.campaign-product-state').text(selected ? 'Selected' : 'Select');
+    }
+
+    function toggleCampaignProduct(element) {
+        var $checkbox = $(element);
+        var $choice = $checkbox.closest('.campaign-product-choice');
+        var productId = $checkbox.val();
+        var selected = $checkbox.is(':checked');
+
+        $checkbox.prop('disabled', true);
+
+        $.post("{{ route('campaign.cart.product') }}", {
+            _token: '{{ csrf_token() }}',
+            campaign_id: {{ (int) $campaign_data->id }},
+            product_id: productId,
+            selected: selected ? 1 : 0
+        }, function(response) {
+            if (response.status !== 'success') {
+                $checkbox.prop('checked', !selected);
+                setCampaignProductChoiceState($choice, !selected);
+                showFrontendAlert('error', response.message || 'Could not update product selection.');
+                return;
+            }
+
+            setCampaignProductChoiceState($choice, selected);
+            $('.orderDetails').html(response.html);
+            updateNavCart();
+        }).fail(function(xhr) {
+            $checkbox.prop('checked', !selected);
+            setCampaignProductChoiceState($choice, !selected);
+
+            var message = 'Could not update product selection. Please try again.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                message = xhr.responseJSON.message;
+            }
+            showFrontendAlert('error', message);
+        }).always(function() {
+            $checkbox.prop('disabled', false);
+        });
+    }
+
+    function removeCampaignProduct(productId) {
+        var $checkbox = $('.campaign-product-checkbox[value="' + productId + '"]');
+        if (!$checkbox.length) {
+            return;
+        }
+
+        $checkbox.prop('checked', false);
+        toggleCampaignProduct($checkbox.get(0));
     }
 
     function updateQuantity(key, element){

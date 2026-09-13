@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Yajra\Datatables\DataTables;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -135,6 +136,21 @@ class OrderController extends Controller
     'couriers.courierName', 'cities.cityName', 'zones.zoneName',
     'users.name as name'
 );
+
+        // Fraud-check columns were added later. Keep the order list usable even
+        // before the production migration is run, then read persisted values
+        // automatically once the columns exist.
+        if (Schema::hasColumn('orders', 'fraud_success_count')) {
+            $orders->addSelect('orders.fraud_success_count');
+        } else {
+            $orders->addSelect(DB::raw('NULL as fraud_success_count'));
+        }
+
+        if (Schema::hasColumn('orders', 'fraud_fail_count')) {
+            $orders->addSelect('orders.fraud_fail_count');
+        } else {
+            $orders->addSelect(DB::raw('NULL as fraud_fail_count'));
+        }
     
         // ========================
         // STATUS FILTER
@@ -212,15 +228,23 @@ class OrderController extends Controller
                 $highlight   = in_array($order->customerPhone, $duplicatePhones) ? 'highlight' : '';
                 $customOrder = $order->is_custom_order == 1 ? 'custom' : '';
     
+                $fraudResult = '';
+                if ($order->fraud_success_count !== null || $order->fraud_fail_count !== null) {
+                    $fraudResult = '<span class="badge badge-success mr-1">Success: ' . (int) $order->fraud_success_count . '</span>'
+                        . '<span class="badge badge-danger">Fail: ' . (int) $order->fraud_fail_count . '</span>';
+                }
+
                 return '<div class="'.$highlight.' '.$customOrder.'">'
                     . $order->customerName . '<br>'
                     . $order->customerPhone . '<br>'
                     . $order->customerAddress . '<br>'
                     . 'Order Note: ' . $order->note . '<br>'
-                    . '<button class="btn btn-info btn-xs ml-2 fraud-check-button"
+                    . '<button class="btn btn-info btn-xs fraud-check-button"
                         data-phone="'.$order->customerPhone.'"
-                        onclick="openFraudCheckModal(this)">Check</button>
-                </div>';
+                        data-order-id="'.$order->id.'"
+                        onclick="openFraudCheckModal(this)">Check</button>'
+                    . '<div class="fraud-check-inline-result mt-1">' . $fraudResult . '</div>'
+                . '</div>';
             })
     
             ->addColumn('invoice', function ($order) {

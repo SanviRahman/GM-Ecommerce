@@ -189,6 +189,9 @@
     const phone = $(button).data('phone');
     if (!phone) return;
 
+    const inlineResult = $(button).siblings('.fraud-check-inline-result');
+    inlineResult.html('<span class="text-muted small">Checking...</span>');
+
     $('#phoneNumber').text(phone);
     $('.modal-body').html(`
         <p id="loadingMessage">
@@ -212,6 +215,7 @@
         $('#loadingMessage').remove();
 
         if (response.status !== 'success' || !response.data) {
+            inlineResult.html('<span class="badge badge-secondary">No data</span>');
             $('.modal-body').html(`
                 <p class="text-danger text-center">No data found</p>
             `);
@@ -219,6 +223,17 @@
         }
 
         const data = response.data;
+
+        // Print the fraud-check totals directly beside the Check button in the
+        // order list, while keeping the existing detailed modal unchanged.
+        if (data.summary) {
+            inlineResult.html(
+                '<span class="badge badge-success mr-1">Success: ' + data.summary.success_parcel + '</span>' +
+                '<span class="badge badge-danger">Fail: ' + data.summary.cancelled_parcel + '</span>'
+            );
+        } else {
+            inlineResult.html('<span class="badge badge-secondary">No data</span>');
+        }
 
         let html = `
             <table class="table table-bordered table-sm">
@@ -273,6 +288,7 @@
     })
     .catch(error => {
         console.error(error);
+        inlineResult.html('<span class="badge badge-danger">Failed</span>');
         $('.modal-body').html(`
             <p class="text-danger text-center">
                 Failed to load fraud check data.
