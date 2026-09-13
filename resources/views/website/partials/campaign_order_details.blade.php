@@ -8,6 +8,16 @@
     $campaignCartItems = Cart::content()->sortBy(function ($item) {
         return (int) ($item->options->campaignPosition ?? PHP_INT_MAX);
     });
+
+    // Match the normal checkout free-delivery rule: if any selected campaign
+    // product has free delivery, the delivery charge is shown and then fully
+    // discounted for the entire campaign order.
+    $campaignHasFreeDelivery = $campaignCartItems->contains(function ($item) {
+        return $item->model && (int) $item->model->isFreeDelivery === 1;
+    });
+    $campaignFreeDeliveryDiscount = $campaignHasFreeDelivery ? $campaignDeliveryCharge : 0;
+    $campaignSubtotal = (float) Cart::subtotal('0', '', '');
+    $campaignGrandTotal = $campaignSubtotal + $campaignDeliveryCharge - $campaignFreeDeliveryDiscount;
 @endphp
 <aside class="card">
     <article class="card-body">
@@ -45,7 +55,12 @@
                             </td>
 
                             <td class="product-name">
-                                <span class="d-block">{{ $item->model->productName }}</span>
+                                <span class="d-block">
+                                    {{ $item->model->productName }}
+                                    @if((int) $item->model->isFreeDelivery === 1)
+                                        <span class="badge badge-danger ml-1" style="font-size: 10px;">Free Delivery</span>
+                                    @endif
+                                </span>
 
                                 @if($item->model->colors->isNotEmpty())
                                     <div class="mt-2 campaign-color-selector">
@@ -141,9 +156,12 @@
             <dt class="col-sm-8">Delivery charge: </dt>
             <dd class="col-sm-4 text-danger text-right"><strong>TK {{ number_format($campaignDeliveryCharge, 0, '.', '') }}</strong></dd>
 
+            <dt class="col-sm-8">Discount: </dt>
+            <dd class="col-sm-4 text-success text-right"><strong>- TK {{ number_format($campaignFreeDeliveryDiscount, 0, '.', '') }}</strong></dd>
+
             <dt class="col-sm-8">Total:</dt>
             <dd class="col-sm-4 text-right">
-                <strong class="h5 text-dark">TK {{ number_format((float) Cart::subtotal('0', '', '') + $campaignDeliveryCharge, 0, '.', '') }}</strong>
+                <strong class="h5 text-dark">TK {{ number_format($campaignGrandTotal, 0, '.', '') }}</strong>
             </dd>
         </dl>
     </article>

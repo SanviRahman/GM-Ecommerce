@@ -779,7 +779,12 @@
                                 >
                                 <span class="campaign-product-check"><i class="fas fa-check"></i></span>
                                 <span class="campaign-product-meta">
-                                    <span class="campaign-product-name">{{ $campaignProductItem->productName }}</span>
+                                    <span class="campaign-product-name">
+                                        {{ $campaignProductItem->productName }}
+                                        @if((int) $campaignProductItem->isFreeDelivery === 1)
+                                            <span class="badge badge-danger ml-1" style="font-size: 10px; vertical-align: middle;">Free Delivery</span>
+                                        @endif
+                                    </span>
                                     <span class="campaign-product-price">TK {{ number_format((float) $campaignProductPrice, 0, '.', '') }}</span>
                                 </span>
                                 <span class="campaign-product-state">{{ $campaignProductSelected ? 'Selected' : 'Select' }}</span>
