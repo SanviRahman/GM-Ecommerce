@@ -44,7 +44,16 @@
                             $selectedColorId = $item->options->colorId ?? null;
                             $selectedColorName = $item->options->colorName ?? null;
                         @endphp
-                        <tr class="cart-item">
+                        <tr class="cart-item campaign-tracking-item"
+                            data-product-id="{{ $item->id }}"
+                            data-product-code="{{ $item->model->productCode }}"
+                            data-product-name="{{ $item->model->productName }}"
+                            data-price="{{ (float) $item->price }}"
+                            data-quantity="{{ (int) $item->qty }}"
+                            data-category="{{ optional($item->model->category)->name ?? 'Uncategorized' }}"
+                            data-color="{{ $selectedColorName ?? '' }}"
+                            data-size="{{ $item->options->sizeName ?? '' }}"
+                            data-option="{{ $selectedOptionName ?? '' }}">
                             <td class="product-image" style="display: flex; flex-direction: row-reverse;">
                                 <a href="#">
                                     <img class="lazyload" src="{{ url('/public/product/thumbnail/'.$item->model->productImage) }}" style="max-width: 50px">

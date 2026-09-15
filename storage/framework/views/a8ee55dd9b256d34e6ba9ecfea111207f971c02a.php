@@ -187,6 +187,7 @@
     
     function openFraudCheckModal(button) {
     const phone = $(button).data('phone');
+    const orderId = $(button).data('order-id') || null;
     if (!phone) return;
 
     const inlineResult = $(button).siblings('.fraud-check-inline-result');
@@ -208,7 +209,7 @@
             'X-CSRF-TOKEN': document
                 .querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({ phone })
+        body: JSON.stringify({ phone, order_id: orderId })
     })
     .then(res => res.json())
     .then(response => {

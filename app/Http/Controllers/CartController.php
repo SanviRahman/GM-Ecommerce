@@ -369,8 +369,12 @@ class CartController extends Controller
             }
         }
         $tempOrder = Order::orderBy('id','desc')->where('session_id',$sessionId)->where('status','Incomplete')->first();
-        OrderProducts::where('order_id', $tempOrder->id)->forceDelete();
-        $tempOrder->forceDelete();
+        // Campaign checkout can submit before the asynchronous incomplete-order
+        // draft has been created. Only delete the draft when it actually exists.
+        if ($tempOrder) {
+            OrderProducts::where('order_id', $tempOrder->id)->forceDelete();
+            $tempOrder->forceDelete();
+        }
         
         $order = new Order();
         $order->ip_address = $ipAddress;

@@ -1,0 +1,1 @@
+a:4:{s:16:"checkout_session";O:35:"Ramsey\Uuid\Lazy\LazyUuidFromString":1:{s:6:"string";s:36:"de199e33-47e3-408f-9525-93c99e7d2440";}s:6:"_token";s:40:"CutAZwxovmy4GK8hPPT7RCaLXE6RWket5THH8Byt";s:9:"_previous";a:1:{s:3:"url";s:27:"http://127.0.0.1:8000/admin";}s:6:"_flash";a:2:{s:3:"old";a:0:{}s:3:"new";a:0:{}}}

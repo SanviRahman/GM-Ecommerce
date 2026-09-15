@@ -142,13 +142,20 @@
 
         @media (max-width: 767.98px) {
             .campaign-product-picker { padding: 10px; }
-            .campaign-product-options { gap: 8px; }
+            .campaign-product-options {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                gap: 8px;
+            }
             .campaign-product-choice {
-                flex: 1 1 calc(50% - 4px);
-                min-width: 0;
-                min-height: 54px;
-                padding: 9px 8px;
-                gap: 7px;
+                flex: 0 0 auto;
+                width: 100%;
+                min-width: 100%;
+                min-height: 58px;
+                padding: 10px 10px;
+                gap: 8px;
+                box-sizing: border-box;
             }
             .campaign-product-check {
                 width: 21px;
@@ -254,6 +261,136 @@
     <?php echo $__env->yieldPushContent('css'); ?>
     <?php echo Settings::get('facebook_pixels'); ?>
 
+
+    <?php
+        /*
+         * Campaign funnel tracking uses the same event names/shape already
+         * used by the normal product -> checkout -> thank-you flow.
+         * The campaign page is both a product-detail and checkout surface, so
+         * view_item and begin_checkout are emitted here. Purchase continues to
+         * fire from the existing thankyou.blade.php after a successful order.
+         */
+        $campaignTrackingItems = [];
+        $campaignCheckoutProducts = [];
+
+        foreach (Cart::content() as $trackingItem) {
+            $trackingProduct = $trackingItem->model;
+            $trackingCategory = 'Uncategorized';
+
+            if ($trackingProduct && $trackingProduct->category) {
+                $trackingCategory = $trackingProduct->category->name;
+            }
+
+            $trackingVariant = trim(implode(' ', array_filter([
+                $trackingItem->options->colorName ?? null,
+                $trackingItem->options->sizeName ?? null,
+                $trackingItem->options->optionName ?? null,
+            ])));
+
+            $campaignTrackingItems[] = [
+                'item_name' => $trackingProduct ? $trackingProduct->productName : $trackingItem->name,
+                'item_id' => (string) $trackingItem->id,
+                'price' => (float) $trackingItem->price,
+                'item_category' => $trackingCategory,
+                'item_variant' => $trackingVariant,
+                'quantity' => (int) $trackingItem->qty,
+                'currency' => 'BDT',
+            ];
+
+            $campaignCheckoutProducts[] = [
+                'id' => (string) $trackingItem->id,
+                'name' => $trackingProduct ? $trackingProduct->productName : $trackingItem->name,
+                'price' => (float) $trackingItem->price,
+                'quantity' => (int) $trackingItem->qty,
+                'category' => $trackingCategory,
+                'variant' => $trackingVariant,
+            ];
+        }
+
+        $campaignTrackingValue = (float) str_replace(',', '', Cart::subtotal('0', '', ''));
+    ?>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        var campaignTrackingItems = <?php echo json_encode($campaignTrackingItems, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+        var campaignCheckoutProducts = <?php echo json_encode($campaignCheckoutProducts, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+        var campaignTrackingValue = <?php echo e($campaignTrackingValue); ?>;
+        var campaignName = <?php echo json_encode($campaign_data->name ?: $campaign_data->banner_title, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+        var campaignSlug = <?php echo json_encode($campaign_data->slug, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+
+        // Campaign-specific page event.
+        window.dataLayer.push({
+            event: 'view_campaign',
+            pageType: 'campaign',
+            campaignId: <?php echo e((int) $campaign_data->id); ?>,
+            campaignName: campaignName,
+            campaignSlug: campaignSlug,
+            ecommerce: {
+                currency: 'BDT',
+                value: campaignTrackingValue
+            }
+        });
+
+        // Same ecommerce event used on the normal product details page.
+        if (campaignTrackingItems.length > 0) {
+            window.dataLayer.push({
+                event: 'view_item',
+                value: campaignTrackingValue,
+                ecommerce: {
+                    items: campaignTrackingItems
+                }
+            });
+        }
+
+        // Campaign page contains the checkout/order form, so mirror the normal
+        // checkout page's begin_checkout event shape for existing GTM triggers.
+        window.dataLayer.push({
+            event: 'begin_checkout',
+            value: campaignTrackingValue,
+            currency: 'BDT',
+            ecommerce: {
+                checkout: {
+                    actionField: {
+                        step: 1,
+                        option: 'Campaign Checkout'
+                    },
+                    products: campaignCheckoutProducts
+                }
+            },
+            campaign: {
+                id: <?php echo e((int) $campaign_data->id); ?>,
+                name: campaignName,
+                slug: campaignSlug
+            }
+        });
+
+        // Mirror the standard Meta funnel used by product/checkout pages.
+        if (typeof fbq === 'function' && campaignTrackingItems.length > 0) {
+            var primaryCampaignItem = campaignTrackingItems[0];
+
+            fbq('track', 'ViewContent', {
+                content_ids: [String(primaryCampaignItem.item_id)],
+                content_name: primaryCampaignItem.item_name,
+                content_category: primaryCampaignItem.item_category || 'Uncategorized',
+                value: Number(primaryCampaignItem.price || 0),
+                currency: 'BDT'
+            });
+
+            fbq('track', 'InitiateCheckout', {
+                content_ids: campaignTrackingItems.map(function (item) {
+                    return String(item.item_id);
+                }),
+                content_name: campaignName,
+                content_category: 'Campaign',
+                num_items: campaignTrackingItems.reduce(function (total, item) {
+                    return total + Number(item.quantity || 0);
+                }, 0),
+                value: campaignTrackingValue,
+                currency: 'BDT'
+            });
+        }
+    </script>
     
     <style>
         
@@ -850,6 +987,114 @@
         });
     }
 
+    function getCampaignCurrentTrackingState() {
+        var items = [];
+        var checkoutProducts = [];
+        var value = 0;
+
+        $('.orderDetails .campaign-tracking-item').each(function () {
+            var $row = $(this);
+            var price = Number($row.attr('data-price') || 0);
+            var quantity = Number($row.attr('data-quantity') || 0);
+            var variantParts = [
+                $row.attr('data-color') || '',
+                $row.attr('data-size') || '',
+                $row.attr('data-option') || ''
+            ].filter(function (part) {
+                return String(part).trim() !== '';
+            });
+            var variant = variantParts.join(' ');
+            var itemId = String($row.attr('data-product-id') || '');
+            var itemName = String($row.attr('data-product-name') || '');
+            var category = String($row.attr('data-category') || 'Uncategorized');
+
+            if (!itemId || quantity <= 0) {
+                return;
+            }
+
+            items.push({
+                item_name: itemName,
+                item_id: itemId,
+                price: price,
+                item_category: category,
+                item_variant: variant,
+                quantity: quantity,
+                currency: 'BDT'
+            });
+
+            checkoutProducts.push({
+                id: itemId,
+                name: itemName,
+                price: price,
+                quantity: quantity,
+                category: category,
+                variant: variant
+            });
+
+            value += price * quantity;
+        });
+
+        return {
+            items: items,
+            checkoutProducts: checkoutProducts,
+            value: Number(value.toFixed(2))
+        };
+    }
+
+    function pushCampaignCheckoutTracking(updateSource) {
+        var state = getCampaignCurrentTrackingState();
+
+        if (!state.items.length) {
+            return;
+        }
+
+        window.dataLayer = window.dataLayer || [];
+
+        // Push the complete current cart state directly.
+        // Do not push { ecommerce: null } here because DataLayer Checker
+        // displays that reset as a separate generic `data` event.
+        // Every begin_checkout event below contains the full, latest cart,
+        // so previous campaign cart values are overwritten by the new event.
+        window.dataLayer.push({
+            event: 'begin_checkout',
+            value: state.value,
+            currency: 'BDT',
+            ecommerce: {
+                checkout: {
+                    actionField: {
+                        step: 1,
+                        option: 'Campaign Checkout'
+                    },
+                    products: state.checkoutProducts
+                }
+            },
+            campaign: {
+                id: <?php echo e((int) $campaign_data->id); ?>,
+                name: campaignName,
+                slug: campaignSlug
+            },
+            update_source: updateSource || 'campaign_cart_update'
+        });
+
+        // Keep an explicit cart-update event for debugging/GTM rules without
+        // relying only on repeated begin_checkout events.
+        window.dataLayer.push({
+            event: 'campaign_cart_update',
+            value: state.value,
+            currency: 'BDT',
+            items: state.items,
+            campaign_id: <?php echo e((int) $campaign_data->id); ?>,
+            campaign_slug: campaignSlug,
+            update_source: updateSource || 'campaign_cart_update'
+        });
+    }
+
+    function refreshCampaignOrderDetails(html, updateSource) {
+        $('.orderDetails').html(html);
+        updateNavCart();
+        pushCampaignCheckoutTracking(updateSource);
+    }
+
     function setCampaignProductChoiceState($choice, selected) {
         $choice.toggleClass('active', selected);
         $choice.find('.campaign-product-state').text(selected ? 'Selected' : 'Select');
@@ -877,8 +1122,7 @@
             }
 
             setCampaignProductChoiceState($choice, selected);
-            $('.orderDetails').html(response.html);
-            updateNavCart();
+            refreshCampaignOrderDetails(response.html, 'product_selection');
         }).fail(function(xhr) {
             $checkbox.prop('checked', !selected);
             setCampaignProductChoiceState($choice, !selected);
@@ -910,8 +1154,7 @@
             key: key,
             quantity: quantity
         }, function(data){
-            updateNavCart();
-            $('.orderDetails').html(data);
+            refreshCampaignOrderDetails(data, 'quantity_change');
         });
     }
 
@@ -921,8 +1164,7 @@
             key: key,
             option_id: optionId
         }, function(data) {
-            updateNavCart();
-            $('.orderDetails').html(data);
+            refreshCampaignOrderDetails(data, 'option_change');
         }).fail(function(xhr) {
             var message = 'Could not update product option. Please try again.';
             if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -938,8 +1180,7 @@
             key: key,
             color_id: colorId
         }, function(data) {
-            updateNavCart();
-            $('.orderDetails').html(data);
+            refreshCampaignOrderDetails(data, 'color_change');
         }).fail(function(xhr) {
             var message = 'Could not update product color. Please try again.';
             if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -956,8 +1197,7 @@
             key: key,
             [optionType] : value
         }, function(data) {
-            updateNavCart(); // Update the navigation cart
-            $('.orderDetails').html(data); // Update the order details with the new cart HTML
+            refreshCampaignOrderDetails(data, 'cart_option_change');
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error('Error updating cart options:', textStatus, errorThrown);
             alert('Could not update cart options. Please try again.');
@@ -1175,6 +1415,10 @@
                 if (constantValue === 1) {
                     $('html, body').animate(  {  scrollTop: $('body').position().top  },  500   );
                 } else {
+                    // Push the final selected products/price/quantity state immediately
+                    // before the order request so GTM/Meta receives the exact checkout cart.
+                    pushCampaignCheckoutTracking('order_confirm');
+
                     $.ajax({
                         type: "post",
                         url: "<?php echo e(url('/placeOrder')); ?>",

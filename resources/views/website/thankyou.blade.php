@@ -139,53 +139,75 @@
             });
         });
     </script>
+    @php
+        $purchaseItems = [];
+        $purchaseContentIds = [];
+
+        foreach ($orderProducts as $purchaseProduct) {
+            $purchaseVariant = trim(implode(' ', array_filter([
+                $purchaseProduct->colorName ?? null,
+                $purchaseProduct->sizeName ?? null,
+                $purchaseProduct->optionName ?? null,
+            ])));
+
+            $purchaseItems[] = [
+                'id' => (string) $purchaseProduct->productCode,
+                'name' => (string) $purchaseProduct->productName,
+                'category' => $purchaseProduct->category ?? 'Uncategorized',
+                'variant' => $purchaseVariant,
+                'price' => (float) $purchaseProduct->productPrice,
+                'quantity' => (int) $purchaseProduct->quantity,
+            ];
+            $purchaseContentIds[] = (string) $purchaseProduct->productCode;
+        }
+    @endphp
     <script>
         window.dataLayer = window.dataLayer || [];
-    
-        var orderValue = "{{ $total }}"; // Total order value
-        var orderId = "{{ $order->id }}"; // Order ID (assuming it's available)
-        var orderCurrency = "BDT"; // Currency (adjust based on your location)
-    
-        dataLayer.push({
+
+        var orderValue = {{ (float) $total }};
+        var orderId = {!! json_encode((string) $order->id) !!};
+        var orderCurrency = 'BDT';
+        var purchaseItems = {!! json_encode($purchaseItems, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!};
+        var purchaseContentIds = {!! json_encode($purchaseContentIds, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!};
+
+        // Clear stale ecommerce state, then send every saved order product.
+        window.dataLayer.push({ ecommerce: null });
+        window.dataLayer.push({
             event: 'purchase',
             ecommerce: {
-                transaction_id: orderId, // Order ID
-                affiliation: 'Online Store', // Store name or affiliation
-                value: orderValue, // Order total value
-                currency: orderCurrency, // Currency
-                coupon: "{{ $order->coupon ?? 'N/A' }}", // Coupon used (if any)
-                items: [
-                    @foreach($orderProducts as $product)
-                    {
-                        id: "{{ $product->productCode }}", // Product ID
-                        name: "{{ $product->productName }}", // Product name
-                        category: "{{ $product->category ?? 'Uncategorized' }}", // Product category (if available)
-                        variant: "{{ $product->colorName ?? 'No color' }}", // Product variant (color, size, etc.)
-                        price: "{{ $product->productPrice }}", // Product price
-                        quantity: "{{ $product->quantity }}" // Product quantity
-                    },
-                    @endforeach
-                ]
+                transaction_id: orderId,
+                affiliation: 'Online Store',
+                value: orderValue,
+                currency: orderCurrency,
+                coupon: {!! json_encode($order->coupon ?? 'N/A') !!},
+                items: purchaseItems
             },
             user_data: {
-                email: "{{ $customer->customerName ?? '' }}",
-                phone: "{{ $customer->customerPhone  ?? '' }}", 
-                address: "{{ $customer->customerAddress  ?? '' }}" 
+                email: {!! json_encode($customer->customerName ?? '') !!},
+                phone: {!! json_encode($customer->customerPhone ?? '') !!},
+                address: {!! json_encode($customer->customerAddress ?? '') !!}
             }
         });
-    
-        // Facebook Pixel Tracking for Purchase
-        fbq('track', 'Purchase', {
-            content_ids: [
-                @foreach($orderProducts as $product)
-                    "{{ $product->productCode }}",
-                @endforeach
-            ],
-            content_name: "Order Confirmation",
-            content_category: "Products",
-            value: orderValue, // Order total value
-            currency: orderCurrency
-        });
+
+        if (typeof fbq === 'function') {
+            fbq('track', 'Purchase', {
+                content_ids: purchaseContentIds,
+                contents: purchaseItems.map(function (item) {
+                    return {
+                        id: item.id,
+                        quantity: item.quantity,
+                        item_price: item.price
+                    };
+                }),
+                content_name: 'Order Confirmation',
+                content_category: 'Products',
+                num_items: purchaseItems.reduce(function (totalItems, item) {
+                    return totalItems + Number(item.quantity || 0);
+                }, 0),
+                value: orderValue,
+                currency: orderCurrency
+            });
+        }
     </script>
     <script>
         setTimeout(function() {

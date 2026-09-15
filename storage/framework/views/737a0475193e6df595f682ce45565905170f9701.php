@@ -8,6 +8,16 @@
     $campaignCartItems = Cart::content()->sortBy(function ($item) {
         return (int) ($item->options->campaignPosition ?? PHP_INT_MAX);
     });
+
+    // Match the normal checkout free-delivery rule: if any selected campaign
+    // product has free delivery, the delivery charge is shown and then fully
+    // discounted for the entire campaign order.
+    $campaignHasFreeDelivery = $campaignCartItems->contains(function ($item) {
+        return $item->model && (int) $item->model->isFreeDelivery === 1;
+    });
+    $campaignFreeDeliveryDiscount = $campaignHasFreeDelivery ? $campaignDeliveryCharge : 0;
+    $campaignSubtotal = (float) Cart::subtotal('0', '', '');
+    $campaignGrandTotal = $campaignSubtotal + $campaignDeliveryCharge - $campaignFreeDeliveryDiscount;
 ?>
 <aside class="card">
     <article class="card-body">
@@ -34,7 +44,16 @@
                             $selectedColorId = $item->options->colorId ?? null;
                             $selectedColorName = $item->options->colorName ?? null;
                         ?>
-                        <tr class="cart-item">
+                        <tr class="cart-item campaign-tracking-item"
+                            data-product-id="<?php echo e($item->id); ?>"
+                            data-product-code="<?php echo e($item->model->productCode); ?>"
+                            data-product-name="<?php echo e($item->model->productName); ?>"
+                            data-price="<?php echo e((float) $item->price); ?>"
+                            data-quantity="<?php echo e((int) $item->qty); ?>"
+                            data-category="<?php echo e(optional($item->model->category)->name ?? 'Uncategorized'); ?>"
+                            data-color="<?php echo e($selectedColorName ?? ''); ?>"
+                            data-size="<?php echo e($item->options->sizeName ?? ''); ?>"
+                            data-option="<?php echo e($selectedOptionName ?? ''); ?>">
                             <td class="product-image" style="display: flex; flex-direction: row-reverse;">
                                 <a href="#">
                                     <img class="lazyload" src="<?php echo e(url('/public/product/thumbnail/'.$item->model->productImage)); ?>" style="max-width: 50px">
@@ -45,7 +64,13 @@
                             </td>
 
                             <td class="product-name">
-                                <span class="d-block"><?php echo e($item->model->productName); ?></span>
+                                <span class="d-block">
+                                    <?php echo e($item->model->productName); ?>
+
+                                    <?php if((int) $item->model->isFreeDelivery === 1): ?>
+                                        <span class="badge badge-danger ml-1" style="font-size: 10px;">Free Delivery</span>
+                                    <?php endif; ?>
+                                </span>
 
                                 <?php if($item->model->colors->isNotEmpty()): ?>
                                     <div class="mt-2 campaign-color-selector">
@@ -145,9 +170,12 @@
             <dt class="col-sm-8">Delivery charge: </dt>
             <dd class="col-sm-4 text-danger text-right"><strong>TK <?php echo e(number_format($campaignDeliveryCharge, 0, '.', '')); ?></strong></dd>
 
+            <dt class="col-sm-8">Discount: </dt>
+            <dd class="col-sm-4 text-success text-right"><strong>- TK <?php echo e(number_format($campaignFreeDeliveryDiscount, 0, '.', '')); ?></strong></dd>
+
             <dt class="col-sm-8">Total:</dt>
             <dd class="col-sm-4 text-right">
-                <strong class="h5 text-dark">TK <?php echo e(number_format((float) Cart::subtotal('0', '', '') + $campaignDeliveryCharge, 0, '.', '')); ?></strong>
+                <strong class="h5 text-dark">TK <?php echo e(number_format($campaignGrandTotal, 0, '.', '')); ?></strong>
             </dd>
         </dl>
     </article>
