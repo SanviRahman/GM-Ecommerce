@@ -213,15 +213,29 @@ class OrderController extends Controller
                 $highlight   = in_array($order->customerPhone, $duplicatePhones) ? 'highlight' : '';
                 $customOrder = $order->is_custom_order == 1 ? 'custom' : '';
     
+                // Keep the manager fraud-check UI in sync with the admin order list.
+                // Use property_exists so the page still loads safely before the
+                // fraud-result migration is applied on a fresh/older database.
+                $fraudSuccess = property_exists($order, 'fraud_success_count') ? $order->fraud_success_count : null;
+                $fraudFail = property_exists($order, 'fraud_fail_count') ? $order->fraud_fail_count : null;
+                $fraudResult = '';
+
+                if ($fraudSuccess !== null || $fraudFail !== null) {
+                    $fraudResult = '<span class="badge badge-success mr-1">Success: ' . (int) $fraudSuccess . '</span>'
+                        . '<span class="badge badge-danger">Fail: ' . (int) $fraudFail . '</span>';
+                }
+
                 return '<div class="'.$highlight.' '.$customOrder.'">'
                     . $order->customerName . '<br>'
                     . $order->customerPhone . '<br>'
                     . $order->customerAddress . '<br>'
                     . 'Order Note: ' . $order->note . '<br>'
-                    . '<button class="btn btn-info btn-xs ml-2 fraud-check-button"
+                    . '<button class="btn btn-info btn-xs fraud-check-button"
                         data-phone="'.$order->customerPhone.'"
-                        onclick="openFraudCheckModal(this)">Check</button>
-                </div>';
+                        data-order-id="'.$order->id.'"
+                        onclick="openFraudCheckModal(this)">Check</button>'
+                    . '<div class="fraud-check-inline-result mt-1">' . $fraudResult . '</div>'
+                . '</div>';
             })
     
             ->addColumn('invoice', function ($order) {

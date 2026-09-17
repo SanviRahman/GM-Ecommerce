@@ -43,6 +43,7 @@
                             $selectedOptionName = $item->options->optionName ?? null;
                             $selectedColorId = $item->options->colorId ?? null;
                             $selectedColorName = $item->options->colorName ?? null;
+                            $selectedSizeName = $item->options->sizeName ?? null;
                         @endphp
                         <tr class="cart-item campaign-tracking-item"
                             data-product-id="{{ $item->id }}"
@@ -99,8 +100,30 @@
                                     <small class="text-muted">Color: {{ $selectedColorName }},</small>
                                 @endif
 
-                                @if($item->options->sizeName)
-                                    <small class="text-muted">Size: {{ $item->options->sizeName }},</small>
+                                @if($item->model->sizes->isNotEmpty())
+                                    <div class="mt-2 campaign-size-selector">
+                                        <small class="d-block mb-1 font-weight-bold">Select Size</small>
+                                        <div class="btn-group-toggle" data-toggle="buttons">
+                                            @foreach($item->model->sizes as $size)
+                                                @php
+                                                    $isSelectedSize = $selectedSizeName === $size->sizeName;
+                                                @endphp
+                                                <label class="btn btn-outline-secondary btn-sm mb-1 {{ $isSelectedSize ? 'active' : '' }}">
+                                                    <input
+                                                        type="radio"
+                                                        name="campaign_size_{{ $item->rowId }}"
+                                                        value="{{ $size->sizeName }}"
+                                                        autocomplete="off"
+                                                        {{ $isSelectedSize ? 'checked' : '' }}
+                                                        onchange="updateCartOptions('{{ $item->rowId }}', @json($size->sizeName), 'sizeName')"
+                                                    >
+                                                    {{ $size->sizeName }}
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @elseif($selectedSizeName)
+                                    <small class="text-muted">Size: {{ $selectedSizeName }},</small>
                                 @endif
 
                                 @if($item->model->options->isNotEmpty())

@@ -35,6 +35,7 @@
         .shipping-option input[type="radio"] { accent-color:green; }
         .shipping-option.active { background-color:#28a745 !important; color:#fff; border-color:#28a745; font-weight:600; }
         .campaign-color-selector .btn-group-toggle,
+        .campaign-size-selector .btn-group-toggle,
         .campaign-option-selector .btn-group-toggle {
             display: flex;
             flex-wrap: wrap;
@@ -42,6 +43,7 @@
             gap: 4px;
         }
         .campaign-color-selector .btn,
+        .campaign-size-selector .btn,
         .campaign-option-selector .btn {
             flex: 0 0 auto;
             margin: 0 !important;
@@ -171,6 +173,7 @@
 
             /* Keep Color and Option buttons horizontal on mobile as on desktop. */
             .campaign-color-selector .btn-group-toggle,
+            .campaign-size-selector .btn-group-toggle,
             .campaign-option-selector .btn-group-toggle {
                 display: flex;
                 flex-direction: row;
@@ -178,6 +181,7 @@
                 gap: 3px;
             }
             .campaign-color-selector .btn,
+            .campaign-size-selector .btn,
             .campaign-option-selector .btn {
                 margin: 0 !important;
                 padding: .2rem .3rem;
