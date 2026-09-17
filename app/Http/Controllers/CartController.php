@@ -619,7 +619,7 @@ class CartController extends Controller
             'selected' => 'required|in:0,1',
         ]);
 
-        $campaign = Campaign::with(['products.options', 'products.colors', 'product.options', 'product.colors'])
+        $campaign = Campaign::with(['products.options', 'products.colors', 'products.sizes', 'product.options', 'product.colors', 'product.sizes'])
             ->findOrFail((int) $request->input('campaign_id'));
 
         $campaignProducts = $campaign->products;
@@ -645,11 +645,13 @@ class CartController extends Controller
         if ($selected && !$existingCartItem) {
             $selectedOption = $campaignProduct->options->first();
             $selectedColor = $campaignProduct->colors->first();
+            $selectedSize = $campaignProduct->sizes->first();
             $price = $campaignProduct->price();
             $optionName = null;
             $optionId = null;
             $colorName = null;
             $colorId = null;
+            $sizeName = null;
 
             if ($selectedOption) {
                 $optionPrice = $selectedOption->pivot->price;
@@ -666,6 +668,10 @@ class CartController extends Controller
                 $colorId = $selectedColor->id;
             }
 
+            if ($selectedSize) {
+                $sizeName = $selectedSize->sizeName;
+            }
+
             $campaignPosition = $campaignProducts->search(function ($product) use ($productId) {
                 return (int) $product->id === $productId;
             });
@@ -679,7 +685,7 @@ class CartController extends Controller
                 'options' => [
                     'colorName' => $colorName,
                     'colorId' => $colorId,
-                    'sizeName' => null,
+                    'sizeName' => $sizeName,
                     'optionName' => $optionName,
                     'optionId' => $optionId,
                     'campaignPosition' => $campaignPosition,

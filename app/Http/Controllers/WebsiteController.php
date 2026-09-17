@@ -69,7 +69,7 @@ class WebsiteController extends Controller
     
     public function campaign($slug)
     {
-        $campaign_data = Campaign::with(['products.options', 'products.colors', 'product.options', 'product.colors'])
+        $campaign_data = Campaign::with(['products.options', 'products.colors', 'products.sizes', 'product.options', 'product.colors', 'product.sizes'])
             ->where('slug', $slug)
             ->first();
 
@@ -103,11 +103,13 @@ class WebsiteController extends Controller
         $campaignProduct = $campaignProducts->values()->first();
         $selectedOption = $campaignProduct->options->first();
         $selectedColor = $campaignProduct->colors->first();
+        $selectedSize = $campaignProduct->sizes->first();
         $price = $campaignProduct->price();
         $optionName = null;
         $optionId = null;
         $colorName = null;
         $colorId = null;
+        $sizeName = null;
 
         if ($selectedOption) {
             $optionPrice = $selectedOption->pivot->price;
@@ -124,6 +126,10 @@ class WebsiteController extends Controller
             $colorId = $selectedColor->id;
         }
 
+        if ($selectedSize) {
+            $sizeName = $selectedSize->sizeName;
+        }
+
         Cart::add([
             'id' => $campaignProduct->id,
             'name' => $campaignProduct->productName,
@@ -132,7 +138,7 @@ class WebsiteController extends Controller
             'options' => [
                 'colorName' => $colorName,
                 'colorId' => $colorId,
-                'sizeName' => null,
+                'sizeName' => $sizeName,
                 'optionName' => $optionName,
                 'optionId' => $optionId,
                 'campaignPosition' => 1,
