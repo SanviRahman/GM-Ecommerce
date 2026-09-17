@@ -184,19 +184,31 @@ class OrderController extends Controller
                 if($orders->is_custom_order == 1){
                     $customOrder = 'custom';
                 }
-                //return $orders->customerName . '<br>' . $orders->customerPhone . '<br>' . $orders->customerAddress;
-            
-               return '<div class="'. $highlight .' '.$customOrder.'">' . 
-                        $orders->customerName . '<br>' . 
-                        $orders->customerPhone . '<br>' . 
-                         $orders->customerAddress . '<br>Order Note: ' . 
-                        $orders->note . '<br>' . 
-                        '<button class="btn btn-info btn-xs ml-2 fraud-check-button" 
-                                data-phone="'. $orders->customerPhone .'" 
+                // Keep the user fraud-check UI in sync with the admin/manager order lists.
+                // property_exists keeps this page safe on a database where the fraud-result
+                // columns have not been migrated yet.
+                $fraudSuccess = property_exists($orders, 'fraud_success_count') ? $orders->fraud_success_count : null;
+                $fraudFail = property_exists($orders, 'fraud_fail_count') ? $orders->fraud_fail_count : null;
+                $fraudResult = '';
+
+                if ($fraudSuccess !== null || $fraudFail !== null) {
+                    $fraudResult = '<span class="badge badge-success mr-1">Success: ' . (int) $fraudSuccess . '</span>'
+                        . '<span class="badge badge-danger">Fail: ' . (int) $fraudFail . '</span>';
+                }
+
+                return '<div class="'. $highlight .' '.$customOrder.'">' .
+                        $orders->customerName . '<br>' .
+                        $orders->customerPhone . '<br>' .
+                        $orders->customerAddress . '<br>Order Note: ' .
+                        $orders->note . '<br>' .
+                        '<button class="btn btn-info btn-xs ml-2 fraud-check-button"
+                                data-phone="'. $orders->customerPhone .'"
+                                data-order-id="'. $orders->id .'"
                                 onclick="openFraudCheckModal(this)">
                             Check
-                        </button>
-                    </div>';
+                        </button>' .
+                        '<div class="fraud-check-inline-result mt-1">' . $fraudResult . '</div>' .
+                    '</div>';
             })
             ->addColumn('invoice', function ($orders) {
                 return $orders->invoiceID.'<br>'.$orders->web_ID;
