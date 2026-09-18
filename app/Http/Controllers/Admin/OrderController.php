@@ -1983,8 +1983,21 @@ class OrderController extends Controller
                 : 'https://api-hermes.pathao.com';
         
             $results = [];
+
+            // Resolve Pathao from the actual couriers table instead of relying on a
+            // hard-coded ID. Courier IDs can differ between local/live/restored DBs.
+            $pathaoCourier = Courier::where('courierName', 'like', '%Pathao%')->first();
+            if (!$pathaoCourier) {
+                $pathaoCourier = new Courier();
+                $pathaoCourier->courierName = 'Pathao';
+                $pathaoCourier->hasCity = 'on';
+                $pathaoCourier->hasZone = 'on';
+                $pathaoCourier->courierCharge = '0';
+                $pathaoCourier->status = 'Active';
+                $pathaoCourier->save();
+            }
+            $pathaoCourierId = $pathaoCourier->id;
         
-            
             foreach ($orders as $order) {
                 $customer  = Customer::where('order_id', $order->id)->first();
                 $products  = OrderProducts::where('order_id', $order->id)->get();
@@ -2032,7 +2045,7 @@ class OrderController extends Controller
         
                 // Update local order if success
                 if (isset($resData['type']) && $resData['type'] == 'success') {
-                    $order->courier_id     = 28;
+                    $order->courier_id     = $pathaoCourierId;
                     $order->status         = 'Completed';
                     $order->consignment_id = $resData['data']['consignment_id'] ?? null;
                     $order->tracking_code  = $resData['data']['merchant_order_id'] ?? null;
