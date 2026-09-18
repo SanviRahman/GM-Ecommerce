@@ -322,7 +322,7 @@
                         var data = JSON.parse(response);
                         if (data["status"] === "success") {
                             toastr.success(data["message"]);
-                            window.location.href = "{{ url('user/order') }}";
+                            window.location.href = "{{ url('user/order/status/Processing') }}";
 
                         } else {
                             toastr.error(data["message"])
@@ -575,4 +575,3 @@
         });
     </script>
 @endpush
-

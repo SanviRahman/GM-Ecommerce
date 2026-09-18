@@ -65,6 +65,8 @@ class OrderController extends Controller
         $products = $request['data']['products'];
         $order->user_id = Auth::id();
         $order->is_custom_order = 1;
+        // Manual orders must enter the Processing queue immediately.
+        $order->status = 'Processing';
         $result = $order->save();
         if ($result) {
             $customer = new Customer();
@@ -308,132 +310,416 @@ class OrderController extends Controller
 
             $api_key    = env('STEADFAST_API_KEY');
             $secret_key = env('STEADFAST_SECRET_KEY');
-            $base_url   = env('STEADFAST_BASE_URL', 'https://portal.packzy.com/api/v1');
-        
-            $results  = [];
-            $data     = [];
-            $orderMap = [];
-        
+            $base_url   = rtrim(env('STEADFAST_BASE_URL', 'https://portal.packzy.com/api/v1'), '/');
+
+            if (!$api_key || !$secret_key) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'SteadFast API credentials are missing.',
+                ], 500);
+            }
+
+            $results        = [];
+            $successResults = [];
+            $data           = [];
+            $orderMap       = [];
+            $successCount   = 0;
+
+            // Do not depend only on a legacy hard-coded courier ID.
+            $steadfastCourierId = Courier::where('courierName', 'like', '%Stead%')->value('id') ?: 29;
+
             foreach ($orders as $order) {
-        
+                // Already synced locally: never send the same parcel again.
+                if (!empty($order->consignment_id) || !empty($order->tracking_code)) {
+                    $order->courier_id = $steadfastCourierId;
+                    $order->status = 'Completed';
+                    $order->save();
+                    $successCount++;
+                    $successResults[] = [
+                        'order_id' => $order->id,
+                        'invoice' => $order->invoiceID,
+                        'message' => 'Order already synced with SteadFast.',
+                        'status' => 'success',
+                        'consignment_id' => $order->consignment_id,
+                        'tracking_code' => $order->tracking_code,
+                    ];
+                    continue;
+                }
+
                 $customer = Customer::where('order_id', $order->id)->first();
                 $products = OrderProducts::where('order_id', $order->id)->get();
-        
-                if (!$customer) continue;
-        
+
+                if (!$customer) {
+                    $results[] = [
+                        'order_id' => $order->id,
+                        'invoice' => $order->invoiceID,
+                        'error' => 'Customer information not found.',
+                    ];
+                    continue;
+                }
+
                 $description = '';
                 $qty = 0;
-        
+
                 foreach ($products as $product) {
                     $description .= $product->productName . ' (' . $product->productPrice . 'X' . $product->quantity . '), ';
                     $qty += $product->quantity;
                 }
-        
-                $phone = preg_replace('/[^0-9]/', '', $customer->customerPhone);
-                if (strlen($phone) != 11) continue;
-        
+
+                $phone = preg_replace('/[^0-9]/', '', (string) $customer->customerPhone);
+                if (strlen($phone) !== 11) {
+                    $results[] = [
+                        'order_id' => $order->id,
+                        'invoice' => $order->invoiceID,
+                        'error' => 'SteadFast recipient phone must contain exactly 11 digits.',
+                    ];
+                    continue;
+                }
+
+                $address = trim((string) $customer->customerAddress);
+                if ($address === '') {
+                    $results[] = [
+                        'order_id' => $order->id,
+                        'invoice' => $order->invoiceID,
+                        'error' => 'SteadFast recipient address is empty.',
+                    ];
+                    continue;
+                }
+
                 $invoice = (string) $order->invoiceID;
-        
+
                 $data[] = [
                     'invoice'           => $invoice,
-                    'recipient_name'    => substr($customer->customerName, 0, 100),
-                    'recipient_address' => substr($customer->customerAddress, 0, 250),
+                    'recipient_name'    => substr((string) $customer->customerName, 0, 100),
+                    'recipient_address' => substr($address, 0, 250),
                     'recipient_phone'   => $phone,
-                    'cod_amount'        => max(0, $order->subTotal),
+                    'cod_amount'        => max(0, (float) $order->subTotal),
                     'note'              => substr($description, 0, 200),
                     'item_description'  => substr($description, 0, 200),
-                    'total_lot'         => $qty,
+                    'total_lot'         => max(1, (int) $qty),
                     'delivery_type'     => 0,
                 ];
-        
+
                 $orderMap[$invoice] = $order;
             }
-        
-            // chunk
+
             $chunks = array_chunk($data, 500);
-        
+
             foreach ($chunks as $chunk) {
-        
                 $ch = curl_init();
-        
+
+                // This matches the working mentor implementation and SteadFast bulk API format:
+                // the outer JSON contains a `data` field whose value is a JSON-encoded array.
                 $payload = [
-                    'data' => json_encode(array_values($chunk))
+                    'data' => json_encode(array_values($chunk)),
                 ];
-        
+
                 curl_setopt_array($ch, [
                     CURLOPT_URL => $base_url . '/create_order/bulk-order',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_POST => true,
                     CURLOPT_POSTFIELDS => json_encode($payload),
-        
                     CURLOPT_HTTPHEADER => [
                         'Api-Key: ' . $api_key,
                         'Secret-Key: ' . $secret_key,
                         'Content-Type: application/json',
                         'Accept: application/json',
                     ],
-        
                     CURLOPT_TIMEOUT => 60,
                     CURLOPT_CONNECTTIMEOUT => 10,
                 ]);
-        
+
                 $response = curl_exec($ch);
-                $error    = curl_error($ch);
-        
+                $curlError = curl_error($ch);
+                $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 curl_close($ch);
-        
-                if ($error) {
-                    $results[] = ['error' => $error];
-                    continue;
-                }
-        
-                $resData = json_decode($response, true);
-        
-                if (!is_array($resData)) {
+
+                if ($curlError) {
                     $results[] = [
-                        'error' => 'Invalid response',
-                        'raw' => $response
+                        'error' => $curlError,
+                        'http_code' => $httpCode,
                     ];
                     continue;
                 }
-        
-                foreach ($resData as $res) {
-        
-                    $invoice = $res['invoice'] ?? null;
-        
-                    if (!$invoice || !isset($orderMap[$invoice])) continue;
-        
-                    $order = $orderMap[$invoice];
-        
-                    if (($res['status'] ?? '') === 'success') {
-        
-                        $order->update([
-                            'courier_id'     => 29,
-                            'status'         => 'Completed',
-                            'tracking_code'  => $res['tracking_code'] ?? null,
-                            'consignment_id' => $res['consignment_id'] ?? null,
-                        ]);
-        
-                    } else {
-        
+
+                $resData = json_decode($response, true);
+
+                if (!is_array($resData)) {
+                    $results[] = [
+                        'error' => 'Invalid SteadFast response.',
+                        'http_code' => $httpCode,
+                        'raw' => $response,
+                    ];
+                    continue;
+                }
+
+                // Working SteadFast bulk response is normally { status, message, data: [...] }.
+                // Keep direct-array support too, so old/new API response shapes both work.
+                if (isset($resData['data']) && is_array($resData['data'])) {
+                    $responseItems = $resData['data'];
+                } elseif (isset($resData[0]) && is_array($resData[0])) {
+                    $responseItems = $resData;
+                } elseif (isset($resData['invoice'])) {
+                    $responseItems = [$resData];
+                } else {
+                    $results[] = [
+                        'error' => 'Unexpected SteadFast bulk response structure.',
+                        'http_code' => $httpCode,
+                        'response' => $resData,
+                    ];
+                    continue;
+                }
+
+                foreach ($responseItems as $res) {
+                    if (!is_array($res)) {
+                        continue;
+                    }
+
+                    $invoice = isset($res['invoice']) ? (string) $res['invoice'] : null;
+
+                    if (!$invoice || !isset($orderMap[$invoice])) {
                         $results[] = [
                             'invoice' => $invoice,
-                            'error'   => $res
+                            'error' => 'SteadFast response could not be matched with a local order.',
+                            'response' => $res,
                         ];
+                        continue;
                     }
+
+                    $order = $orderMap[$invoice];
+                    $itemStatus = strtolower(trim((string) ($res['status'] ?? '')));
+                    $consignmentId = $res['consignment_id'] ?? null;
+                    $trackingCode = $res['tracking_code'] ?? null;
+                    $isSuccess = $itemStatus === 'success' || !empty($consignmentId) || !empty($trackingCode);
+
+                    if ($isSuccess) {
+                        $order->courier_id = $steadfastCourierId;
+                        $order->status = 'Completed';
+                        $order->consignment_id = $consignmentId;
+                        $order->tracking_code = $trackingCode;
+                        $order->save();
+                        $successCount++;
+                        $successResults[] = [
+                            'order_id' => $order->id,
+                            'invoice' => $invoice,
+                            'message' => $res['message'] ?? 'Order Created Successfully',
+                            'status' => 'success',
+                            'consignment_id' => $consignmentId,
+                            'tracking_code' => $trackingCode,
+                            'response' => $res,
+                        ];
+                        continue;
+                    }
+
+                    $apiError = $res['error'] ?? ($res['errors'] ?? null);
+                    $errorText = is_array($apiError) ? json_encode($apiError) : (string) $apiError;
+                    $isDuplicate = stripos($errorText, 'THIS_INVOICE_ALREADY_EXISTS') !== false;
+
+                    if ($isDuplicate) {
+                        /*
+                         * SteadFast requires invoice values to be unique in the merchant account.
+                         * Old/restored databases can legitimately reuse a local BB-* invoice that
+                         * already exists remotely. First try to recover identifiers from the old
+                         * invoice. If SteadFast only returns delivery_status (no identifiers), retry
+                         * ONCE with a deterministic order-specific courier invoice. This keeps the
+                         * retry idempotent for this local order and prevents endless new parcels.
+                         */
+                        $statusCh = curl_init();
+                        curl_setopt_array($statusCh, [
+                            CURLOPT_URL => $base_url . '/status_by_invoice/' . rawurlencode($invoice),
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_HTTPHEADER => [
+                                'Api-Key: ' . $api_key,
+                                'Secret-Key: ' . $secret_key,
+                                'Content-Type: application/json',
+                                'Accept: application/json',
+                            ],
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_CONNECTTIMEOUT => 10,
+                        ]);
+
+                        $statusResponse = curl_exec($statusCh);
+                        $statusError = curl_error($statusCh);
+                        curl_close($statusCh);
+
+                        $statusData = $statusError ? null : json_decode($statusResponse, true);
+
+                        $recoveredCid = null;
+                        $recoveredTracking = null;
+                        if (is_array($statusData)) {
+                            $recoveredCid = $statusData['consignment_id']
+                                ?? ($statusData['data']['consignment_id'] ?? null)
+                                ?? ($statusData['consignment']['consignment_id'] ?? null);
+                            $recoveredTracking = $statusData['tracking_code']
+                                ?? ($statusData['data']['tracking_code'] ?? null)
+                                ?? ($statusData['consignment']['tracking_code'] ?? null);
+                        }
+
+                        if (!empty($recoveredCid) || !empty($recoveredTracking)) {
+                            $order->courier_id = $steadfastCourierId;
+                            $order->status = 'Completed';
+                            $order->consignment_id = $recoveredCid;
+                            $order->tracking_code = $recoveredTracking;
+                            $order->save();
+                            $successCount++;
+                            $successResults[] = [
+                                'order_id' => $order->id,
+                                'invoice' => $invoice,
+                                'steadfast_invoice' => $invoice,
+                                'message' => 'Existing SteadFast order recovered successfully.',
+                                'status' => 'success',
+                                'consignment_id' => $recoveredCid,
+                                'tracking_code' => $recoveredTracking,
+                                'response' => $statusData,
+                            ];
+                            continue;
+                        }
+
+                        // Find the original payload item for this local order.
+                        $retryItem = null;
+                        foreach ($chunk as $chunkItem) {
+                            if ((string) ($chunkItem['invoice'] ?? '') === $invoice) {
+                                $retryItem = $chunkItem;
+                                break;
+                            }
+                        }
+
+                        if (!$retryItem) {
+                            $results[] = [
+                                'order_id' => $order->id,
+                                'invoice' => $invoice,
+                                'error_code' => 'STEADFAST_RETRY_PAYLOAD_NOT_FOUND',
+                                'message' => 'Could not rebuild the SteadFast payload for duplicate-invoice retry.',
+                                'original_response' => $res,
+                            ];
+                            continue;
+                        }
+
+                        // Deterministic, API-safe, order-specific fallback invoice.
+                        // Example: local BB-4 for order #27 -> SF-27-BB-4.
+                        $safeLocalInvoice = preg_replace('/[^A-Za-z0-9_-]/', '-', $invoice);
+                        $retryInvoice = 'SF-' . $order->id . '-' . trim($safeLocalInvoice, '-_');
+                        $retryInvoice = substr($retryInvoice, 0, 90);
+                        $retryItem['invoice'] = $retryInvoice;
+
+                        $retryCh = curl_init();
+                        $retryPayload = [
+                            'data' => json_encode([$retryItem]),
+                        ];
+
+                        curl_setopt_array($retryCh, [
+                            CURLOPT_URL => $base_url . '/create_order/bulk-order',
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_POST => true,
+                            CURLOPT_POSTFIELDS => json_encode($retryPayload),
+                            CURLOPT_HTTPHEADER => [
+                                'Api-Key: ' . $api_key,
+                                'Secret-Key: ' . $secret_key,
+                                'Content-Type: application/json',
+                                'Accept: application/json',
+                            ],
+                            CURLOPT_TIMEOUT => 60,
+                            CURLOPT_CONNECTTIMEOUT => 10,
+                        ]);
+
+                        $retryResponse = curl_exec($retryCh);
+                        $retryCurlError = curl_error($retryCh);
+                        $retryHttpCode = (int) curl_getinfo($retryCh, CURLINFO_HTTP_CODE);
+                        curl_close($retryCh);
+
+                        if ($retryCurlError) {
+                            $results[] = [
+                                'order_id' => $order->id,
+                                'invoice' => $invoice,
+                                'steadfast_invoice' => $retryInvoice,
+                                'error_code' => 'STEADFAST_RETRY_CURL_ERROR',
+                                'message' => $retryCurlError,
+                                'http_code' => $retryHttpCode,
+                            ];
+                            continue;
+                        }
+
+                        $retryData = json_decode($retryResponse, true);
+                        $retryItems = [];
+                        if (is_array($retryData)) {
+                            if (isset($retryData['data']) && is_array($retryData['data'])) {
+                                $retryItems = $retryData['data'];
+                            } elseif (isset($retryData[0]) && is_array($retryData[0])) {
+                                $retryItems = $retryData;
+                            } elseif (isset($retryData['invoice'])) {
+                                $retryItems = [$retryData];
+                            }
+                        }
+
+                        $retryResult = $retryItems[0] ?? null;
+                        if (is_array($retryResult)) {
+                            $retryStatus = strtolower(trim((string) ($retryResult['status'] ?? '')));
+                            $retryCid = $retryResult['consignment_id'] ?? null;
+                            $retryTracking = $retryResult['tracking_code'] ?? null;
+                            $retrySuccess = $retryStatus === 'success' || !empty($retryCid) || !empty($retryTracking);
+
+                            if ($retrySuccess) {
+                                $order->courier_id = $steadfastCourierId;
+                                $order->status = 'Completed';
+                                $order->consignment_id = $retryCid;
+                                $order->tracking_code = $retryTracking;
+                                $order->save();
+
+                                $successCount++;
+                                $successResults[] = [
+                                    'order_id' => $order->id,
+                                    'invoice' => $invoice,
+                                    'steadfast_invoice' => $retryInvoice,
+                                    'message' => $retryResult['message'] ?? 'Order Created Successfully',
+                                    'status' => 'success',
+                                    'duplicate_invoice_retried' => true,
+                                    'consignment_id' => $retryCid,
+                                    'tracking_code' => $retryTracking,
+                                    'response' => $retryResult,
+                                ];
+                                continue;
+                            }
+                        }
+
+                        $results[] = [
+                            'order_id' => $order->id,
+                            'invoice' => $invoice,
+                            'steadfast_invoice' => $retryInvoice,
+                            'error_code' => 'STEADFAST_DUPLICATE_RETRY_FAILED',
+                            'message' => 'Original invoice already existed in SteadFast and the safe order-specific retry did not succeed.',
+                            'steadfast_status' => $statusData,
+                            'original_response' => $res,
+                            'retry_response' => $retryData,
+                            'retry_http_code' => $retryHttpCode,
+                        ];
+                        continue;
+                    }
+
+                    $results[] = [
+                        'order_id' => $order->id,
+                        'invoice' => $invoice,
+                        'error' => $res,
+                    ];
                 }
             }
-        
-            // ❗ Decide ONE return only
-            if (!empty($results)) {
-                return response()->json([
-                    'status' => 'partial_success',
-                    'results' => $results
-                ]);
-            }
-        
-            return redirect('/admin/order/status/Pending%20Invoiced')
-                ->with('success', 'Orders sent successfully!');
+
+            $failedCount = count($results);
+            $responseStatus = $failedCount > 0
+                ? ($successCount > 0 ? 'partial_success' : 'failed')
+                : ($successCount > 0 ? 'success' : 'failed');
+
+            return response()->json([
+                'status' => $responseStatus,
+                'message' => $responseStatus === 'success'
+                    ? 'Order(s) sent to SteadFast successfully.'
+                    : ($responseStatus === 'partial_success'
+                        ? 'Some orders were sent to SteadFast, but some failed.'
+                        : 'No order was sent to SteadFast.'),
+                'success' => $successCount,
+                'failed' => $failedCount,
+                'results' => $successResults,
+                'errors' => $results,
+            ]);
         }
         else {
             $accessToken = $this->getPathaoAccessToken();
@@ -1057,14 +1343,21 @@ class OrderController extends Controller
     // Create Invoice ID
     public function uniqueID()
     {
-        $lastOrder = Order::latest('id')->first();
-        if($lastOrder){
-            $orderID = $lastOrder->id + 1;
-        }else{
-            $orderID = 1;
+        // Include soft-deleted rows and the highest historical BB-* number.
+        // This prevents a restored/legacy database from reusing an old invoice locally.
+        $lastOrderId = (int) DB::table('orders')->max('id');
+        $lastInvoiceNo = (int) DB::table('orders')
+            ->where('invoiceID', 'like', 'BB-%')
+            ->selectRaw('MAX(CAST(SUBSTRING(invoiceID, 4) AS UNSIGNED)) as max_invoice_no')
+            ->value('max_invoice_no');
+
+        $next = max($lastOrderId, $lastInvoiceNo) + 1;
+
+        while (DB::table('orders')->where('invoiceID', 'BB-' . $next)->exists()) {
+            $next++;
         }
 
-        return 'BB-'.$orderID;
+        return 'BB-' . $next;
     }
 
     // Order Sync

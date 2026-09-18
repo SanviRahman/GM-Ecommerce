@@ -101,6 +101,9 @@ $orderIDs = unserialize($invoice->order_id); ?>
                     <h4>CUSTOMER INFO</h4>
                     {{ $order->customerName }} <br>
                     {{ $order->customerPhone }}<br>
+                    @if(!empty($order->consignment_id))
+                        <strong>Parcel #: {{ $order->consignment_id }}</strong><br>
+                    @endif
                     @if($order->courierName == 'Sa Paribahan' || $order->courierName == 'Sundorban' )
 
                         {{ $order->courierName }} @if($order->cityName) >>  {{$order->cityName}} @endif  @if($order->zoneName) >> {{ $order->zoneName }} @endif

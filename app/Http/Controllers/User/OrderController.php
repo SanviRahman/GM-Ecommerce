@@ -63,6 +63,8 @@ class OrderController extends Controller
         $products = $request['data']['products'];
         $order->user_id = Auth::id();
         $order->is_custom_order = 1;
+        // Manual orders must enter the Processing queue immediately.
+        $order->status = 'Processing';
         $result = $order->save();
         if ($result) {
             $customer = new Customer();
@@ -246,7 +248,7 @@ class OrderController extends Controller
             })
             ->editColumn('courierName', function ($orders) {
                 if($orders->courierName){
-                    return $orders->courierName;
+                    return $orders->courierName . ($orders->consignment_id ? ' - ' . $orders->consignment_id : '');
                 }else{
                     return 'Not Selected';
                 }
@@ -720,14 +722,21 @@ class OrderController extends Controller
     // Create Invoice ID
     public function uniqueID()
     {
-        $lastOrder = Order::latest('id')->first();
-        if($lastOrder){
-            $orderID = $lastOrder->id + 1;
-        }else{
-            $orderID = 1;
+        // Include soft-deleted rows and the highest historical BB-* number.
+        // This prevents a restored/legacy database from reusing an old invoice locally.
+        $lastOrderId = (int) DB::table('orders')->max('id');
+        $lastInvoiceNo = (int) DB::table('orders')
+            ->where('invoiceID', 'like', 'BB-%')
+            ->selectRaw('MAX(CAST(SUBSTRING(invoiceID, 4) AS UNSIGNED)) as max_invoice_no')
+            ->value('max_invoice_no');
+
+        $next = max($lastOrderId, $lastInvoiceNo) + 1;
+
+        while (DB::table('orders')->where('invoiceID', 'BB-' . $next)->exists()) {
+            $next++;
         }
 
-        return 'BB-'.$orderID;
+        return 'BB-' . $next;
     }
 
     // Order Sync
@@ -1449,7 +1458,7 @@ class OrderController extends Controller
             })
             ->editColumn('courierName', function ($orders) {
                 if($orders->courierName){
-                    return $orders->courierName;
+                    return $orders->courierName . ($orders->consignment_id ? ' - ' . $orders->consignment_id : '');
                 }else{
                     return 'Not Selected';
                 }
