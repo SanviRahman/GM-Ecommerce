@@ -22,7 +22,7 @@ class SliderController extends Controller
     {
         return DataTables()->of(Slider::latest()->get())
             ->addColumn('image', function(Slider $data) {
-                return '<img src="'.asset('/public/product/thumbnail/'.$data->image).'" alt="image" class="img-fluid avatar-xl rounded">';
+                return '<img src="'.\App\Support\PublicMedia::url('product/thumbnail/'.$data->image).'" alt="image" class="img-fluid avatar-xl rounded">';
             })
             ->addColumn('action', function(Slider $data) {
 

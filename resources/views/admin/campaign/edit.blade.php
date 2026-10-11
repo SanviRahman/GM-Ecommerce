@@ -60,7 +60,7 @@
                             <label for="banner">Banner Image <span class="text-danger">*</span></label>
                             <input type="file" name="banner" id="banner" class="form-control-file @error('banner') is-invalid @enderror">
                             @if($campaign->banner)
-                                <img src="{{ asset('public/campaigns/'.$campaign->banner) }}" alt="Banner Image" width="100" class="mt-2">
+                                <img src="{{ \App\Support\PublicMedia::url('campaigns/'.$campaign->banner) }}" alt="Banner Image" width="100" class="mt-2">
                             @endif
                             @error('banner')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -123,7 +123,7 @@
                             <label for="image_one">Image One <span class="text-danger">*</span></label>
                             <input type="file" name="image_one" id="image_one" class="form-control-file @error('image_one') is-invalid @enderror">
                             @if($campaign->image_one)
-                                <img src="{{ asset('public/campaigns/' . $campaign->image_one) }}" alt="Image One" width="100" class="mt-2">
+                                <img src="{{ \App\Support\PublicMedia::url('campaigns/' . $campaign->image_one) }}" alt="Image One" width="100" class="mt-2">
                             @endif
                             @error('image_one')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -135,7 +135,7 @@
                             <label for="image_two">Image Two</label>
                             <input type="file" name="image_two" id="image_two" class="form-control-file @error('image_two') is-invalid @enderror">
                             @if($campaign->image_two)
-                                <img src="{{ asset('public/campaigns/' . $campaign->image_two) }}" alt="Image Two" width="100" class="mt-2">
+                                <img src="{{ \App\Support\PublicMedia::url('campaigns/' . $campaign->image_two) }}" alt="Image Two" width="100" class="mt-2">
                             @endif
                             @error('image_two')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -147,7 +147,7 @@
                             <label for="image_three">Image Three</label>
                             <input type="file" name="image_three" id="image_three" class="form-control-file @error('image_three') is-invalid @enderror">
                             @if($campaign->image_three)
-                                <img src="{{ asset('public/campaigns/' . $campaign->image_three) }}" alt="Image Three" width="100" class="mt-2">
+                                <img src="{{ \App\Support\PublicMedia::url('campaigns/' . $campaign->image_three) }}" alt="Image Three" width="100" class="mt-2">
                             @endif
                             @error('image_three')
                                 <div class="invalid-feedback">{{ $message }}</div>

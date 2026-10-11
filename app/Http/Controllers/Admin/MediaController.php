@@ -30,7 +30,7 @@ class MediaController extends Controller
     {
         return datatables()->of(Media::latest()->get())
             ->addColumn('image', function(Media $media) {
-                return '<img src="'.asset('/public/product/thumbnail/'.$media->url).'" alt="image" class="img-fluid avatar-md rounded">';
+                return '<img src="'.\App\Support\PublicMedia::url('product/thumbnail/'.$media->url).'" alt="image" class="img-fluid avatar-md rounded">';
             })
             ->addColumn('created_at', function(Media $media) {
                 return  Carbon::parse($media->created_at)->diffForHumans();
@@ -195,13 +195,13 @@ class MediaController extends Controller
         $multiple = $_REQUEST['multiple'];
         return datatables()->of(Media::latest()->get())
             ->addColumn('image', function(Media $media) {
-                return '<img src="'.asset('/public/product/thumbnail/'.$media->url).'" alt="image" class="img-fluid avatar-md rounded">';
+                return '<img src="'.\App\Support\PublicMedia::url('product/thumbnail/'.$media->url).'" alt="image" class="img-fluid avatar-md rounded">';
             })
             ->addColumn('created_at', function(Media $media) {
                 return  Carbon::parse($media->created_at)->diffForHumans();
             })
             ->addColumn('action', function(Media $media) use ($multiple) {
-                return  '<a href="javascript:void(0);" data-path="'.asset('/public/product/thumbnail/'.$media->url).'" data-src="'.$media->url.'" data-multiple="'.$multiple.'" data-id="'.$media->id.'" class="action-icon btn-select"> <i class="fas fa-check-square"></i></a>
+                return  '<a href="javascript:void(0);" data-path="'.\App\Support\PublicMedia::url('product/thumbnail/'.$media->url).'" data-src="'.$media->url.'" data-multiple="'.$multiple.'" data-id="'.$media->id.'" class="action-icon btn-select"> <i class="fas fa-check-square"></i></a>
                         <a href="javascript:void(0);" data-id="'.$media->id.'" class="action-icon btn-single-delete"> <i class="fas fa-trash"></i></a>';
             })
             ->only(['id','name','image','created_at','action'])

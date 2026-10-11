@@ -17,7 +17,7 @@
                             <div class="d-flex align-items-center">
                                 <div class="dc-image">
                                     <a href="{{ url('/product/'.$item->model->productSlug) }}">
-                                        <img src="{{ url('/public/product/thumbnail/'.$item->model->productImage) }}" class="img-fluid">
+                                        <img src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$item->model->productImage) }}" class="img-fluid">
                                     </a>
                                 </div>
                                 <div class="dc-content">
@@ -63,7 +63,6 @@
         <span class="badge badge-pill badge-danger notify">0</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-right px-0" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-328px, 32px, 0px);">
-
         <li>
             <div class="dropdown-cart px-0">
                 <div class="dc-header">

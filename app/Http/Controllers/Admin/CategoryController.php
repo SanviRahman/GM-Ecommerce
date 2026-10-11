@@ -22,7 +22,7 @@ class CategoryController extends Controller
     {
         return datatables()->of(Category::latest()->get())
             ->addColumn('image', function(Category $data) {
-                return '<img src="'.asset('/public/product/thumbnail/'.$data->categoryImage).'" alt="image" class="img-fluid avatar-md rounded">';
+                return '<img src="'.\App\Support\PublicMedia::url('product/thumbnail/'.$data->categoryImage).'" alt="image" class="img-fluid avatar-md rounded">';
             })
             ->addColumn('action', function(Category $data) {
                 return "<a href='javascript:void(0);' data-id='" .$data->id."' class='action-icon btn-edit'> <i class='fas fa-1x fa-edit'></i></a>

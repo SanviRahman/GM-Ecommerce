@@ -123,7 +123,7 @@ class ProductController extends Controller
     
             return DataTables::of($products)
                 ->editColumn('productImage', function ($product) {
-                    return "<img src='".asset('/public/product/thumbnail/'.$product->productImage)."' class='img-fluid avatar-lg rounded'>";
+                    return "<img src='".\App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)."' class='img-fluid avatar-lg rounded'>";
                 })
                 ->editColumn('ProductName', function ($product) {
                     return "<a href=".url('product/'.$product->ProductSlug).">".$product->ProductName."</a>";
@@ -562,6 +562,4 @@ class ProductController extends Controller
         if ($contents) return $contents;
         else return FALSE;
     }
-
-
 }

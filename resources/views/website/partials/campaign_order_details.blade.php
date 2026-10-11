@@ -57,7 +57,7 @@
                             data-option="{{ $selectedOptionName ?? '' }}">
                             <td class="product-image" style="display: flex; flex-direction: row-reverse;">
                                 <a href="#">
-                                    <img class="lazyload" src="{{ url('/public/product/thumbnail/'.$item->model->productImage) }}" style="max-width: 50px">
+                                    <img class="lazyload" src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$item->model->productImage) }}" style="max-width: 50px">
                                 </a>
                                 <button type="button" onclick="removeCampaignProduct('{{ $item->id }}')" class="btn btn-danger btn-sm">
                                     <i class="fa fa-trash"></i>

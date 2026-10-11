@@ -620,7 +620,7 @@
 
             </div>
              <div class="col-md-6">
-                <img class="img-fluid shadow border rounded" src="{{asset('public/campaigns/'.$campaign_data->banner)}}" >
+                <img class="img-fluid shadow border rounded" src="{{\App\Support\PublicMedia::url('campaigns/'.$campaign_data->banner)}}" >
             </div>
         </div>
     </div>
@@ -755,17 +755,17 @@
                     <div class="campro_img_slider owl-carousel">
                         @if($campaign_data->image_one)
                        <div class="campro_img_item" style="border:5px solid red;" class="rounded">
-                           <img  class="rounded" src="{{asset('public/campaigns/'.$campaign_data->image_one)}}" alt="">
+                           <img  class="rounded" src="{{\App\Support\PublicMedia::url('campaigns/'.$campaign_data->image_one)}}" alt="">
                        </div> 
                        @endif
                         @if($campaign_data->image_two)
                        <div class="campro_img_item" style="border:5px solid red;" class="rounded">
-                           <img  class="rounded" src="{{asset('public/campaigns/'.$campaign_data->image_two)}}" alt="">
+                           <img  class="rounded" src="{{\App\Support\PublicMedia::url('campaigns/'.$campaign_data->image_two)}}" alt="">
                        </div> 
                        @endif
                         @if($campaign_data->image_three)
                        <div class="campro_img_item" style="border:5px solid red;" class="rounded">
-                           <img  src="{{asset('public/campaigns/'.$campaign_data->image_three)}}" alt="">
+                           <img  src="{{\App\Support\PublicMedia::url('campaigns/'.$campaign_data->image_three)}}" alt="">
                        </div>
                        @endif
                     </div>
@@ -1530,7 +1530,6 @@ function saveInput() {
         console.error('Error:', error);
     });
 }
-
 </script>
 @stack('js')
 </body>

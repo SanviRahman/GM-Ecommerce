@@ -1,0 +1,70 @@
+/*
+ * LEATHERKET — Sitewide typography
+ * Font change only: intentionally does NOT modify sizes, weights, colors or spacing.
+ * Palatino Linotype is a device-installed typeface (not bundled or redistributed).
+ * If unavailable, the browser picks the next font in the fallback list.
+ * Bengali glyphs fall back to a Bengali-capable font automatically.
+ * Keep icon classes and pseudo-elements on their original font families.
+ */
+:root {
+    --leatherket-font: "Palatino Linotype", "Book Antiqua", Palatino,
+                       "Noto Serif Bengali", "Noto Sans Bengali", Georgia, serif;
+}
+
+/* Native text, Bootstrap components, forms, and common plugin text.
+ * Do NOT use a universal (*) font rule — that would corrupt icon fonts. */
+html,
+body,
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6,
+body p,
+body blockquote,
+body th,
+body td,
+body label,
+body small,
+body button,
+body input,
+body select,
+body textarea,
+body optgroup,
+body option,
+body .btn,
+body .form-control,
+body .custom-select,
+body .navbar,
+body .navbar-nav,
+body .nav-link,
+body .dropdown-menu,
+body .dropdown-item,
+body .table,
+body .modal,
+body .popover,
+body .tooltip,
+body .page-title,
+body .page-title-box,
+body .text-error,
+body .error-text-box,
+body #sidebar-menu > ul > li > a,
+body .font-family-secondary,
+body .dataTables_wrapper,
+body .daterangepicker,
+body .select2-container,
+body .select2-dropdown,
+body .swal2-popup,
+body .swal2-modal,
+body .jq-toast-single,
+body .jq-toast-single h2,
+body .filter-menu a,
+body .mobile-side-menu .side-menu-list ul > li > a,
+body .mobile-side-menu .side-menu-footer,
+body .section-header .header-main #cart_items > a > .notify {
+    font-family: var(--leatherket-font) !important;
+}
+
+/* Existing icon libraries (.fa, .fas, .far, .fab, .mdi, .ti, etc.)
+ * use their own font rules; do not override their font-family here. */

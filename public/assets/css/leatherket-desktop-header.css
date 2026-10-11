@@ -1,0 +1,79 @@
+/* Desktop-only header arrangement. Existing V1 off-canvas/mobile header unchanged. */
+@media (min-width: 992px) {
+  .section-header .header-main { padding: 13px 0 12px; }
+  .section-header .header-main > .container > .row {
+    display: grid;
+    grid-template-columns: 1fr minmax(200px, 440px) 1fr;
+    grid-template-areas: ". brand cart" ". search .";
+    row-gap: 8px;
+    align-items: center;
+    justify-items: center;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .section-header .header-main .header-brand-column {
+    grid-area: brand;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex: none;
+    padding: 0;
+    justify-content: center;
+  }
+  .section-header .header-main .brand-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    max-width: 180px;
+  }
+  .section-header .header-main .brand-wrap .logo {
+    display: block;
+    width: auto;
+    max-width: 145px;
+    max-height: 48px;
+    height: auto;
+    margin: 0;
+    object-fit: contain;
+  }
+  .section-header .header-main .search-box {
+    grid-area: search;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    text-align: center;
+    position: relative;
+  }
+  .section-header .header-main .leatherket-desktop-search-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 38px;
+    margin: 0 auto;
+    padding: 5px;
+    color: #222;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .section-header .header-main .leatherket-desktop-search-trigger:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+  .section-header .header-main .search-box form.search {
+    display: none;
+    width: min(440px, 100%);
+    margin: 6px auto 2px;
+  }
+  .section-header .header-main .search-box.is-open form.search { display: block; }
+  .section-header .header-main .header-cart-column {
+    grid-area: cart;
+    justify-self: end;
+    width: auto;
+    max-width: none;
+    flex: none;
+    padding-right: 0;
+  }
+}

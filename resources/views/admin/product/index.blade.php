@@ -318,7 +318,7 @@
             //             });
                         
                         
-            //             var html = ('<div class="image-holder image-"><img src="{{ asset('/public/product/thumbnail/') }}/' +data['productImage']+ '"><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="imageID" value="' + data['productImage'] + '"></div>');
+            //             var html = ('<div class="image-holder image-"><img src="{{ \App\Support\PublicMedia::url('product/thumbnail/') }}/' +data['productImage']+ '"><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="imageID" value="' + data['productImage'] + '"></div>');
             //             $('.single-image').find(".image-holder.placeholder").remove();
             //             $('.single-image').empty().append(html);
                         
@@ -327,7 +327,7 @@
             //             $.each(data['media'], function (index, media) {
             //                 galleryHtml += (
             //                     '<div class="image-holder">' +
-            //                     '<img src="{{ asset("/public/product/thumbnail/") }}/' + media.url + '">' +
+            //                     '<img src="{{ \App\Support\PublicMedia::url("product/thumbnail/") }}/' + media.url + '">' +
             //                     '<button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right">' +
             //                     '<i class="mdi mdi-close"></i></button>' +
             //                     '<input type="hidden" name="imageID[]" value="' + media.url + '">' +
@@ -464,7 +464,7 @@
                         });
             
                         // Populate product image
-                        var html = ('<div class="image-holder image-"><img src="{{ asset('/public/product/thumbnail/') }}/' + data['productImage'] + '"><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="imageID" value="' + data['productImage'] + '"></div>');
+                        var html = ('<div class="image-holder image-"><img src="{{ \App\Support\PublicMedia::url('product/thumbnail/') }}/' + data['productImage'] + '"><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="imageID" value="' + data['productImage'] + '"></div>');
                         $('.single-image').find(".image-holder.placeholder").remove();
                         $('.single-image').empty().append(html);
                         
@@ -473,7 +473,7 @@
                         $.each(data['media'], function (index, media) {
                             galleryHtml += (
                                 '<div class="image-holder">' +
-                                '<img src="{{ asset("/public/product/thumbnail/") }}/' + media.url + '">' +
+                                '<img src="{{ \App\Support\PublicMedia::url("product/thumbnail/") }}/' + media.url + '">' +
                                 '<button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right">' +
                                 '<i class="mdi mdi-close"></i></button>' +
                                 '<input type="hidden" name="imageID[]" value="' + media.id + '">' +
@@ -771,11 +771,7 @@
                         }
                     })
                 }
-
             });
-
-
-
         });
     </script>
 @endpush

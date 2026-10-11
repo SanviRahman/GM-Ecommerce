@@ -10,13 +10,13 @@
 							<div class="carousel-inner rounded">
 								<div class="carousel-item active">
 									<a href="javascript:void(0)" data-toggle="modal" data-target="#lightbox">
-										<img src="{{ url('/public/product/'.$product->productImage)  }}" alt="First slide" class="img-responsive img-thumbnail">
+										<img src="{{ \App\Support\PublicMedia::url('product/'.$product->productImage)  }}" alt="First slide" class="img-responsive img-thumbnail">
 									</a>
 								</div>
 								@foreach($product->media as $index =>$photo)
 								<div class="carousel-item">
     								<a href="javascript:void(0)" data-toggle="modal" data-target="#lightbox">
-    									<img src="{{ url('/public/product/'.$photo->url)  }}" alt="First slide" class="img-responsive img-thumbnail">
+    									<img src="{{ \App\Support\PublicMedia::url('product/'.$photo->url)  }}" alt="First slide" class="img-responsive img-thumbnail">
     								</a>
 								</div>
 								@endforeach
@@ -25,11 +25,11 @@
 							</div>
 							<ol class="carousel-indicators">
 								<li data-target="#single-product-galary" data-slide-to="0" class="active">
-									<img class="img-thumbnail" alt="" src="{{ url('/public/product/thumbnail/'.$product->productImage)  }}">
+									<img class="img-thumbnail" alt="" src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)  }}">
 								</li>
 								@foreach($product->media as $index =>$photo)
 								<li data-target="#single-product-galary" data-slide-to="{{$index+1}}">
-								    <img class="img-thumbnail" alt="" src="{{ url('/public/product/thumbnail/'.$photo->url)  }}">
+								    <img class="img-thumbnail" alt="" src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$photo->url)  }}">
 								</li>
 								@endforeach
 								
@@ -189,7 +189,7 @@
                     <div class="col-md-3 col-6">
                         <div href="#" class="card card-product-grid product-box-2">
                             <a href="{{ url('/product/'.$prod->id)  }}" class="img-wrap">
-                                <img class="img-fit lazyload"   src="{{ url('public/product/thumbnail/default.jpg') }}"  data-src="{{ url('/public/product/thumbnail/'.$prod->productImage)  }}" alt="{{ $prod->productName  }}">
+                                <img class="img-fit lazyload"   src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$prod->productImage)  }}" data-src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$prod->productImage)  }}" alt="{{ $prod->productName  }}">
                                 @include('website.partials.product_badge', ['product' => $prod])
                             </a>
                             <figcaption class="info-wrap">

@@ -65,7 +65,7 @@
                         <?php $__currentLoopData = $slides; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $slide): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="carousel-item <?php echo e($key == 0 ? 'active' : ''); ?>">
                                 <a href="<?php echo e($slide->link); ?>">
-                                    <img src="<?php echo e(asset('/public/'.$slide->image)); ?>"
+                                    <img src="<?php echo e(\App\Support\PublicMedia::url(''.$slide->image)); ?>"
                                          class="d-block w-100 slider-img"
                                          alt="">
                                 </a>
@@ -105,7 +105,7 @@
                         <div class="category-img-box">
                     
                             <?php if(!empty($cat->categoryImage)): ?>
-                                <img src="<?php echo e(asset('public/product/thumbnail/'.$cat->categoryImage)); ?>"
+                                <img src="<?php echo e(\App\Support\PublicMedia::url('product/thumbnail/'.$cat->categoryImage)); ?>"
                                      class="category-img">
                             <?php else: ?>
                                  <div class="placeholder-icon">
@@ -152,7 +152,7 @@
                                 <div class="card card-product-grid product-box-2">
                                     <a href="<?php echo e(url('/product/'.$product->productSlug)); ?>" class="img-wrap">
                                         <!-- Check if product image exists -->
-                                        <img class="img-fit" src="<?php echo e(asset('/public/product/thumbnail/'.($product->productImage ?? 'default-image.jpg'))); ?>" alt="<?php echo e($product->productName ?? 'Product Name'); ?>">
+                                        <img class="img-fit" src="<?php echo e(\App\Support\PublicMedia::url('product/thumbnail/'.($product->productImage ?? 'default-image.jpg'))); ?>" alt="<?php echo e($product->productName ?? 'Product Name'); ?>">
                                         <?php echo $__env->make('website.partials.product_badge', ['product' => $product], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </a>
                                     <figcaption class="info-wrap">

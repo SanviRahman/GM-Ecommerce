@@ -160,7 +160,7 @@ class WebsiteController extends Controller
         <div class="col-md-3 col-6">
             <div href="#" class="card card-product-grid product-box-2">
                 <a href="<?php  echo url('/product/'.$product->productSlug)  ?>" class="img-wrap">
-                    <img class="img-fit lazyload"   src="<?php echo asset('public/product/thumbnail/default.jpg') ?>"  data-src="<?php echo asset('/public/product/thumbnail/'.$product->productImage)  ?>" alt="<?php echo $product->productName  ?>">
+                    <img class="img-fit lazyload"   src="<?php echo \App\Support\PublicMedia::url('product/thumbnail/default.jpg') ?>"  data-src="<?php echo \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)  ?>" alt="<?php echo $product->productName  ?>">
                    <?php echo view('website.partials.product_badge', ['product' => $product])->render(); ?>
                 </a>
                 <figcaption class="info-wrap">

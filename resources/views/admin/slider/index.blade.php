@@ -141,7 +141,7 @@
                         $('#id').val(id);
                         $('#name').val(data['name']);
                         $('#link').val(data['link']);
-                        var html = ('<div class="image-holder image-"><img src="{{url("/public/product/thumbnail/")}}/' +data['image']+ '"><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="imageID" value="' + data['image'] + '"></div>');
+                        var html = ('<div class="image-holder image-"><img src="{{\App\Support\PublicMedia::url("product/thumbnail/")}}/' +data['image']+ '"><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="imageID" value="' + data['image'] + '"></div>');
                         $('.single-image').find(".image-holder.placeholder").remove();
                         $('.single-image').empty().append(html);
 
@@ -343,12 +343,7 @@
                         }
                     })
                 }
-
             });
-
-
-
-
         });
     </script>
 @endpush

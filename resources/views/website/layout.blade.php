@@ -23,7 +23,8 @@
     @stack('css')
     <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
     <link href="{{ asset('assets/css/leatherket-typography.css') }}?v=1" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/leatherket-commerce.css') }}?v=footer-2" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/leatherket-commerce.css') }}?v=image-badge-fix-3" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/leatherket-desktop-header.css') }}?v=1" rel="stylesheet" type="text/css" />
     {!! Settings::get('facebook_pixels') !!}
     <!-- CSS for scrolling ticker -->
 
@@ -105,11 +106,18 @@
                         </a>
                     </div>
                     <a href="{{ url('/') }}" class="brand-wrap">
-                        <img class="logo" src="{{ asset('/public/'.Settings::get('site_logo')) }}" alt="{{ Settings::get('site_name') }}">
+                        <img class="logo" src="{{ \App\Support\PublicMedia::url(''.Settings::get('site_logo')) }}" alt="{{ Settings::get('site_name') }}">
                     </a> <!-- brand-wrap.// -->
                 </div>
                 <div class="col-lg-9 col-md-5 col-sm-12 search-box">
-                    <form action="{{ url('/shop') }}" class="search">
+                    <button type="button" class="leatherket-desktop-search-trigger d-none d-lg-inline-flex"
+                            aria-label="Search products" aria-expanded="false" aria-controls="leatherket-desktop-search-form">
+                        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+                            <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M15.5 15.5L21 21" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                    </button>
+                    <form id="leatherket-desktop-search-form" action="{{ url('/shop') }}" class="search">
                         <div class="input-group w-100">
                             <div class="d-lg-none search-box-back">
                                 <button class="" type="button"><i class="fa fa-arrow-left"></i></button>
@@ -258,7 +266,7 @@
 
         <div class="leatherket-footer-brand">
             <span class="leatherket-footer-rule" aria-hidden="true"></span>
-            <a href="{{ url('/') }}" aria-label="Leatherket home"><img src="{{ asset('/public/'.Settings::get('site_logo')) }}" alt="{{ Settings::get('site_name') }}"></a>
+            <a href="{{ url('/') }}" aria-label="Leatherket home"><img src="{{ \App\Support\PublicMedia::url(''.Settings::get('site_logo')) }}" alt="{{ Settings::get('site_name') }}"></a>
             <span class="leatherket-footer-rule" aria-hidden="true"></span>
         </div>
         <div class="leatherket-footer-bottom">
@@ -298,6 +306,7 @@
 <script src="{{asset('assets/js/lazyload.js')}}"></script>
 <script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
 <script src="{{asset('assets/js/script.js')}}?v=mobile-nav-2"></script>
+<script src="{{asset('assets/js/leatherket-desktop-header.js')}}?v=1" defer></script>
 <script>
     $(document).ready(function() {
         updateNavCart();

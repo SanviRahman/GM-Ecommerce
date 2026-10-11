@@ -1075,7 +1075,7 @@ class OrderController extends Controller
             if (App::environment('local')) {
                 $item['productImage'] = url('/product/' . $item['productImage']);
             } else {
-                $item['productImage'] = url('/public/product/' . $item['productImage']);
+                $item['productImage'] = \App\Support\PublicMedia::url('product/' . $item['productImage']);
             }
 
             $product[] = array(
@@ -2236,5 +2236,4 @@ class OrderController extends Controller
         // You can filter the data based on the selected IDs
         //return Excel::download(new OrdersExport($ids), 'orders.xlsx');
     }
-
 }

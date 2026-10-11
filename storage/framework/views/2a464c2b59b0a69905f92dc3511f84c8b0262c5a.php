@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo e(config('app.name', 'Laravel')); ?></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="<?php echo e(asset('images/favicon.ico')); ?>">
+    <!-- App css -->
+    <link href="<?php echo e(asset('css/bootstrap.min.css')); ?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('css/icons.min.css')); ?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('css/app.min.css')); ?>" rel="stylesheet" type="text/css" />
+    <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
+    <link href="<?php echo e(asset('assets/css/leatherket-typography.css')); ?>?v=1" rel="stylesheet" type="text/css" />
+</head>
+
+
+<body class="authentication-bg">
+
+<div class="account-pages mt-5 mb-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-pattern">
+
+                    <div class="card-body p-4">
+
+                        <div class="text-center w-75 m-auto">
+                            <a href="<?php echo e(url('/')); ?>">
+                                <h2><?php echo e(config('app.name', 'Inventory')); ?></h2>
+                            </a>
+                            
+                             <h4 class="text mb-4 mt-3" style="color:red" > অ্যাডমিন প্যানেলে প্রবেশ করতে আপনার সঠিক ই-মেইল ও পাসওয়ার্ড ব্যাবহার ক </h4>
+                            
+                      <!--      <p class="text-muted mb-4 mt-3">অ্যাডমিন প্যানেলে প্রবেশ করতে আপনার সঠিক ই-মেইল ও পাসওয়ার্ড ব্যাবহার করুন.</p> -->
+                        </div>
+
+                        <form method="POST" action="<?php echo e(route('login')); ?>">
+                            <?php echo csrf_field(); ?>
+
+
+                            <div class="form-group mb-3">
+                                <label for="emailaddress">Email address</label>
+                                <input class="form-control <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" name="email"  type="email" id="emailaddress" required autocomplete="email" autofocus value="<?php echo e(old('email')); ?>" placeholder="Enter your email">
+                                <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <span class="invalid-feedback" role="alert">
+                                        <strong><?php echo e($message); ?></strong>
+                                    </span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="password">Password</label>
+                                <input id="password" type="password" class="form-control <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" name="password" required autocomplete="current-password" placeholder="Enter your password">
+                                <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <span class="invalid-feedback" role="alert">
+                                        <strong><?php echo e($message); ?></strong>
+                                    </span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="remember"  class="custom-control-input" id="checkbox-signin" <?php echo e(old('remember') ? 'checked' : ''); ?>>
+                                    <label class="custom-control-label" for="checkbox-signin">Remember me</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-0 text-center">
+                                <button class="btn btn-primary btn-block" type="submit"> <?php echo e(__('Log In')); ?> </button>
+                            </div>
+
+                        </form>
+
+
+
+                    </div> <!-- end card-body -->
+                </div>
+                <!-- end card -->
+
+            </div> <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+</div>
+<!-- end page -->
+
+<!-- Vendor js -->
+<script src="<?php echo e(asset('js/vendor.min.js')); ?>"></script>
+
+<!-- App js -->
+<script src="<?php echo e(asset('js/app.min.js')); ?>"></script>
+
+</body>
+</html>
+<?php /**PATH D:\public_html leatherket\resources\views/auth/login.blade.php ENDPATH**/ ?>

@@ -11,7 +11,7 @@
                     <div class="col-md-2 col-6">
                         <div href="#" class="card card-product-grid product-box-2">
                             <a href="{{ url('/product/'.$product->productSlug)  }}" class="img-wrap">
-                                <img class="img-fit lazyload"   src="{{ url('public/product/thumbnail/default.jpg') }}"  data-src="{{ url('/public/product/thumbnail/'.$product->productImage)  }}" alt="{{ $product->productName  }}">
+                                <img class="img-fit lazyload"   src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)  }}" data-src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)  }}" alt="{{ $product->productName  }}">
                                         @include('website.partials.product_badge', ['product' => $product])
                             </a>
                             <figcaption class="info-wrap">

@@ -457,7 +457,7 @@ class OrderController extends Controller
             if (App::environment('local')) {
                 $item['productImage'] = url('/product/' . $item['productImage']);
             } else {
-                $item['productImage'] = url('/public/product/' . $item['productImage']);
+                $item['productImage'] = \App\Support\PublicMedia::url('product/' . $item['productImage']);
             }
 
             $product[] = array(
@@ -1465,7 +1465,5 @@ class OrderController extends Controller
             })
             ->escapeColumns([])->toJson();
         die();
-
     }
-    
 }

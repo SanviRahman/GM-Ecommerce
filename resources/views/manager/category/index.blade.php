@@ -147,7 +147,7 @@
                         $('#id').val(id);
                         $('#categoryName').val(data['categoryName']);
                         $('#categorySlug').val(data['categorySlug']);
-                        var html = ('<div class="image-holder image-"><img src="{{url("/media/")}}/' +data['categoryImage']+ '"><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="imageID" value="' + data['categoryImage'] + '"></div>');
+                        var html = ('<div class="image-holder image-"><img src="{{ \App\Support\PublicMedia::url("product/thumbnail/") }}/' +data['categoryImage']+ '"><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="imageID" value="' + data['categoryImage'] + '"></div>');
                         $('.single-image').find(".image-holder.placeholder").remove();
                         $('.single-image').empty().append(html);
 
@@ -351,12 +351,7 @@
                         }
                     })
                 }
-
             });
-
-
-
-
         });
     </script>
 @endpush

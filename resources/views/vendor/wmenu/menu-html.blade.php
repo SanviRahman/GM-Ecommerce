@@ -5,7 +5,7 @@ $pages =  App\Page::get();
 ?>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-<link href="{{asset('public/vendor/harimayco-menu/style.css')}}" rel="stylesheet">
+<link href="{{\App\Support\PublicMedia::url('vendor/harimayco-menu/style.css')}}" rel="stylesheet">
 <div id="hwpwrap">
 	<div class="custom-wp-admin wp-admin wp-core-ui js   menu-max-depth-0 nav-menus-php auto-fold admin-bar">
 		<div id="wpwrap">

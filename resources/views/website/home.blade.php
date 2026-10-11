@@ -65,7 +65,7 @@
                         @foreach($slides as $key => $slide)
                             <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                                 <a href="{{ $slide->link }}">
-                                    <img src="{{ asset('/public/'.$slide->image) }}"
+                                    <img src="{{ \App\Support\PublicMedia::url(''.$slide->image) }}"
                                          class="d-block w-100 slider-img"
                                          alt="">
                                 </a>
@@ -105,7 +105,7 @@
                         <div class="category-img-box">
                     
                             @if(!empty($cat->categoryImage))
-                                <img src="{{ asset('public/product/thumbnail/'.$cat->categoryImage) }}"
+                                <img src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$cat->categoryImage) }}"
                                      class="category-img">
                             @else
                                  <div class="placeholder-icon">
@@ -144,7 +144,7 @@
                         <div>
                             <div href="#" class="card card-product-grid product-box-2">
                                 <a href="{{ url('/product/'.$product->productSlug)  }}" class="img-wrap">
-                                    <img class="img-fit" src="{{ asset('/public/product/thumbnail/'.$product->productImage)  }}" alt="{{ $product->productName  }}">
+                                    <img class="img-fit" src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)  }}" alt="{{ $product->productName  }}">
                                         @include('website.partials.product_badge', ['product' => $product])
                                 </a>
                                 <figcaption class="info-wrap">
@@ -189,7 +189,7 @@
                                 <div class="card card-product-grid product-box-2">
                                     <a href="{{ url('/product/'.$product->productSlug) }}" class="img-wrap">
                                         <!-- Check if product image exists -->
-                                        <img class="img-fit" src="{{ asset('/public/product/thumbnail/'.($product->productImage ?? 'default-image.jpg')) }}" alt="{{ $product->productName ?? 'Product Name' }}">
+                                        <img class="img-fit" src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.($product->productImage ?? 'default-image.jpg')) }}" alt="{{ $product->productName ?? 'Product Name' }}">
                                         @include('website.partials.product_badge', ['product' => $product])
                                     </a>
                                     <figcaption class="info-wrap">
@@ -231,7 +231,7 @@
 {{--                    <div class="col-md-2 col-6">--}}
 {{--                        <div href="#" class="card card-product-grid product-box-2">--}}
 {{--                            <a href="{{ url('/product/'.$product->id)  }}" class="img-wrap">--}}
-{{--                                <img class="img-fit lazyload"   src="{{ asset('public/product/thumbnail/default.jpg') }}"  data-src="{{ asset('/public/product/thumbnail/'.$product->productImage)  }}" alt="{{ $product->productName  }}">--}}
+{{--                                <img class="img-fit lazyload"   src="{{ \App\Support\PublicMedia::url('product/thumbnail/default.jpg') }}"  data-src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)  }}" alt="{{ $product->productName  }}">--}}
 {{--                            </a>--}}
 {{--                            <figcaption class="info-wrap">--}}
 {{--                                <a href="{{ url('/product/'.$product->id)  }}" class="title text-truncate">{{ $product->productName  }}</a>--}}

@@ -144,3 +144,45 @@
     .card-product-grid .product-price, .card-product-grid .product-price-old { font-size: 13px; }
     .leatherket-product-badge { font-size: 12px !important; padding: 7px 9px; }
 }
+
+/* Image & badge bugfix: product media is a square with stable dimensions.
+   A badge must not be clipped by the old ui.css .img-wrap overflow:hidden. */
+.card-product-grid.product-box-2 .img-wrap,
+.card-product-grid .img-wrap {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    min-height: 130px;
+    overflow: visible !important;
+}
+.card-product-grid .img-wrap > img.img-fit,
+.card-product-grid .img-wrap > img.lazyload {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 4px 4px 0 0;
+}
+.card-product-grid .img-wrap > .leatherket-product-badge {
+    z-index: 5;
+    top: 8px !important;
+    left: 8px !important;
+    max-width: calc(100% - 16px);
+    width: max-content;
+    white-space: nowrap;
+    height: auto;
+    line-height: 1.4;
+    box-sizing: border-box;
+    visibility: visible;
+    opacity: 1;
+    clip-path: none;
+}
+/* On product detail, badge sits over the image, not inside a carousel clipping edge. */
+#single-product-galary .carousel-inner { position: relative; }
+#single-product-galary .leatherket-product-badge {
+    position: absolute;
+    z-index: 5;
+    top: 12px !important;
+    left: 12px !important;
+}
