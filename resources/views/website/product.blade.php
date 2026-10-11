@@ -1,6 +1,5 @@
 @extends('website.layout')
 @section('content')
-
 	<section class="section-name bg mt-2">
 		<div class="container">
 			<div class="card">
@@ -129,7 +128,29 @@
                                 <div class="single-product-buttons leatherket-purchase-buttons">
                                     <button type="button" {{ $product->isSoldOut() ? 'disabled' : '' }} class="btn btn-primary leatherket-add-cart" onclick="addToCart({{ $product->id }})">Add to cart</button>
                                     <button type="button" {{ $product->isSoldOut() ? 'disabled' : '' }} class="btn btn-outline-primary leatherket-buy-now" onclick="buyNow({{ $product->id }})">Buy it now</button>
+                                    @if((int) $product->isFreeDelivery === 1)
+                                        <button type="button" {{ $product->isSoldOut() ? 'disabled' : '' }}
+                                                class="btn leatherket-free-delivery-order"
+                                                onclick="buyNow({{ $product->id }})">
+                                            ফ্রী ডেলিভারিতে অর্ডার করুন
+                                        </button>
+                                    @endif
                                 </div>
+                                    @php
+                                        $waDigits = preg_replace('/\D+/', '', (string) Settings::get('whatsapp_number'));
+                                        if (strlen($waDigits) === 11 && substr($waDigits, 0, 1) === '0') $waDigits = '88'.$waDigits;
+                                        $callNumber = trim((string) Settings::get('phone_number'));
+                                    @endphp
+                                    @if((Settings::get('lk_whatsapp_button_enabled') === '1' && $waDigits) || (Settings::get('lk_call_button_enabled') === '1' && $callNumber))
+                                        <div class="lk-contact-actions">
+                                            @if(Settings::get('lk_whatsapp_button_enabled') === '1' && $waDigits)
+                                                <a class="lk-contact-action" href="{{ 'https://wa.me/'.$waDigits.'?text='.rawurlencode('I want to know about '.$product->productName.' - '.url('/product/'.$product->productSlug)) }}" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+                                            @endif
+                                            @if(Settings::get('lk_call_button_enabled') === '1' && $callNumber)
+                                                <a class="lk-contact-action" href="tel:{{ preg_replace('/[^0-9+]/', '', $callNumber) }}"><i class="fa fa-phone" aria-hidden="true"></i> Call Now</a>
+                                            @endif
+                                        </div>
+                                    @endif
                             </div>
                             <div class="col-sm-12 col-md-12  col-xs-12" style="padding: 0">
                                 {!!  Settings::get('product_bottom_text')  !!}
@@ -184,28 +205,10 @@
             <header class="section-heading">
                 <h4 class="section-title">Related products</h4>
             </header>
-            <div class="row no-gutters">
+            <div class="lk-related-products" aria-label="Related products; scroll horizontally">
                 @foreach($relatedProducts as $prod)
-                    <div class="col-md-3 col-6">
-                        <div href="#" class="card card-product-grid product-box-2">
-                            <a href="{{ url('/product/'.$prod->id)  }}" class="img-wrap">
-                                <img class="img-fit lazyload"   src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$prod->productImage)  }}" data-src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$prod->productImage)  }}" alt="{{ $prod->productName  }}">
-                                @include('website.partials.product_badge', ['product' => $prod])
-                            </a>
-                            <figcaption class="info-wrap">
-                                <a href="{{ url('/product/'.$prod->id)  }}" class="title text-truncate">{{ $prod->productName  }}</a>
-                                <div class="price mt-1 text-center">
-                                    {!! $prod->htmlPrice() !!}
-                                </div>
-                            </figcaption>
-                            @if ($prod->colors->isNotEmpty() || $prod->sizes->isNotEmpty() || $prod->options->isNotEmpty())
-                                <a href="{{ url('/product/'.$prod->productSlug)  }}" class="btn btn-success btn-sm btn-block {{ $prod->isSoldOut() ? 'disabled' : '' }}"> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
-                            @else
-                            <button {{ $prod->isSoldOut() ? 'disabled' : '' }} class="btn btn-success btn-sm btn-block" onclick="addToCart({{ $prod->id }})">
-                                <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
-                            </button>
-                            @endif
-                        </div>
+                    <div class="lk-related-product">
+                        @include('website.partials.product_card', ['product' => $prod])
                     </div>
                 @endforeach
             </div>

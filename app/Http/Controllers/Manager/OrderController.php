@@ -15,6 +15,7 @@ use App\PaymentType;
 use App\Product;
 use App\Setting;
 use App\Stock;
+use App\Services\OrderStockService;
 use App\Store;
 use App\User;
 use App\Zone;
@@ -1547,107 +1548,71 @@ class OrderController extends Controller
     // Change Single order Status
     public function status(Request $request)
     {
-        $id = $request['id'];
+        $request->validate(['id' => 'required|integer', 'status' => 'required|string|max:100']);
+        $status = (string) $request->input('status');
+        try {
+            DB::transaction(function () use ($request, $status) {
+                $order = Order::whereKey($request->input('id'))->lockForUpdate()->firstOrFail();
+                if (!$order->courier_id && !in_array($status, ['Canceled', 'On Hold', 'Payment Pending'], true)) {
+                    throw new \RuntimeException('Please Update order courier and try again !');
+                }
+                app(OrderStockService::class)->onStatusChange($order, $status);
+                if ($status === 'Completed') {
+                    $order->orderDate = date('Y-m-d');
+                }
+                if ($status === 'Delivered') {
+                    $order->deliveryDate = date('Y-m-d');
+                }
+                if (in_array($status, ['Paid', 'Return'], true)) {
+                    $order->completeDate = date('Y-m-d');
+                }
+                $order->status = $status;
+                $order->save();
 
-        $status = $request['status'];
-        $order = Order::find($id);
-
-        if($request['status'] == 'Completed'){
-            $order->orderDate = date('Y-m-d');
-        }
-        if($request['status'] == 'Delivered'){
-            $order->deliveryDate = date('Y-m-d');
-            $orderProducts = OrderProducts::query()->where('order_id','=',$order->id)->get();
-            foreach ($orderProducts as $orderProduct) {
-                $stock =  Stock::query()->where('product_id','=',$orderProduct->product_id)->first();
-                $stock->stock =  $stock->stock - $orderProduct->quantity;
-                $stock->save();
-            }
-        }
-        if($request['status'] == 'Paid'){
-            $order->completeDate = date('Y-m-d');
-        }
-        if($request['status'] == 'Return'){
-            $order->completeDate = date('Y-m-d');
-            $orderProducts = OrderProducts::query()->where('order_id','=',$order->id)->get();
-            foreach ($orderProducts as $orderProduct) {
-                $stock =  Stock::query()->where('product_id','=',$orderProduct->product_id)->first();
-                $stock->stock =  $stock->stock + $orderProduct->quantity;
-                $stock->save();
-            }
-        }
-
-        if($order->courier_id || $status =='Canceled' || $status =='On Hold'  || $status =='Payment Pending' ){
-            $order->status = $status;
-            $result = $order->save();
-            if ($result) {
-                $response['status'] = 'success';
-                $response['message'] = 'Successfully Update Status to ' . $request['status'];
                 $notification = new Notification();
-                $notification->order_id = $id;
-                $notification->notificaton = Auth::user()->name.' Successfully Update #BB-'.$id.' Order status to '.$status;
-                $notification->user_id =  Auth::id();
+                $notification->order_id = $order->id;
+                $notification->notificaton = Auth::user()->name . ' Successfully Update #BB-' . $order->id . ' Order status to ' . $status;
+                $notification->user_id = Auth::id();
                 $notification->save();
-            } else {
-                $response['status'] = 'failed';
-                $response['message'] = 'Unsuccessful to update Status ' . $request['status'];
-            }
-        }else {
-            $response['status'] = 'failed';
-            $response['message'] = 'Please Update order courier and try again !';
+            }, 3);
+            return json_encode(['status' => 'success', 'message' => 'Successfully Update Status to ' . $status]);
+        } catch (\RuntimeException $e) {
+            return json_encode(['status' => 'failed', 'message' => $e->getMessage()]);
         }
-
-        return json_encode($response);
     }
 
-    // Change Multiple Order Status
     public function changeStatusByCheckbox(Request $request)
     {
-
-        $status = $request['status'];
-        $ids = $request['ids'];
-        if($ids){
-            foreach ($ids as $id){
-                $order = Order::find($id);
-                $order->status = $status;
-
-
-                if($status == 'Delivered'){
-                    $order->deliveryDate = date('Y-m-d');
-                    $orderProducts = OrderProducts::query()->where('order_id','=',$order->id)->get();
-                    foreach ($orderProducts as $orderProduct) {
-                        $stock =  Stock::query()->where('product_id','=',$orderProduct->product_id)->first();
-                        $stock->stock =  $stock->stock - $orderProduct->quantity;
-                        $stock->save();
+        $request->validate([
+            'status' => 'required|string|max:100',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer',
+        ]);
+        $status = (string) $request->input('status');
+        try {
+            DB::transaction(function () use ($request, $status) {
+                foreach (array_unique($request->input('ids')) as $id) {
+                    $order = Order::whereKey($id)->lockForUpdate()->firstOrFail();
+                    app(OrderStockService::class)->onStatusChange($order, $status);
+                    if ($status === 'Delivered') {
+                        $order->deliveryDate = date('Y-m-d');
                     }
-                }
-                if($status == 'Paid'){
-                    $order->completeDate = date('Y-m-d');
-                }
-                if($status == 'Return'){
-                    $order->completeDate = date('Y-m-d');
-                    $orderProducts = OrderProducts::query()->where('order_id','=',$order->id)->get();
-                    foreach ($orderProducts as $orderProduct) {
-                        $stock =  Stock::query()->where('product_id','=',$orderProduct->product_id)->first();
-                        $stock->stock =  $stock->stock + $orderProduct->quantity;
-                        $stock->save();
+                    if (in_array($status, ['Paid', 'Return'], true)) {
+                        $order->completeDate = date('Y-m-d');
                     }
+                    $order->status = $status;
+                    $order->save();
+                    $notification = new Notification();
+                    $notification->order_id = $order->id;
+                    $notification->notificaton = Auth::user()->name . ' Successfully Update #BB-' . $order->id . ' Order status to ' . $status;
+                    $notification->user_id = Auth::id();
+                    $notification->save();
                 }
-
-                $order->save();
-                $notification = new Notification();
-                $notification->order_id = $id;
-                $notification->notificaton = Auth::user()->name.' Successfully Update #BB-'.$id.' Order status to '.$status;
-                $notification->user_id =  Auth::id();
-                $notification->save();
-            }
-            $response['status'] = 'success';
-            $response['message'] = 'Successfully Assign User to this Order';
-        }else{
-            $response['status'] = 'failed';
-            $response['message'] = 'Unsuccessful to Assign User to this Order';
+            }, 3);
+            return json_encode(['status' => 'success', 'message' => 'Successfully Updated Order Status']);
+        } catch (\RuntimeException $e) {
+            return json_encode(['status' => 'failed', 'message' => $e->getMessage()]);
         }
-        return json_encode($response);
     }
 
     //

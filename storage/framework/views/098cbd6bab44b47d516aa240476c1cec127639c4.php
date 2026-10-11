@@ -378,9 +378,7 @@
         </div>
         <!-- End Sidebar -->
         <div class="clearfix"></div>
-
     </div>
     <!-- Sidebar -left -->
-
 </div>
 <?php /**PATH D:\public_html leatherket\resources\views/layouts/sidebar.blade.php ENDPATH**/ ?>

@@ -1,7 +1,7 @@
 <div class="tile">
     <form action="{{ url('admin/setting') }}" method="POST" role="form">
         @csrf
-        <h3 class="tile-title">Cop Right Footer</h3>
+        <h3 class="tile-title">Copy Right Footer</h3>
         <hr>
         <div class="tile-body">
             <div class="form-group">

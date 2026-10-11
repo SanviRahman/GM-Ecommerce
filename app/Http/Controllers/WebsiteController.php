@@ -14,13 +14,13 @@ class WebsiteController extends Controller
     public function index()
     {
         $slug = 'offer';
-        $topProducts = Product::where('status','Active')->with('media','categories','stockRecord')->latest()->whereHas('categories', function ($query) use ($slug) {
+        $topProducts = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->latest()->whereHas('categories', function ($query) use ($slug) {
             $query->where('categories.categorySlug','like', $slug);
         })->limit(12)->get();
-        $otherProducts = Product::where('status','Active')->with('media','categories','stockRecord')->latest()->paginate(30);
+        $otherProducts = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->latest()->paginate(30);
         $otherProducts->withPath('shop/');
         $slides = Slider::where('status','Active')->get();
-        $sections = Section::with('category','category.products.stockRecord')->where('status','Active')->orderBy('sort')->get();
+        $sections = Section::with('category','category.products.stockRecord', 'category.products.colors', 'category.products.sizes', 'category.products.options')->where('status','Active')->orderBy('sort')->get();
      
         return view('website.home',compact('slug','topProducts','otherProducts','slides','sections'));
     }
@@ -28,11 +28,11 @@ class WebsiteController extends Controller
     public function product($id)
     {
         
-        $product = Product::where('status','Active')->with('media','categories','stockRecord')->where('products.id','like',$id)->first();
+        $product = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->where('products.id','like',$id)->first();
         if(!$product){
-            $product = Product::where('status','Active')->with('media','categories','stockRecord')->where('products.productSlug','like',$id)->first();
+            $product = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->where('products.productSlug','like',$id)->first();
         }
-        $relatedProducts = Product::where('status','Active')->with('media','categories','stockRecord')
+        $relatedProducts = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')
         ->where('products.id','!=',$product->id)
         ->whereHas('categories', function ($query) use ($product) {
             $query->whereIn('categories.id', $product->categories->pluck('id'));
@@ -43,7 +43,7 @@ class WebsiteController extends Controller
 
     public function category($slug)
     {
-        $categoryProducts = Product::where('status','Active')->with('media','categories','stockRecord')->whereHas('categories', function ($query) use ($slug) {
+        $categoryProducts = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->whereHas('categories', function ($query) use ($slug) {
             $query->where('categories.categorySlug','like', $slug);
         })->orderBy('productCode', 'asc')->paginate(30);
         $category = Category::where('categories.categorySlug', $slug)->first();
@@ -53,9 +53,9 @@ class WebsiteController extends Controller
     public function shop()
     {
         if (isset($_REQUEST['q'])){
-            $shop = Product::where('status','Active')->with('media','categories','stockRecord')->where('products.productName','like',"%{$_REQUEST['q']}%")->orderBy('productCode', 'asc')->paginate(30);
+            $shop = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->where('products.productName','like',"%{$_REQUEST['q']}%")->orderBy('productCode', 'asc')->paginate(30);
         }else{
-            $shop = Product::where('status','Active')->with('media','categories','stockRecord')->orderBy('productCode', 'asc')->paginate(30);
+            $shop = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->orderBy('productCode', 'asc')->paginate(30);
         }
         return view('website.shop',compact('shop'));
     }
@@ -63,7 +63,7 @@ class WebsiteController extends Controller
     public function page($slug)
     {
         $page = Page::where('pageSlug','like',$slug)->first();
-        $relatedProducts = Product::where('status','Active')->with('media','categories','stockRecord')->orderBy('productCode', 'asc')->limit(30)->get();
+        $relatedProducts = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->orderBy('productCode', 'asc')->limit(30)->get();
         return view('website.page',compact('page','relatedProducts'));
     }
     
@@ -154,36 +154,11 @@ class WebsiteController extends Controller
     }
         public function loadProducts()
     {
+        $otherProducts = Product::where('status', 'Active')
+            ->with(['media', 'categories', 'stockRecord', 'colors', 'sizes', 'options'])
+            ->orderBy('productCode', 'asc')
+            ->paginate(30);
 
-        $otherProducts = Product::where('status','Active')->with('media','categories','stockRecord')->orderBy('productCode', 'asc')->paginate(30);
-        foreach($otherProducts as $product) { ?>
-        <div class="col-md-3 col-6">
-            <div href="#" class="card card-product-grid product-box-2">
-                <a href="<?php  echo url('/product/'.$product->productSlug)  ?>" class="img-wrap">
-                    <img class="img-fit lazyload"   src="<?php echo \App\Support\PublicMedia::url('product/thumbnail/default.jpg') ?>"  data-src="<?php echo \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)  ?>" alt="<?php echo $product->productName  ?>">
-                   <?php echo view('website.partials.product_badge', ['product' => $product])->render(); ?>
-                </a>
-                <figcaption class="info-wrap">
-                    <h6 style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;"> <?php echo e($product->productName); ?></h6>
-                    <div class="price mt-1 text-center">
-                        <?php echo $product->htmlPrice() ?>
-                    </div>
-                </figcaption>
-                <?php if ($product->colors->isNotEmpty() || $product->sizes->isNotEmpty() || $product->options->isNotEmpty()){ ?>
-    <a href="<?php echo url('/product/'.$product->productSlug); ?>" 
-       class="btn btn-dark btn-sm btn-block <?php echo ($product->isSoldOut())?'disabled':''; ?>">
-       <i class="fa fa-shopping-cart" aria-hidden="true"></i> অর্ডার করুন
-    </a>
-<?php }else{ ?>
-    <button <?php echo ($product->isSoldOut())?'disabled':''; ?> 
-            class="btn btn-dark btn-sm btn-block" 
-            onclick="buyNow(<?php echo $product->id; ?>)">
-        <i class="fa fa-shopping-cart" aria-hidden="true"></i> অর্ডার করুন
-    </button>
-<?php } ?>
-
-            </div>
-        </div>
-        <?php }
-   }
+        return view('website.partials.product_card_list', compact('otherProducts'));
+    }
 }

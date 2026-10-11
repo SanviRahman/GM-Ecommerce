@@ -1,0 +1,35 @@
+<div class="tile">
+    <form action="<?php echo e(url('/admin/setting/')); ?>" method="POST" role="form">
+        <?php echo csrf_field(); ?>
+        <div class="tile-body">
+            <div class="form-group">
+                <label class="control-label" for="google_analytics">Google Analytics Code</label>
+                <textarea
+                    class="form-control"
+                    rows="4"
+                    placeholder="Enter google analytics code"
+                    id="google_analytics"
+                    name="google_analytics"
+                ><?php echo e(Settings::get('google_analytics')); ?></textarea>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="facebook_pixels">Facebook Pixel Code</label>
+                <textarea
+                    class="form-control"
+                    rows="4"
+                    placeholder="Enter facebook pixel code"
+                    id="facebook_pixels"
+                    name="facebook_pixels"
+                ><?php echo e(Settings::get('facebook_pixels')); ?></textarea>
+            </div>
+        </div>
+        <div class="tile-footer">
+            <div class="row d-print-none mt-2">
+                <div class="col-12 text-right">
+                    <button class="btn btn-success" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i>Update Settings</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<?php /**PATH D:\public_html leatherket\resources\views/admin/settings/includes/analytics.blade.php ENDPATH**/ ?>

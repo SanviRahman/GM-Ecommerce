@@ -1,6 +1,5 @@
 @extends('layout')
 @section('content')
-
     <section class="section-name bg padding-y-sm">
         <div class="container">
             <header class="section-heading">
@@ -30,7 +29,7 @@
                                 </div>
                             </figcaption>
                             <button class="btn btn-dark btn-sm btn-block" onclick="addToCart({{ $product->id }})">
-                                <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
+                                <i class="fa fa-shopping-cart"  aria-hidden="true"></i> {{ (int) $product->isFreeDelivery === 1 ? 'ফ্রী ডেলিভারিতে অর্ডার করুন' : 'অর্ডার করুন' }}
                             </button>
                         </div>
                     </div> <!-- col.// -->
@@ -45,7 +44,6 @@
         page: {
             title: "{{ $page->pageTitle }}",  // Dynamic Page Title
             url: "{{ url()->current() }}" // Current URL
-    
         }
     });
     </script>
@@ -55,6 +53,4 @@
         page_url: "{{ url()->current() }}" // Current URL
     });
     </script>
-
-
 @endsection

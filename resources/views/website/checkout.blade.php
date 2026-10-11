@@ -360,9 +360,12 @@
                                 showFrontendAlert('error', data['message']);
                             }
                             else{
-                                showFrontendAlert('error', 'Unsuccessful to Place order');
+                                showFrontendAlert('error', data['message'] || 'Unsuccessful to Place order');
 
                             }
+                        },
+                        error: function (xhr) {
+                            showFrontendAlert('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Unable to place order. Please check stock.');
                         }
                     });
                 }
@@ -449,4 +452,3 @@ function saveInput() {
 }
 </script>
 @endpush
-

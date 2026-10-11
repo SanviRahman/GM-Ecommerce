@@ -1,0 +1,35 @@
+/* LEATHERKET shared product cards — collection-style photos, no legacy card border/padding. */
+.lk-product-card { display:flex;flex-direction:column;min-width:0;height:100%;background:transparent;border:0;box-shadow:none;overflow:visible; }
+.lk-product-card-image { position:relative;display:block;width:100%;aspect-ratio:3 / 4;overflow:hidden;background:#e5dfd8;text-decoration:none; }
+.lk-product-card-image img { display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease; }
+.lk-product-card-image:hover img { transform:scale(1.035); }
+.lk-product-card-image .leatherket-product-badge { position:absolute !important;top:10px !important;left:10px !important;z-index:3;box-sizing:border-box;max-width:calc(100% - 20px);padding:7px 10px;white-space:normal;overflow-wrap:anywhere;line-height:1.35; }
+.lk-product-card-details { padding:12px 0 14px;flex:1 1 auto;min-height:88px; }
+.lk-product-card-name { display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;min-height:25px;font-size:16px;line-height:1.45;color:#201812;text-decoration:none !important; }
+.lk-product-card-name:hover { color:#19a047; }
+.lk-product-card-price { margin-top:7px; }
+.lk-product-card-price .price { text-align:left !important; }
+.lk-product-card-price .leatherket-price-line {display:flex;justify-content:flex-start;align-items:baseline;gap:7px;flex-wrap:wrap;}
+.lk-product-card-price .product-price { color:#19a047;white-space:nowrap; }
+.lk-product-card-price .product-price-old { color:#777;text-decoration:line-through;white-space:nowrap; }
+.lk-product-card-action { display:flex;align-items:center;justify-content:center;text-align:center;min-height:44px;width:100%;padding:8px 12px;margin:0;border:0;border-radius:0;background:#1f2428;color:#fff !important;font-size:14px;font-weight:400;line-height:1.45;cursor:pointer;text-decoration:none !important;transition:background .2s ease; }
+.lk-product-card-action:hover,.lk-product-card-action:focus { background:#1766ca;color:#fff !important; }
+.lk-product-card-action:disabled {background:#898989;cursor:not-allowed;opacity:.75;}
+.lk-products-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px 18px;margin:0;align-items:stretch;}
+.lk-related-products {display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:20px;padding:0 0 12px;scrollbar-width:thin;}
+.lk-related-product {flex:0 0 calc((100% - 60px)/4);scroll-snap-align:start;min-width:0;}
+.lk-home-products-slider .lk-product-slide {padding:0 10px;box-sizing:border-box;}
+.lk-home-products-slider .slick-list {margin:0 -10px;}
+.lk-home-products-slider .slick-track {display:flex;align-items:stretch;}
+.lk-home-products-slider .slick-slide {height:auto;}
+.lk-home-products-slider .slick-slide > div {height:100%;}
+.lk-home-products-slider .lk-product-slide {height:100%;}
+/* Product detail — preserve original green base theme; blue hover requested. */
+.leatherket-purchase-buttons .leatherket-buy-now:hover,
+.leatherket-purchase-buttons .leatherket-buy-now:focus {background:#2563eb !important;border-color:#2563eb !important;color:#fff !important;}
+.leatherket-purchase-buttons .leatherket-free-delivery-order {background:#19a047;border:1px solid #19a047;color:#fff;}
+.leatherket-purchase-buttons .leatherket-free-delivery-order:hover,
+.leatherket-purchase-buttons .leatherket-free-delivery-order:focus {background:#136f38;border-color:#136f38;color:#fff;}
+@media(max-width:991.98px){.lk-products-grid{grid-template-columns:repeat(3,minmax(0,1fr));}.lk-related-product{flex-basis:calc((100% - 40px)/3);}}
+@media(max-width:767.98px){.lk-products-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px;}.lk-related-product{flex-basis:calc((100% - 12px)/2);}.lk-product-card-image{aspect-ratio:3 / 4;}.lk-product-card-name{font-size:14px;}.lk-product-card-action{font-size:12px;padding:8px 6px;min-height:48px;}.lk-product-card-details{min-height:86px;}.lk-product-card-image .leatherket-product-badge{font-size:11px !important;padding:6px 7px;top:7px !important;left:7px !important;max-width:calc(100% - 14px);}}
+@media(max-width:350px){.lk-products-grid{gap:15px 8px;}.lk-product-card-action{font-size:11px;}}

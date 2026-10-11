@@ -1,5 +1,4 @@
 <?php $__env->startSection('content'); ?>
-
 	<section class="section-name bg mt-2">
 		<div class="container">
 			<div class="card">
@@ -134,7 +133,30 @@
                                 <div class="single-product-buttons leatherket-purchase-buttons">
                                     <button type="button" <?php echo e($product->isSoldOut() ? 'disabled' : ''); ?> class="btn btn-primary leatherket-add-cart" onclick="addToCart(<?php echo e($product->id); ?>)">Add to cart</button>
                                     <button type="button" <?php echo e($product->isSoldOut() ? 'disabled' : ''); ?> class="btn btn-outline-primary leatherket-buy-now" onclick="buyNow(<?php echo e($product->id); ?>)">Buy it now</button>
+                                    <?php if((int) $product->isFreeDelivery === 1): ?>
+                                        <button type="button" <?php echo e($product->isSoldOut() ? 'disabled' : ''); ?>
+
+                                                class="btn leatherket-free-delivery-order"
+                                                onclick="buyNow(<?php echo e($product->id); ?>)">
+                                            ফ্রী ডেলিভারিতে অর্ডার করুন
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
+                                    <?php
+                                        $waDigits = preg_replace('/\D+/', '', (string) Settings::get('whatsapp_number'));
+                                        if (strlen($waDigits) === 11 && substr($waDigits, 0, 1) === '0') $waDigits = '88'.$waDigits;
+                                        $callNumber = trim((string) Settings::get('phone_number'));
+                                    ?>
+                                    <?php if((Settings::get('lk_whatsapp_button_enabled') === '1' && $waDigits) || (Settings::get('lk_call_button_enabled') === '1' && $callNumber)): ?>
+                                        <div class="lk-contact-actions">
+                                            <?php if(Settings::get('lk_whatsapp_button_enabled') === '1' && $waDigits): ?>
+                                                <a class="lk-contact-action" href="<?php echo e('https://wa.me/'.$waDigits.'?text='.rawurlencode('I want to know about '.$product->productName.' - '.url('/product/'.$product->productSlug))); ?>" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+                                            <?php endif; ?>
+                                            <?php if(Settings::get('lk_call_button_enabled') === '1' && $callNumber): ?>
+                                                <a class="lk-contact-action" href="tel:<?php echo e(preg_replace('/[^0-9+]/', '', $callNumber)); ?>"><i class="fa fa-phone" aria-hidden="true"></i> Call Now</a>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
                             </div>
                             <div class="col-sm-12 col-md-12  col-xs-12" style="padding: 0">
                                 <?php echo Settings::get('product_bottom_text'); ?>
@@ -192,29 +214,10 @@
             <header class="section-heading">
                 <h4 class="section-title">Related products</h4>
             </header>
-            <div class="row no-gutters">
+            <div class="lk-related-products" aria-label="Related products; scroll horizontally">
                 <?php $__currentLoopData = $relatedProducts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $prod): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="col-md-3 col-6">
-                        <div href="#" class="card card-product-grid product-box-2">
-                            <a href="<?php echo e(url('/product/'.$prod->id)); ?>" class="img-wrap">
-                                <img class="img-fit lazyload"   src="<?php echo e(\App\Support\PublicMedia::url('product/thumbnail/'.$prod->productImage)); ?>" data-src="<?php echo e(\App\Support\PublicMedia::url('product/thumbnail/'.$prod->productImage)); ?>" alt="<?php echo e($prod->productName); ?>">
-                                <?php echo $__env->make('website.partials.product_badge', ['product' => $prod], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                            </a>
-                            <figcaption class="info-wrap">
-                                <a href="<?php echo e(url('/product/'.$prod->id)); ?>" class="title text-truncate"><?php echo e($prod->productName); ?></a>
-                                <div class="price mt-1 text-center">
-                                    <?php echo $prod->htmlPrice(); ?>
-
-                                </div>
-                            </figcaption>
-                            <?php if($prod->colors->isNotEmpty() || $prod->sizes->isNotEmpty() || $prod->options->isNotEmpty()): ?>
-                                <a href="<?php echo e(url('/product/'.$prod->productSlug)); ?>" class="btn btn-success btn-sm btn-block <?php echo e($prod->isSoldOut() ? 'disabled' : ''); ?>"> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
-                            <?php else: ?>
-                            <button <?php echo e($prod->isSoldOut() ? 'disabled' : ''); ?> class="btn btn-success btn-sm btn-block" onclick="addToCart(<?php echo e($prod->id); ?>)">
-                                <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
-                            </button>
-                            <?php endif; ?>
-                        </div>
+                    <div class="lk-related-product">
+                        <?php echo $__env->make('website.partials.product_card', ['product' => $prod], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>

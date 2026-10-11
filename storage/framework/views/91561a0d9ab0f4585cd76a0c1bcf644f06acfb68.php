@@ -25,6 +25,9 @@
     <link href="<?php echo e(asset('assets/css/leatherket-typography.css')); ?>?v=1" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(asset('assets/css/leatherket-commerce.css')); ?>?v=image-badge-fix-3" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(asset('assets/css/leatherket-desktop-header.css')); ?>?v=2" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-collections.css')); ?>?v=1">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-product-cards.css')); ?>?v=2">
+    <link href="<?php echo e(asset('assets/css/leatherket-font-sizes.css')); ?>?v=20261011" rel="stylesheet" type="text/css" />
     <?php echo Settings::get('facebook_pixels'); ?>
 
     <!-- CSS for scrolling ticker -->
@@ -286,7 +289,7 @@ unset($__errorArgs, $__bag); ?>
             <span class="leatherket-footer-rule" aria-hidden="true"></span>
         </div>
         <div class="leatherket-footer-bottom">
-            <span>Copyright &copy; <?php echo e(date('Y')); ?>.</span>
+            <span><?php echo e(trim((string) Settings::get('footer_copyright_text')) ?: ('Copyright © ' . date('Y') . '. Leatherket')); ?></span>
             <a href="#leatherket-footer" class="leatherket-back-top" aria-label="Back to top"><i class="fa fa-angle-up" aria-hidden="true"></i></a>
         </div>
         <div class="leatherket-payment-strip"><img src="<?php echo e(asset('assets/images/ssl.png')); ?>" alt="Supported payment providers" loading="lazy"></div>
@@ -530,6 +533,6 @@ unset($__errorArgs, $__bag); ?>
     }
 </script>
 <?php echo $__env->yieldPushContent('js'); ?>
+<script src="<?php echo e(asset('assets/js/leatherket-collections.js')); ?>?v=1"></script>
 </body>
-</html>
-<?php /**PATH D:\public_html leatherket\resources\views/website/layout.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\public_html leatherket\resources\views/website/layout.blade.php ENDPATH**/ ?>

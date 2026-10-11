@@ -19530,3 +19530,172 @@ Did you mean one of these?
 [stacktrace]
 #0 {main}
 "} 
+[2026-10-11 12:50:04] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:50:28] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:56:18] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:57:29] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 13:01:48] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 13:06:53] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 13:08:00] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 13:08:06] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:27:55] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:29:39] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:30:59] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:31:04] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:31:27] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:32:13] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:34:28] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:34:35] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:34:51] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:34:56] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:35:01] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:35:06] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:35:35] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:35:41] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:36:23] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:36:53] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:37:51] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:40:20] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:40:32] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:42:54] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:43:01] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:43:13] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:43:17] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:45:59] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:46:38] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:46:45] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:46:47] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 20:47:15] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 21:57:57] local.ERROR: require_once(D:\public_html leatherket/database/migrations/2026_10_11_220000_add_stock_deducted_to_orders_table.php): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): require_once(D:\\public_html leatherket/database/migrations/2026_10_11_220000_add_stock_deducted_to_orders_table.php): Failed to open stream: No such file or directory at D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php:111)
+[stacktrace]
+#0 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(111): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'require_once(D:...', 'D:\\\\public_html ...', 111)
+#1 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(111): require_once()
+#2 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(482): Illuminate\\Filesystem\\Filesystem->requireOnce('D:\\\\public_html ...')
+#3 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(103): Illuminate\\Database\\Migrations\\Migrator->requireFiles(Array)
+#4 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(70): Illuminate\\Database\\Migrations\\Migrator->run(Array, Array)
+#5 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(541): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::handle():63}()
+#6 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(63): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#7 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#8 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(37): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#9 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#10 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#11 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(596): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#12 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(134): Illuminate\\Container\\Container->call(Array)
+#13 D:\\public_html leatherket\\vendor\\symfony\\console\\Command\\Command.php(298): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#14 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(120): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#15 D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php(1040): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#16 D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php(301): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php(171): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Application.php(93): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(129): Illuminate\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#20 D:\\public_html leatherket\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#21 {main}
+"} 

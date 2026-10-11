@@ -85,12 +85,13 @@
         
             </div>
         </div>
+        @include('website.partials.shop_by_collection')
         @php
             use App\Category;
             $menus = Menu::getByName('Category Menu');
         @endphp
         
-        @if($menus)
+        @if(Settings::get('lk_collection_enabled') !== '1' && $menus)
         <div class="category-slider">
         
             @foreach($menus as $menu)
@@ -154,10 +155,10 @@
                                     </div>
                                 </figcaption>
                                 @if ($product->colors->isNotEmpty() || $product->sizes->isNotEmpty())
-                                    <a href="{{ url('/product/'.$product->productSlug)  }}" class="btn btn-success btn-sm btn-block"> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
+                                    <a href="{{ url('/product/'.$product->productSlug)  }}" class="btn btn-success btn-sm btn-block"> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> {{ (int) $product->isFreeDelivery === 1 ? 'ফ্রী ডেলিভারিতে অর্ডার করুন' : 'অর্ডার করুন' }}</a>
                                 @else
                                 <button class="btn btn-success btn-sm btn-block" onclick="buyNow({{ $product->id }})">
-                                    <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
+                                    <i class="fa fa-shopping-cart"  aria-hidden="true"></i> {{ (int) $product->isFreeDelivery === 1 ? 'ফ্রী ডেলিভারিতে অর্ডার করুন' : 'অর্ডার করুন' }}
                                 </button>
                                 @endif
                             </div>
@@ -181,35 +182,11 @@
                         <h4 class="section-title">No Category Available</h4>
                     @endif
                 </header><!-- sect-heading -->
-                <div class="row no-gutters popular-product-slider">
-                    <!-- Check if category and products exist -->
+                <div class="popular-product-slider lk-home-products-slider" aria-label="Products in collection">
                     @if($section->category && $section->category->products->isNotEmpty())
                         @foreach($section->category->products->sortBy('productCode')->take($section->max) as $product)
-                            <div>
-                                <div class="card card-product-grid product-box-2">
-                                    <a href="{{ url('/product/'.$product->productSlug) }}" class="img-wrap">
-                                        <!-- Check if product image exists -->
-                                        <img class="img-fit" src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.($product->productImage ?? 'default-image.jpg')) }}" alt="{{ $product->productName ?? 'Product Name' }}">
-                                        @include('website.partials.product_badge', ['product' => $product])
-                                    </a>
-                                    <figcaption class="info-wrap">
-                                        <!-- Check if product name exists -->
-                                        <a href="{{ url('/product/'.$product->productSlug) }}" class="title text-truncate">{{ $product->productName ?? 'Product Name' }}</a>
-                                        <div class="price mt-1 text-center">
-                                            <!-- Check if htmlPrice() method exists -->
-                                            {!! $product->htmlPrice() ?? 'Price Not Available' !!}
-                                        </div>
-                                    </figcaption>
-                                    <!-- Check for colors or sizes availability before showing buttons -->
-                                    @if ($product->colors->isNotEmpty() || $product->sizes->isNotEmpty() || $product->options->isNotEmpty())
-                                        <a href="{{ url('/product/'.$product->productSlug) }}" class="btn btn-dark btn-sm btn-block <?php echo ($product->isSoldOut())?'disabled':''; ?> "> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
-                                    @else
-                                        <!-- Check if product can be ordered -->
-                                        <button <?php echo ($product->isSoldOut())?'disabled':''; ?> class="btn btn-dark btn-sm btn-block" onclick="buyNow({{ $product->id }})">
-                                            <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
-                                        </button>
-                                    @endif
-                                </div>
+                            <div class="lk-product-slide">
+                                @include('website.partials.product_card', ['product' => $product])
                             </div>
                         @endforeach
                     @else
@@ -226,7 +203,7 @@
                 <a href="{{ url('/shop') }}" class="btn btn-info btn-sm float-right rounded">View More</a>
                 <h4 class="section-title">Recommended For You</h4>
             </header>
-            <div class="row no-gutters" id="loadProducts">
+            <div class="lk-products-grid" id="loadProducts">
 {{--                @foreach($otherProducts as $product)--}}
 {{--                    <div class="col-md-2 col-6">--}}
 {{--                        <div href="#" class="card card-product-grid product-box-2">--}}
@@ -240,7 +217,7 @@
 {{--                                </div>--}}
 {{--                            </figcaption>--}}
 {{--                            <button class="btn btn-dark btn-sm btn-block" onclick="buyNow({{ $product->id }})">--}}
-{{--                                <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন--}}
+{{--                                <i class="fa fa-shopping-cart"  aria-hidden="true"></i> {{ (int) $product->isFreeDelivery === 1 ? 'ফ্রী ডেলিভারিতে অর্ডার করুন' : 'অর্ডার করুন' }}--}}
 {{--                            </button>--}}
 {{--                        </div>--}}
 {{--                    </div>--}}

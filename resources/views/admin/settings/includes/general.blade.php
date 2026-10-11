@@ -48,6 +48,18 @@
                     value="{{ Settings::get('whatsapp_number') }}"
                 />
             </div>
+            <div class="form-group"><label>WhatsApp Button on Product Page</label>
+                <select class="form-control" name="lk_whatsapp_button_enabled">
+                    <option value="0" {{ Settings::get('lk_whatsapp_button_enabled') !== '1' ? 'selected' : '' }}>Off</option>
+                    <option value="1" {{ Settings::get('lk_whatsapp_button_enabled') === '1' ? 'selected' : '' }}>On</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Call Button on Product Page</label>
+                <select class="form-control" name="lk_call_button_enabled">
+                    <option value="0" {{ Settings::get('lk_call_button_enabled') !== '1' ? 'selected' : '' }}>Off</option>
+                    <option value="1" {{ Settings::get('lk_call_button_enabled') === '1' ? 'selected' : '' }}>On</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label class="control-label" for="home_page_all_products">Home Page All Products</label>
                 <select class="form-control" name="home_page_all_products" id="home_page_all_products">

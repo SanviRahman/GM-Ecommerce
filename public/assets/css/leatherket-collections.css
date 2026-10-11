@@ -1,0 +1,33 @@
+/* Leatherket collection redesign, isolated from legacy menu/cart */
+html, body { background-color: #f3f0ec; }
+body .bg, body .section-name.bg, body .section-main.bg { background-color: #f3f0ec !important; }
+.lk-collections { background: #f3f0ec; color: #1d1714; padding: 42px 0 45px; }
+.lk-collections-inner { width: min(100% - 36px, 1370px); margin: 0 auto; }
+.lk-collections-heading { text-align: center; margin: 0 auto 46px; }
+.lk-collections-heading small { color: #ac8661; letter-spacing: .28em; font-size: 10px; }
+.lk-collections-heading h2 { margin: 12px 0; font-weight: 400; font-size: clamp(30px,3.5vw,48px); }
+.lk-collections-heading p { font-size: 15px; line-height: 1.65; }
+.lk-collections-track { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; padding-bottom: 5px; }
+.lk-collections-track::-webkit-scrollbar { display:none; }
+.lk-collection-item { flex: 0 0 calc((100% - 60px)/4); min-width: 0; scroll-snap-align: start; text-decoration: none !important; color: #fff !important; }
+.lk-collection-image { height: clamp(280px,29vw,430px); overflow: hidden; position: relative; background: #6e5446; }
+.lk-collection-image img { display:block; width:100%;height:100%;object-fit:cover;transition:transform .35s ease; }
+.lk-collection-item:hover img { transform: scale(1.035); }
+.lk-collection-image::after { content:''; position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.74));pointer-events:none; }
+.lk-collection-overlay { position:absolute;z-index:1;left:24px;right:20px;bottom:23px; }
+.lk-collection-overlay span { font-size:10px;letter-spacing:.18em; }
+.lk-collection-overlay h3 { margin:8px 0 0;font-weight:400;font-size:22px;color:#fff; }
+.lk-collection-placeholder { padding:30px; height:100%;display:grid;place-items:center;color:#fff;font-size:24px; }
+.lk-collections-controls { display:flex;justify-content:flex-end;gap:7px;margin:14px 0 0; }
+.lk-scroll-button { cursor:pointer;border:1px solid #bba58f;background:transparent;color:#201812;width:42px;height:42px;font-size:20px; }
+.lk-collections-description { border:1px solid #d7c4ae; margin:46px auto 0;max-width:920px;text-align:center;padding:38px clamp(22px,5vw,75px); }
+.lk-collections-description h3 {font-size:clamp(24px,3vw,36px);font-weight:400;margin:0 0 15px;}
+.lk-collections-description p {font-size:16px;line-height:1.8;white-space:pre-line;margin:0;}
+.lk-contact-actions {display:flex;flex-direction:column;gap:12px;margin-top:12px;}
+.lk-contact-action {display:flex;align-items:center;justify-content:center;gap:10px;min-height:54px;border:1px solid var(--lk-accent,#19a047);color:var(--lk-accent,#19a047);text-decoration:none !important;font-size:16px;}
+.lk-contact-action:hover {background:var(--lk-accent,#19a047);color:white;}
+@media(max-width:991.98px){.lk-collection-item { flex-basis:calc((100% - 20px)/2.2);}.lk-collection-image{height:330px}}
+@media(max-width:575.98px){.lk-collections{padding:34px 0}.lk-collections-inner{width:calc(100% - 28px)}.lk-collections-heading{margin-bottom:28px}.lk-collection-item{flex-basis:79%;}.lk-collection-image{height:340px}.lk-collections-description{margin-top:25px;padding:30px 20px}}
+
+/* Shared page background; no global card padding/border overrides */
+body .leatherket-store-footer { background-color: #f3f0ec; }

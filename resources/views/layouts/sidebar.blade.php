@@ -378,8 +378,6 @@
         </div>
         <!-- End Sidebar -->
         <div class="clearfix"></div>
-
     </div>
     <!-- Sidebar -left -->
-
 </div>

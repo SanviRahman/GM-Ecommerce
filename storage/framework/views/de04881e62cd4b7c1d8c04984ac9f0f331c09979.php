@@ -85,12 +85,13 @@
         
             </div>
         </div>
+        <?php echo $__env->make('website.partials.shop_by_collection', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         <?php
             use App\Category;
             $menus = Menu::getByName('Category Menu');
         ?>
         
-        <?php if($menus): ?>
+        <?php if(Settings::get('lk_collection_enabled') !== '1' && $menus): ?>
         <div class="category-slider">
         
             <?php $__currentLoopData = $menus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -144,36 +145,11 @@
                         <h4 class="section-title">No Category Available</h4>
                     <?php endif; ?>
                 </header><!-- sect-heading -->
-                <div class="row no-gutters popular-product-slider">
-                    <!-- Check if category and products exist -->
+                <div class="popular-product-slider lk-home-products-slider" aria-label="Products in collection">
                     <?php if($section->category && $section->category->products->isNotEmpty()): ?>
                         <?php $__currentLoopData = $section->category->products->sortBy('productCode')->take($section->max); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <div>
-                                <div class="card card-product-grid product-box-2">
-                                    <a href="<?php echo e(url('/product/'.$product->productSlug)); ?>" class="img-wrap">
-                                        <!-- Check if product image exists -->
-                                        <img class="img-fit" src="<?php echo e(\App\Support\PublicMedia::url('product/thumbnail/'.($product->productImage ?? 'default-image.jpg'))); ?>" alt="<?php echo e($product->productName ?? 'Product Name'); ?>">
-                                        <?php echo $__env->make('website.partials.product_badge', ['product' => $product], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                    </a>
-                                    <figcaption class="info-wrap">
-                                        <!-- Check if product name exists -->
-                                        <a href="<?php echo e(url('/product/'.$product->productSlug)); ?>" class="title text-truncate"><?php echo e($product->productName ?? 'Product Name'); ?></a>
-                                        <div class="price mt-1 text-center">
-                                            <!-- Check if htmlPrice() method exists -->
-                                            <?php echo $product->htmlPrice() ?? 'Price Not Available'; ?>
-
-                                        </div>
-                                    </figcaption>
-                                    <!-- Check for colors or sizes availability before showing buttons -->
-                                    <?php if($product->colors->isNotEmpty() || $product->sizes->isNotEmpty() || $product->options->isNotEmpty()): ?>
-                                        <a href="<?php echo e(url('/product/'.$product->productSlug)); ?>" class="btn btn-dark btn-sm btn-block <?php echo ($product->isSoldOut())?'disabled':''; ?> "> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
-                                    <?php else: ?>
-                                        <!-- Check if product can be ordered -->
-                                        <button <?php echo ($product->isSoldOut())?'disabled':''; ?> class="btn btn-dark btn-sm btn-block" onclick="buyNow(<?php echo e($product->id); ?>)">
-                                            <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
-                                        </button>
-                                    <?php endif; ?>
-                                </div>
+                            <div class="lk-product-slide">
+                                <?php echo $__env->make('website.partials.product_card', ['product' => $product], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                             </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     <?php else: ?>
@@ -190,7 +166,7 @@
                 <a href="<?php echo e(url('/shop')); ?>" class="btn btn-info btn-sm float-right rounded">View More</a>
                 <h4 class="section-title">Recommended For You</h4>
             </header>
-            <div class="row no-gutters" id="loadProducts">
+            <div class="lk-products-grid" id="loadProducts">
 
 
 

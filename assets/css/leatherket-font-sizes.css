@@ -1,0 +1,113 @@
+/*
+ * LEATHERKET — shared Admin / Storefront type scale
+ * Reference: original Admin Bootstrap theme uses .875rem (14px) body/form text.
+ * Keep existing Palatino Linotype font stack, component geometry and icon fonts.
+ * Use px rather than changing html font-size: Bootstrap rem spacing must stay intact.
+ */
+:root {
+    --lk-type-body: 14px;
+    --lk-type-h1: 36px;
+    --lk-type-h2: 30px;
+    --lk-type-h3: 24px;
+    --lk-type-h4: 18px;
+    --lk-type-h5: 15px;
+    --lk-type-h6: 12px;
+}
+
+html body {
+    font-size: var(--lk-type-body);
+    line-height: 1.5;
+}
+
+/* Primary reading, navigation, tables and form controls. */
+body p,
+body label,
+body .form-control,
+body .custom-select,
+body .select2-container,
+body .select2-container .select2-selection__rendered,
+body .dataTables_wrapper,
+body .dataTables_wrapper input,
+body .dataTables_wrapper select,
+body .table,
+body .table th,
+body .table td,
+body .btn,
+body .dropdown-item,
+body .nav-link,
+body .breadcrumb,
+body .pagination,
+body .alert,
+body input:not([type="checkbox"]):not([type="radio"]),
+body textarea,
+body select,
+body .topbar-menu,
+body #sidebar-menu a,
+body .page-title-box .breadcrumb {
+    font-size: var(--lk-type-body);
+}
+
+/* Preserve the six-level heading hierarchy of the original Admin theme. */
+body h1, body .h1 { font-size: var(--lk-type-h1); }
+body h2, body .h2 { font-size: var(--lk-type-h2); }
+body h3, body .h3 { font-size: var(--lk-type-h3); }
+body h4, body .h4 { font-size: var(--lk-type-h4); }
+body h5, body .h5 { font-size: var(--lk-type-h5); }
+body h6, body .h6 { font-size: var(--lk-type-h6); }
+
+/* Admin dashboard/card captions and DataTables: match its original 14px text. */
+body .content-page .card-body,
+body .content-page .tile-body,
+body .content-page .form-group,
+body .content-page .dataTables_info,
+body .content-page .dataTables_paginate,
+body .content-page .dataTables_length,
+body .content-page .dataTables_filter {
+    font-size: var(--lk-type-body);
+}
+
+/* Storefront previously used a 16px Bootstrap body scale. Align its ordinary
+   text without overriding the intentionally prominent product prices/badges. */
+body .section-header .header-main .form-control,
+body .section-header .header-main .btn,
+body .leatherket-desktop-search input,
+body .lk-product-card-name,
+body .lk-product-card-action,
+body .lk-collections-heading p,
+body .lk-collections-description p,
+body .leatherket-newsletter p,
+body .leatherket-newsletter-form input[type="email"],
+body .leatherket-newsletter-form .btn,
+body .leatherket-quick-links nav a,
+body .leatherket-contact-details,
+body .leatherket-purchase-buttons button,
+body .leatherket-quantity-label,
+body .lk-contact-action {
+    font-size: var(--lk-type-body);
+}
+
+/* Heading text inside newly-added storefront sections. */
+body .lk-collections-heading h2,
+body .leatherket-newsletter h2 { font-size: var(--lk-type-h2); }
+body .lk-collections-description h3 { font-size: var(--lk-type-h3); }
+body .leatherket-quick-links summary { font-size: var(--lk-type-h4); }
+
+/* Do not alter the reference-approved 24px fullscreen Mobile Drawer labels. */
+body .mobile-side-menu .side-menu-list ul > li > a { font-size: 24px; }
+
+/* Small screens: keep long Bangla order labels within two-column cards. */
+@media (max-width: 575.98px) {
+    body .lk-product-card-action { font-size: 13px; }
+    body .lk-product-card-name { font-size: 14px; }
+    body .lk-collections-heading h2 { font-size: 26px; }
+}
+
+/* Keep original Bootstrap compact/large controls appropriately scaled. */
+body small, body .small,
+body .btn-sm,
+body .form-control-sm,
+body .custom-select-sm { font-size: 12px; }
+body .btn-lg,
+body .form-control-lg,
+body .custom-select-lg { font-size: 18px; }
+/* Badges and icon glyphs retain their own component typography. */

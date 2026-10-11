@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Controllers;
@@ -337,112 +336,123 @@ class CartController extends Controller
 
     public function placeOrder(Request $request)
     {
-        
+        $request->validate([
+            'customerPhone' => ['required', 'regex:/^01[3-9][0-9]{8}$/'],
+            'customerName' => 'nullable|string|max:150',
+            'customerAddress' => 'nullable|string|max:1000',
+            'selectCourier' => 'required|numeric|min:0',
+        ]);
+
+        if (Cart::count() < 1) {
+            return response()->json(['status' => 'error', 'message' => 'Your cart is empty.'], 422);
+        }
+
         $sessionId = session('checkout_session');
-     
         $ipAddress = $request->ip();
-        
         $blockHours = (float) Setting::get('order_blocking_hour');
-        
-        $order = Order::where('session_id', $sessionId)
-            ->where('status', '!=', 'Incomplete')
-            ->latest()
-            ->first();
-            
-        if ($blockHours > 0 && $order) {
-            $nextAllowedTime = $order->created_at
-                ->copy()
-                ->addMinutes($blockHours * 60); // supports decimal hours
-        
-            if (now()->lt($nextAllowedTime)) {
-                return response()->json([
-                    'status' => 'blocked',
-                    'message' => 'You already placed an order recently. Please try later.'
-                ], 201);
-            }
-        }    
-        
-        if(Ip::where('ip_address',$ipAddress)->first()){
-            $response['status'] = 'blocked';
-            $response['message'] = 'You Can not place any order at this moment';
-            return response()->json($response, 201);
+        $recentOrder = Order::where('session_id', $sessionId)
+            ->where('status', '!=', 'Incomplete')->latest()->first();
+
+        if ($blockHours > 0 && $recentOrder && now()->lt($recentOrder->created_at->copy()->addMinutes($blockHours * 60))) {
+            return response()->json(['status' => 'blocked', 'message' => 'You already placed an order recently. Please try later.'], 201);
         }
-        $user = DB::table('users')->where([
-            ['status', 'like', 'Active'],
-            ['role_id', '=', '3']
-        ])->inRandomOrder()->first();
+        if (Ip::where('ip_address', $ipAddress)->exists()) {
+            return response()->json(['status' => 'blocked', 'message' => 'You Can not place any order at this moment'], 201);
+        }
+
+        $user = DB::table('users')->where('status', 'Active')
+            ->where('role_id', 3)->inRandomOrder()->first();
+        $user = $user ?: User::find(1);
         if (!$user) {
-            $user = User::find(1);
+            return response()->json(['status' => 'error', 'message' => 'Order processing is unavailable.'], 422);
         }
-        $freeDeliveryDiscount = 0;
-        foreach (Cart::content() as $item) {
-            if( $item->model->isFreeDelivery) {
-                $freeDeliveryDiscount = $request->selectCourier ; // discount equals delivery charge
-                break; // only need to apply once
-            }
-        }
-        $tempOrder = Order::orderBy('id','desc')->where('session_id',$sessionId)->where('status','Incomplete')->first();
-        // Campaign checkout can submit before the asynchronous incomplete-order
-        // draft has been created. Only delete the draft when it actually exists.
-        if ($tempOrder) {
-            OrderProducts::where('order_id', $tempOrder->id)->forceDelete();
-            $tempOrder->forceDelete();
-        }
-        
-        $order = new Order();
-        $order->ip_address = $ipAddress;
-        $order->invoiceID = $this->uniqueID();
-        $order->store_id = 1;
-        $order->session_id = $sessionId;
-        $order->deliveryCharge = $request->selectCourier - $freeDeliveryDiscount;
-        $order->orderDate = date('d-m-Y, h:i A');
-        $order->subTotal = Cart::subtotal('0','','')+$request->selectCourier- $freeDeliveryDiscount;
-        $order->user_id = $user->id;
-        $order->save();
-        if($order->id){
-            $customer = new Customer();
-            $customer->order_id = $order->id;
-            $customer->customerName = $request->customerName??'-';
-            $customer->customerPhone = $request->customerPhone;
-            $customer->customerAddress = $request->customerAddress??'-';
-            $customer->save();
-            foreach(Cart::content() as $item) {
 
-                $orderProducts = new OrderProducts();
-                $orderProducts->order_id = $order->id;
-                $orderProducts->product_id = $item->model->id;
-                $orderProducts->productCode = $item->model->productCode;
-                $orderProducts->productName = $item->model->productName;
-                $orderProducts->quantity = $item->qty;
-                $orderProducts->productPrice = $item->price;
-                // Include colorName and sizeName from the cart options
-                $orderProducts->colorName = $item->options->colorName ?? null;
-                $orderProducts->sizeName = $item->options->sizeName ?? null;
-                $orderProducts->optionName = $item->options->optionName ?? null;
-                $orderProducts->save();
+        // Only clear the cart AFTER the database transaction commits.
+        // Stock check, order rows, customer, and reservation succeed or fail together.
+        try {
+            $orderId = DB::transaction(function () use ($request, $sessionId, $ipAddress, $user) {
+                $cartItems = Cart::content();
+                $freeDelivery = false;
+                foreach ($cartItems as $item) {
+                    // Resolve the live product for the final inventory decision.
+                    $product = Product::find($item->id);
+                    if (!$product || (int) $product->isStockOut === 1) {
+                        throw new \RuntimeException('A product in your cart is no longer available.');
+                    }
+                    if ((int) $item->qty < 1) {
+                        throw new \RuntimeException('Invalid cart quantity.');
+                    }
+                    if ((int) $product->isFreeDelivery === 1) {
+                        $freeDelivery = true;
+                    }
+                }
 
-                $response['link'] = url('/checkout/order-received/'.$order->id);
-                $response['status'] = 'success';
-                $response['message'] = 'Successfully Placed Order';
-            }
-            $notification = new Notification();
-            $notification->order_id = $order->id;
-            $notification->notificaton = '#SD' . $order->id . ' Order Has Been Created by ' . $user->name;
-            $notification->user_id = $user->id;
-            $notification->save();
-        } else{
-            Customer::where('order_id', '=', $order->id)->delete();
-            OrderProducts::where('order_id', '=', $order->id)->delete();
-            Notification::where('order_id', '=', $order->id)->delete();
-            Order::where('id', '=', $order->id)->delete();
-            $response['status'] = 'failed';
-            $response['message'] = 'Unsuccessful to Add Order';
-            $response['status'] = 'failed';
-            $response['message'] = 'Unsuccessful to Placed Order';
+                // Draft orders never reserve stock. Delete drafts only inside the transaction.
+                $draftOrders = Order::where('session_id', $sessionId)
+                    ->where('status', 'Incomplete')->lockForUpdate()->get();
+                foreach ($draftOrders as $draft) {
+                    OrderProducts::where('order_id', $draft->id)->forceDelete();
+                    Customer::where('order_id', $draft->id)->forceDelete();
+                    $draft->forceDelete();
+                }
+
+                $deliveryCharge = $freeDelivery ? 0 : (float) $request->selectCourier;
+                $order = new Order();
+                $order->ip_address = $ipAddress;
+                $order->invoiceID = $this->uniqueID();
+                $order->store_id = 1;
+                $order->session_id = $sessionId;
+                $order->status = 'Processing';
+                $order->deliveryCharge = $deliveryCharge;
+                $order->orderDate = date('d-m-Y, h:i A');
+                $order->subTotal = (float) Cart::subtotal(2, '.', '') + $deliveryCharge;
+                $order->user_id = $user->id;
+                $order->save();
+
+                $customer = new Customer();
+                $customer->order_id = $order->id;
+                $customer->customerName = $request->customerName ?: '-';
+                $customer->customerPhone = $request->customerPhone;
+                $customer->customerAddress = $request->customerAddress ?: '-';
+                $customer->save();
+
+                foreach ($cartItems as $item) {
+                    $product = Product::findOrFail($item->id);
+                    $line = new OrderProducts();
+                    $line->order_id = $order->id;
+                    $line->product_id = $product->id;
+                    $line->productCode = $product->productCode;
+                    $line->productName = $product->productName;
+                    $line->quantity = (int) $item->qty;
+                    $line->productPrice = $item->price;
+                    $line->colorName = $item->options->colorName ?? null;
+                    $line->sizeName = $item->options->sizeName ?? null;
+                    $line->optionName = $item->options->optionName ?? null;
+                    $line->save();
+                }
+
+                app(\App\Services\OrderStockService::class)->reserve($order);
+
+                $notification = new Notification();
+                $notification->order_id = $order->id;
+                $notification->notificaton = '#SD' . $order->id . ' Order Has Been Created by ' . $user->name;
+                $notification->user_id = $user->id;
+                $notification->save();
+
+                return $order->id;
+            }, 3);
+        } catch (\RuntimeException $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 422);
         }
+
         Cart::destroy();
-        return response()->json($response, 201);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Successfully Placed Order',
+            'link' => url('/checkout/order-received/' . $orderId),
+        ], 201);
     }
+
     public function saveOrderInput(Request $request){
         
         $phone = $request->customerPhone;

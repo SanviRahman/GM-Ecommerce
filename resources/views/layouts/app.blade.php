@@ -34,6 +34,7 @@
     <link href="{{asset('css/style.css')}}" rel="stylesheet" type="text/css" />
     <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
     <link href="{{ asset('assets/css/leatherket-typography.css') }}?v=1" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/leatherket-font-sizes.css') }}?v=20261011" rel="stylesheet" type="text/css" />
     @livewireStyles
 </head>
 

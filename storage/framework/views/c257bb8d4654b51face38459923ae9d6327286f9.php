@@ -1,5 +1,4 @@
 <?php $__env->startSection('content'); ?>
-
     <section class="section-name bg padding-y-sm">
         <div class="container">
             <header class="section-heading">
@@ -21,10 +20,11 @@
                                 </div>
                             </figcaption>
                             <?php if($product->colors->isNotEmpty() || $product->sizes->isNotEmpty() || $product->options->isNotEmpty()): ?>
-                                <a  href="<?php echo e(url('/product/'.$product->productSlug)); ?>" class="btn btn-dark btn-sm btn-block <?php echo ($product->isSoldOut())?'disabled':''; ?> "> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
+                                <a  href="<?php echo e(url('/product/'.$product->productSlug)); ?>" class="btn btn-dark btn-sm btn-block <?php echo ($product->isSoldOut())?'disabled':''; ?> "> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> <?php echo e((int) $product->isFreeDelivery === 1 ? 'ফ্রী ডেলিভারিতে অর্ডার করুন' : 'অর্ডার করুন'); ?></a>
                             <?php else: ?>
                             <button <?php echo ($product->isSoldOut())?'disabled':''; ?>  class="btn btn-dark btn-sm btn-block" onclick="addToCart(<?php echo e($product->id); ?>)">
-                                <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
+                                <i class="fa fa-shopping-cart"  aria-hidden="true"></i> <?php echo e((int) $product->isFreeDelivery === 1 ? 'ফ্রী ডেলিভারিতে অর্ডার করুন' : 'অর্ডার করুন'); ?>
+
                             </button>
                             <?php endif; ?>
                         </div>
