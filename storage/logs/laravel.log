@@ -19502,3 +19502,31 @@ Did you mean one of these?
 [stacktrace]
 #0 {main}
 "} 
+[2026-10-11 12:33:37] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:33:46] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:33:52] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:33:59] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:34:10] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:34:34] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 
+[2026-10-11 12:34:50] local.ERROR: Namespace declaration statement has to be the very first statement or after any declare call in the script {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Namespace declaration statement has to be the very first statement or after any declare call in the script at D:\\public_html leatherket\\app\\Http\\Controllers\\CartController.php:4)
+[stacktrace]
+#0 {main}
+"} 

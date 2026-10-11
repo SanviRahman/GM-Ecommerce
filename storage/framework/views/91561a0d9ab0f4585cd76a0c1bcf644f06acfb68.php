@@ -24,7 +24,7 @@
     <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
     <link href="<?php echo e(asset('assets/css/leatherket-typography.css')); ?>?v=1" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(asset('assets/css/leatherket-commerce.css')); ?>?v=image-badge-fix-3" rel="stylesheet" type="text/css" />
-    <link href="<?php echo e(asset('assets/css/leatherket-desktop-header.css')); ?>?v=1" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/leatherket-desktop-header.css')); ?>?v=2" rel="stylesheet" type="text/css" />
     <?php echo Settings::get('facebook_pixels'); ?>
 
     <!-- CSS for scrolling ticker -->
@@ -111,26 +111,19 @@
                     </a> <!-- brand-wrap.// -->
                 </div>
                 <div class="col-lg-9 col-md-5 col-sm-12 search-box">
-                    <button type="button" class="leatherket-desktop-search-trigger d-none d-lg-inline-flex"
-                            aria-label="Search products" aria-expanded="false" aria-controls="leatherket-desktop-search-form">
-                        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
-                            <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                            <path d="M15.5 15.5L21 21" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                        </svg>
-                    </button>
                     <form id="leatherket-desktop-search-form" action="<?php echo e(url('/shop')); ?>" class="search">
                         <div class="input-group w-100">
                             <div class="d-lg-none search-box-back">
                                 <button class="" type="button"><i class="fa fa-arrow-left"></i></button>
                             </div>
-                            <input type="text" name="q" class="form-control" placeholder="Search">
+                            <input type="text" name="q" class="form-control" placeholder="Search products..." aria-label="Search products" value="<?php echo e(request('q')); ?>">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit">
+                                <button class="btn btn-primary" type="submit" aria-label="Search products">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
-                    </form> <!-- search-wrap .end// -->
+                    </form> <!-- The desktop search remains visible; mobile V1 still opens this form from its search icon. -->
                 </div> <!-- col.// -->
                 <div class="col-lg-1 col-md-3 col-sm-6 col-6 header-cart-column">
                     <div class="widgets-wrap float-right">
@@ -179,23 +172,38 @@
       display: none;                 /* Chrome, Safari */
     }
 </style>
-<?php $header = Menu::getByName('Header Menu') ?>
-<?php if($header): ?>
-<nav class="navbar navbar-main navbar-expand-sm navbar-light border-bottom d-none d-sm-block">
+
+<?php
+    $headerMenuItems = collect(Menu::getByName('Header Menu') ?: [])->filter(function ($item) {
+        return is_array($item) && !empty($item['label']);
+    });
+    if ($headerMenuItems->isEmpty()) {
+        $headerMenuItems = collect(Menu::getByName('Category Menu') ?: [])
+            ->filter(function ($item) {
+                return is_array($item) && !empty($item['label']);
+            })
+            ->unique(function ($item) {
+                // Existing database includes duplicate category entries; show each only once in the desktop bar.
+                return mb_strtolower(trim((string) $item['label']), 'UTF-8') . '|' . trim((string) ($item['link'] ?? ''));
+            });
+    }
+?>
+<?php if($headerMenuItems->isNotEmpty()): ?>
+<nav class="navbar navbar-main leatherket-category-navbar navbar-expand-lg d-none d-lg-block" aria-label="Product categories">
     <div class="container">
-        <div class="collapse navbar-collapse" id="main_nav" style="overflow-x:auto; white-space:nowrap;">
-            <ul class="navbar-nav  flex-nowrap">
-                <?php $__currentLoopData = $header; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="<?php echo e($menu['link']); ?>"><?php echo e($menu['label']); ?></a>
-                    <?php if( $menu['child'] ): ?>
-                    <div class="dropdown-menu">
-                        <?php $__currentLoopData = $menu['child']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <a class="dropdown-item" href="<?php echo e($child['link']); ?>"><?php echo e($child['label']); ?></a>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </div>
-                    <?php endif; ?>
-                </li>
+        <div class="leatherket-category-scroll" id="main_nav">
+            <ul class="navbar-nav flex-row flex-nowrap">
+                <?php $__currentLoopData = $headerMenuItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <li class="nav-item<?php echo e(!empty($menu['child']) ? ' dropdown' : ''); ?>">
+                        <a class="nav-link" href="<?php echo e(\App\Support\CategoryMenuUrl::resolve($menu['link'] ?? '')); ?>"><?php echo e($menu['label']); ?></a>
+                        <?php if(!empty($menu['child'])): ?>
+                            <div class="dropdown-menu">
+                                <?php $__currentLoopData = $menu['child']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <a class="dropdown-item" href="<?php echo e(\App\Support\CategoryMenuUrl::resolve($child['link'] ?? '')); ?>"><?php echo e($child['label']); ?></a>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        <?php endif; ?>
+                    </li>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </ul>
         </div>
@@ -314,7 +322,6 @@ unset($__errorArgs, $__bag); ?>
 <script src="<?php echo e(asset('assets/js/lazyload.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/sweetalert2.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/js/script.js')); ?>?v=mobile-nav-2"></script>
-<script src="<?php echo e(asset('assets/js/leatherket-desktop-header.js')); ?>?v=1" defer></script>
 <script>
     $(document).ready(function() {
         updateNavCart();
