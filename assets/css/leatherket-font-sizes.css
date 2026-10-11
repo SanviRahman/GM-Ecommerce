@@ -1,53 +1,50 @@
 /*
- * LEATHERKET — shared Admin / Storefront type scale
- * Reference: original Admin Bootstrap theme uses .875rem (14px) body/form text.
- * Keep existing Palatino Linotype font stack, component geometry and icon fonts.
- * Use px rather than changing html font-size: Bootstrap rem spacing must stay intact.
+ * LEATHERKET | Readable typography V2
+ * Palatino Linotype and existing brand colors remain unchanged.
+ * Keep HTML root font-size untouched so Bootstrap's rem layout stays stable.
+ * Source of truth for Admin, Manager, User, Login and Storefront text sizing.
  */
 :root {
-    --lk-type-body: 14px;
-    --lk-type-h1: 36px;
-    --lk-type-h2: 30px;
-    --lk-type-h3: 24px;
-    --lk-type-h4: 18px;
-    --lk-type-h5: 15px;
-    --lk-type-h6: 12px;
+    --lk-type-body: 17px;
+    --lk-type-h1: 42px;
+    --lk-type-h2: 36px;
+    --lk-type-h3: 28px;
+    --lk-type-h4: 22px;
+    --lk-type-h5: 18px;
+    --lk-type-h6: 16px;
 }
 
 html body {
     font-size: var(--lk-type-body);
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
-/* Primary reading, navigation, tables and form controls. */
+/* Shared readable text and forms. Do not target icon glyphs / .fa / svg. */
 body p,
 body label,
+body input:not([type="checkbox"]):not([type="radio"]),
+body select,
+body textarea,
 body .form-control,
 body .custom-select,
-body .select2-container,
 body .select2-container .select2-selection__rendered,
-body .dataTables_wrapper,
-body .dataTables_wrapper input,
-body .dataTables_wrapper select,
-body .table,
-body .table th,
-body .table td,
 body .btn,
 body .dropdown-item,
 body .nav-link,
 body .breadcrumb,
 body .pagination,
 body .alert,
-body input:not([type="checkbox"]):not([type="radio"]),
-body textarea,
-body select,
 body .topbar-menu,
-body #sidebar-menu a,
-body .page-title-box .breadcrumb {
-    font-size: var(--lk-type-body);
+body #sidebar-menu a {
+    font-size: 17px;
+}
+body input,
+body textarea,
+body select {
+    line-height: 1.5;
 }
 
-/* Preserve the six-level heading hierarchy of the original Admin theme. */
+/* Heading hierarchy. */
 body h1, body .h1 { font-size: var(--lk-type-h1); }
 body h2, body .h2 { font-size: var(--lk-type-h2); }
 body h3, body .h3 { font-size: var(--lk-type-h3); }
@@ -55,59 +52,119 @@ body h4, body .h4 { font-size: var(--lk-type-h4); }
 body h5, body .h5 { font-size: var(--lk-type-h5); }
 body h6, body .h6 { font-size: var(--lk-type-h6); }
 
-/* Admin dashboard/card captions and DataTables: match its original 14px text. */
+/* Admin, Manager & User dashboards: tables and data widgets. */
+body .content-page,
 body .content-page .card-body,
 body .content-page .tile-body,
 body .content-page .form-group,
+body .content-page .dataTables_wrapper,
 body .content-page .dataTables_info,
 body .content-page .dataTables_paginate,
 body .content-page .dataTables_length,
-body .content-page .dataTables_filter {
-    font-size: var(--lk-type-body);
+body .content-page .dataTables_filter,
+body .content-page .table,
+body .content-page .table th,
+body .content-page .table td,
+body .content-page .table td span,
+body .content-page .dataTables_wrapper input,
+body .content-page .dataTables_wrapper select {
+    font-size: 16px;
 }
+body .content-page .page-title-box .page-title { font-size: 24px; }
+body .content-page .header-title,
+body .content-page .tile-title,
+body .content-page .card-title { font-size: 21px; }
+body .content-page .table h5.font-15,
+body .content-page .table .font-15 { font-size: 17px; }
+body .content-page .widget-rounded-circle h3 { font-size: 29px; }
+body .content-page .widget-rounded-circle p { font-size: 16px; }
+body .content-page .card-body .btn,
+body .content-page .tile-body .btn,
+body .content-page .form-control,
+body .content-page .custom-select,
+body .content-page .select2-selection__rendered { font-size: 16px; }
+body .content-page .form-group > label { font-size: 17px; }
+body #sidebar-menu .menu-title { font-size: 14px; }
 
-/* Storefront previously used a 16px Bootstrap body scale. Align its ordinary
-   text without overriding the intentionally prominent product prices/badges. */
-body .section-header .header-main .form-control,
-body .section-header .header-main .btn,
-body .leatherket-desktop-search input,
-body .lk-product-card-name,
-body .lk-product-card-action,
-body .lk-collections-heading p,
-body .lk-collections-description p,
+/* Shop by Collection / descriptive blocks. */
+body .lk-collections-heading small { font-size: 13px; }
+body .lk-collections-heading h2 { font-size: clamp(34px, 3.5vw, 44px); }
+body .lk-collections-heading p { font-size: 18px; line-height: 1.65; }
+body .lk-collection-overlay span { font-size: 12px; }
+body .lk-collection-overlay h3 { font-size: 24px; }
+body .lk-collections-description h3 { font-size: clamp(27px, 3vw, 34px); }
+body .lk-collections-description p { font-size: 18px; line-height: 1.8; }
+
+/* All product cards (homepage, category, shop, related, AJAX cards). */
+body .lk-product-card-name { font-size: 17px; line-height: 1.5; }
+body .lk-product-card-action {
+    font-size: 16px;
+    line-height: 1.45;
+    min-height: 50px;
+    padding: 10px 9px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+body .lk-product-card-price .product-price,
+body .lk-product-card-price .leatherket-price-line .product-price { font-size: 18px; }
+body .lk-product-card-price .product-price-old,
+body .lk-product-card-price .leatherket-price-line .product-price-old { font-size: 16px; }
+/* Leave Sale / Sold Out badges compact so they don't hide product photos. */
+
+/* Product details & purchase form. */
+body .leatherket-stock-label { font-size: 16px; }
+body .leatherket-quantity-label { font-size: 17px; }
+body .leatherket-purchase-buttons button,
+body .lk-contact-action { font-size: 17px; }
+body .leatherket-quantity-spinner input.form-control { font-size: 18px; }
+
+/* Footer: newsletter, links, contact and copyright. */
+body .leatherket-newsletter h2 { font-size: 32px; }
 body .leatherket-newsletter p,
 body .leatherket-newsletter-form input[type="email"],
 body .leatherket-newsletter-form .btn,
 body .leatherket-quick-links nav a,
 body .leatherket-contact-details,
-body .leatherket-purchase-buttons button,
-body .leatherket-quantity-label,
-body .lk-contact-action {
-    font-size: var(--lk-type-body);
-}
+body .leatherket-footer-bottom { font-size: 17px; }
+body .leatherket-quick-links summary,
+body .leatherket-contact-heading { font-size: 15px; }
 
-/* Heading text inside newly-added storefront sections. */
-body .lk-collections-heading h2,
-body .leatherket-newsletter h2 { font-size: var(--lk-type-h2); }
-body .lk-collections-description h3 { font-size: var(--lk-type-h3); }
-body .leatherket-quick-links summary { font-size: var(--lk-type-h4); }
-
-/* Do not alter the reference-approved 24px fullscreen Mobile Drawer labels. */
+/* Preserve long-requested large full-screen mobile navigation links. */
 body .mobile-side-menu .side-menu-list ul > li > a { font-size: 24px; }
+/* Footer contact / icon labels and cart badge retain their own geometry. */
 
-/* Small screens: keep long Bangla order labels within two-column cards. */
-@media (max-width: 575.98px) {
-    body .lk-product-card-action { font-size: 13px; }
-    body .lk-product-card-name { font-size: 14px; }
-    body .lk-collections-heading h2 { font-size: 26px; }
+/* Small screens: readable labels that wrap rather than clipping. */
+@media (max-width: 767.98px) {
+    html body { font-size: 16px; }
+    body .lk-product-card-name { font-size: 16px; }
+    body .lk-product-card-action {
+        font-size: 15px;
+        min-height: 55px;
+        padding: 9px 6px;
+    }
+    body .lk-product-card-price .product-price,
+    body .lk-product-card-price .leatherket-price-line .product-price { font-size: 16px; }
+    body .lk-product-card-price .product-price-old,
+    body .lk-product-card-price .leatherket-price-line .product-price-old { font-size: 14px; }
+    body .lk-collections-heading h2 { font-size: 34px; }
+    body .lk-collections-heading p { font-size: 17px; }
+    body .lk-collections-description h3 { font-size: 29px; }
+    body .lk-collections-description p { font-size: 17px; }
+    body .leatherket-newsletter h2 { font-size: 30px; }
+    body .leatherket-newsletter p,
+    body .leatherket-quick-links nav a,
+    body .leatherket-contact-details { font-size: 16px; }
+    body .leatherket-quick-links summary { font-size: 24px; }
 }
 
-/* Keep original Bootstrap compact/large controls appropriately scaled. */
-body small, body .small,
+/* Controls intentionally marked small stay smaller than normal text. */
+body small,
+body .small,
 body .btn-sm,
 body .form-control-sm,
-body .custom-select-sm { font-size: 12px; }
+body .custom-select-sm { font-size: 14px; }
 body .btn-lg,
 body .form-control-lg,
-body .custom-select-lg { font-size: 18px; }
-/* Badges and icon glyphs retain their own component typography. */
+body .custom-select-lg { font-size: 19px; }
+/* Retain the collection eyebrow above the generic small-text rule. */
+body .lk-collections-heading small { font-size: 13px; }

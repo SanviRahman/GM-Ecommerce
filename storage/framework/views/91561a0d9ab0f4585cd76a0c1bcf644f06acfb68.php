@@ -27,7 +27,7 @@
     <link href="<?php echo e(asset('assets/css/leatherket-desktop-header.css')); ?>?v=2" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-collections.css')); ?>?v=1">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-product-cards.css')); ?>?v=2">
-    <link href="<?php echo e(asset('assets/css/leatherket-font-sizes.css')); ?>?v=20261011" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/leatherket-font-sizes.css')); ?>?v=20261011-readable2" rel="stylesheet" type="text/css" />
     <?php echo Settings::get('facebook_pixels'); ?>
 
     <!-- CSS for scrolling ticker -->
