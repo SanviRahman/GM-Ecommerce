@@ -57,6 +57,8 @@
             }
         }
     </style>
+    <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
+    <link href="{{ asset('assets/css/leatherket-typography.css') }}?v=1" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <?php

@@ -70,9 +70,21 @@ class CartController extends Controller
                 'errors' => $e->validator->errors()
             ]);
         }
-        $qty=  $request->quantity??1;
-        // Retrieve the product
-        $product = Product::find($request->id);
+        $product = Product::with('stockRecord')->findOrFail($request->id);
+        $qty = filter_var($request->input('quantity', 1), FILTER_VALIDATE_INT);
+        if ($qty === false || $qty < 1) {
+            return response()->json(['status' => 'error', 'message' => 'Please select a valid quantity.'], 422);
+        }
+        if ($product->isSoldOut()) {
+            return response()->json(['status' => 'error', 'message' => 'This product is sold out.'], 422);
+        }
+        // Stock may be shared across variants. Count all existing cart lines for the product.
+        $alreadyInCart = Cart::content()->filter(function ($item) use ($product) {
+            return (int) $item->id === (int) $product->id;
+        })->sum('qty');
+        if ($qty + $alreadyInCart > $product->availableStock()) {
+            return response()->json(['status' => 'error', 'message' => 'Only ' . $product->availableStock() . ' item(s) are in stock.'], 422);
+        }
     
         // Prepare conditional validation rules and messages for color and size
         $rules = [];
@@ -919,9 +931,6 @@ class CartController extends Controller
             </script>
         </aside>
         <?php
-    
         return ob_get_clean(); // Return the buffered content
     }
-
-
 }

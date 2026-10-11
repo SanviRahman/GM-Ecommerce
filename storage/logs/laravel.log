@@ -19440,3 +19440,45 @@ Stack trace:
 #58 D:\\public_html\\server.php(79): require_once('D:\\\\public_html\\\\...')
 #59 {main}
 "} 
+[2026-10-10 15:48:47] local.ERROR: Command "controller" is not defined.
+
+Did you mean one of these?
+    make:controller
+    ui:controllers {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"controller\" is not defined.
+
+Did you mean one of these?
+    make:controller
+    ui:controllers at D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php:720)
+[stacktrace]
+#0 D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php(259): Symfony\\Component\\Console\\Application->find('controller')
+#1 D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php(171): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#2 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Application.php(93): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#3 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(129): Illuminate\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#4 D:\\public_html leatherket\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#5 {main}
+"} 
+[2026-10-10 16:05:00] local.ERROR: require_once(D:\public_html leatherket/database/migrations/2026_10_10_000001_create_newsletter_subscribers_table.php): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): require_once(D:\\public_html leatherket/database/migrations/2026_10_10_000001_create_newsletter_subscribers_table.php): Failed to open stream: No such file or directory at D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php:111)
+[stacktrace]
+#0 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(111): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'require_once(D:...', 'D:\\\\public_html ...', 111)
+#1 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(111): require_once()
+#2 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(482): Illuminate\\Filesystem\\Filesystem->requireOnce('D:\\\\public_html ...')
+#3 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(103): Illuminate\\Database\\Migrations\\Migrator->requireFiles(Array)
+#4 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(70): Illuminate\\Database\\Migrations\\Migrator->run(Array, Array)
+#5 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(541): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::handle():63}()
+#6 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Console\\Migrations\\MigrateCommand.php(63): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#7 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#8 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php(37): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#9 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#10 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#11 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(596): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#12 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(134): Illuminate\\Container\\Container->call(Array)
+#13 D:\\public_html leatherket\\vendor\\symfony\\console\\Command\\Command.php(298): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#14 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(120): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#15 D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php(1040): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#16 D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php(301): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 D:\\public_html leatherket\\vendor\\symfony\\console\\Application.php(171): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Application.php(93): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 D:\\public_html leatherket\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(129): Illuminate\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#20 D:\\public_html leatherket\\artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#21 {main}
+"} 

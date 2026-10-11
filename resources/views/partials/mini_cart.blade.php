@@ -1,6 +1,10 @@
 @if(Cart::count() > 0)
     <a href="#" class="icon icon-xs rounded-circle border" data-toggle="dropdown">
-        <i class="fa fa-shopping-cart d-inline-block nav-box-icon"></i>
+        <i class="fa fa-shopping-cart d-inline-block nav-box-icon desktop-cart-icon" aria-hidden="true"></i>
+        <svg class="mobile-cart-bag-icon d-lg-none" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6.7 8.7H17.3L18.3 20H5.7L6.7 8.7Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+            <path d="M9 9V7.2C9 5.45 10.34 4 12 4C13.66 4 15 5.45 15 7.2V9" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+        </svg>
         <span class="badge badge-pill badge-danger notify">{{ Cart::count() }}</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-right px-0">
@@ -51,7 +55,11 @@
 @else
     <span class="badge badge-pill badge-danger notify">0</span>
     <a href="" class="icon icon-xs rounded-circle border" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <i class="fa fa-shopping-cart d-inline-block nav-box-icon"></i>
+        <i class="fa fa-shopping-cart d-inline-block nav-box-icon desktop-cart-icon" aria-hidden="true"></i>
+        <svg class="mobile-cart-bag-icon d-lg-none" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6.7 8.7H17.3L18.3 20H5.7L6.7 8.7Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+            <path d="M9 9V7.2C9 5.45 10.34 4 12 4C13.66 4 15 5.45 15 7.2V9" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+        </svg>
         <span class="badge badge-pill badge-danger notify">0</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-right px-0" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-328px, 32px, 0px);">

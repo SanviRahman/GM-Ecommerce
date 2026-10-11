@@ -54,35 +54,75 @@ $(document).ready(function() {
 	} // end if
 
 
-    $(".nav-search-box a").on("click", function (e) {
-        e.preventDefault();
-        $(".search-box").addClass("show");
+    // Keep the AJAX-powered #cart_items in the original header; it remains above the drawer.
+    var $mobileDrawer = $('#leatherket-mobile-menu');
+    var $menuButton = $('.menu-toggle');
+
+    function setMobileDrawer(isOpen) {
+        if (!$mobileDrawer.length) return;
+
+        if (isOpen) {
+            // The existing header is repositioned above the drawer only while it is open.
+            var headerHeight = Math.ceil($('.section-header .header-main').outerHeight() || 49);
+            document.documentElement.style.setProperty('--leatherket-mobile-header-height', headerHeight + 'px');
+            $('.search-box').removeClass('show');
+        }
+
+        $mobileDrawer.toggleClass('show', isOpen).toggleClass('hide', !isOpen)
+                     .attr('aria-hidden', isOpen ? 'false' : 'true');
+        $menuButton.toggleClass('collapsed', isOpen)
+                   .attr('aria-expanded', isOpen ? 'true' : 'false')
+                   .attr('aria-label', isOpen ? 'Close menu' : 'Open menu');
+        $('body').toggleClass('mobile-nav-open', isOpen);
+
+        if (!isOpen) {
+            document.documentElement.style.removeProperty('--leatherket-mobile-header-height');
+        }
+    }
+
+    $(document).on('click', '.menu-toggle', function (event) {
+        event.preventDefault();
+        setMobileDrawer(!$mobileDrawer.hasClass('show'));
+    });
+
+    // Search takes precedence over navigation, and stays usable on small screens.
+    $('.nav-search-box a').on('click', function (event) {
+        event.preventDefault();
+        setMobileDrawer(false);
+        $('.search-box').addClass('show');
         $('.search-box input[type="text"]').focus();
     });
-    $(".search-box-back button").on("click", function () {
-        $(".search-box").removeClass("show");
+    $('.search-box-back button').on('click', function () {
+        $('.search-box').removeClass('show');
     });
 
-
-    $(document).on("click", ".menu-toggle", function (e) {
-        if ($(this).hasClass("collapsed")) {
-            $(".mobile-side-menu").removeClass("show").addClass("hide");
-            $(this).removeClass("collapsed");
+    // Capture phase also catches Escape when Bootstrap's cart dropdown stops bubbling.
+    document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape') return;
+        if ($mobileDrawer.hasClass('show')) {
+            setMobileDrawer(false);
+            $menuButton.focus();
         } else {
-            $(this).addClass("collapsed");
-            $(".mobile-side-menu").removeClass("hide").addClass("show");
+            $('.search-box').removeClass('show');
+        }
+    }, true);
+
+    // Dismiss navigation at desktop widths; refresh offset when mobile rotates.
+    $(window).on('resize', function () {
+        if (window.innerWidth >= 992) {
+            setMobileDrawer(false);
+        } else if ($mobileDrawer.hasClass('show')) {
+            document.documentElement.style.setProperty(
+                '--leatherket-mobile-header-height',
+                Math.ceil($('.section-header .header-main').outerHeight() || 49) + 'px'
+            );
         }
     });
 
-    $(document).on("click", ".side-menu-close", function (e) {
-        if ($('.menu-toggle').hasClass("collapsed")) {
-            $(".mobile-side-menu").removeClass("show").addClass("hide");
-            $('.menu-toggle').removeClass("collapsed");
-        } else {
-            $('.menu-toggle').addClass("collapsed");
-            $(".mobile-side-menu").removeClass("hide").addClass("show");
-        }
-    }); 
+    // Links continue to use the database-backed Category Menu.
+    $mobileDrawer.on('click', '.mobile-nav-categories a', function () {
+        setMobileDrawer(false);
+    });
 
 
     const galleryThumbnail = document.querySelectorAll(".thumbnails-list li");
@@ -152,17 +192,6 @@ $('[data-target="#lightbox"]').on("click", function(t) {
             input.val(0);
         }
     });
-
-
-
-
-
-
-
-
-
-
-
 }); 
 // jquery end
 

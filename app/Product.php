@@ -40,6 +40,32 @@ class Product extends Model
         return $this->belongsToMany('App\Order')->withTimestamps();
     }
 
+    /** Current inventory row maintained by Purchase/Order controllers. */
+    public function stockRecord()
+    {
+        return $this->hasOne(Stock::class, 'product_id');
+    }
+
+    public function availableStock()
+    {
+        return max(0, (int) optional($this->stockRecord)->stock);
+    }
+
+    public function isSoldOut()
+    {
+        return (int) $this->isStockOut === 1 || $this->availableStock() <= 0;
+    }
+
+    /** Discount badge percentage, only for a genuine lower sale price. */
+    public function salePercentage()
+    {
+        $regular = (float) $this->productRegularPrice;
+        $sale = (float) $this->productSalePrice;
+        return $regular > 0 && $sale > 0 && $sale < $regular
+            ? (int) round((($regular - $sale) / $regular) * 100)
+            : 0;
+    }
+
     public function url()
     {
         return url('product/'.$this->ProductSlug.'/'.$this->id);
@@ -55,26 +81,15 @@ class Product extends Model
     }
     public function htmlPrice()
     {
-        if($this->productSalePrice > 0){
-            return '<div class="product-price-old">
-                    <del>
-                        ৳ '.number_format($this->productRegularPrice).'
-                    </del>
-                    <span class="product-price">
-                            <strong>
-                                ৳ '.number_format($this->productSalePrice).'
-                            </strong>
-                        </span>
-                </div>';
-        }else{
-            return '<div class="product-price-old">
-                        <span class="product-price">
-                                <strong>
-                                    ৳ '.number_format($this->productRegularPrice).'
-                                </strong>
-                            </span>
-                    </div>';
-
+        $sale = (float) $this->productSalePrice;
+        $regular = (float) $this->productRegularPrice;
+        if ($sale > 0 && $regular > 0 && $sale < $regular) {
+            return '<span class="leatherket-price-line"><span class="product-price">৳ '
+                . number_format($sale, 2) . '</span><del class="product-price-old">৳ '
+                . number_format($regular, 2) . '</del></span>';
         }
+        $price = $sale > 0 ? $sale : $regular;
+        return '<span class="leatherket-price-line"><span class="product-price">৳ '
+            . number_format($price, 2) . '</span></span>';
     }
 }

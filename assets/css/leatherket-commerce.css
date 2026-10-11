@@ -1,0 +1,146 @@
+/* LEATHERKET storefront enhancements — no changes to navigation or admin UI. */
+:root { --lk-accent: #19a047; --lk-border: #e6e6e6; }
+
+/* Product grid: image badge and discount-price alignment */
+.card-product-grid .img-wrap { position: relative; display: block; }
+.leatherket-product-badge {
+    position: absolute !important; left: 8px !important; top: 8px !important;
+    z-index: 3; display: inline-block; padding: 7px 10px;
+    font: normal 13px/1.4 var(--leatherket-font, Georgia, serif) !important; letter-spacing: .01em;
+    border-radius: 0; background: #e74b4b; color: #fff;
+}
+.leatherket-badge-sold { background: #f2f2f2; color: #222; }
+.leatherket-badge-delivery { background: var(--lk-accent); color: #fff; }
+.leatherket-price-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px; }
+.card-product-grid .leatherket-price-line { justify-content: flex-start; }
+.card-product-grid .price { text-align: left !important; }
+.leatherket-price-line .product-price {
+    font-size: 15px; font-weight: 400; color: var(--lk-accent); white-space: nowrap;
+}
+.leatherket-price-line .product-price-old { color: #777; font-size: 14px; font-weight: 400; white-space: nowrap; }
+.card-product-grid .info-wrap { text-align: left; }
+.card-product-grid .info-wrap .price { margin-top: 9px !important; }
+
+/* Product detail: inventory > price > quantity > stacked action buttons */
+.leatherket-purchase-panel { padding: 8px 0 14px; }
+.leatherket-stock-label { display: inline-flex; align-items: center; gap: 10px; background: #f3f3f3; padding: 8px 12px; font-size: 15px; color: #151515; }
+.leatherket-stock-label .fa { font-size: 14px; }
+.leatherket-stock-empty { color: #7b2727; }
+.leatherket-detail-price .product-price { font-size: clamp(21px, 2vw, 27px); }
+.leatherket-detail-price .product-price-old { font-size: clamp(17px, 1.8vw, 23px); }
+.leatherket-quantity-label { font-size: 16px; margin-bottom: 12px; color: #666; }
+.leatherket-quantity-spinner { display: flex; width: min(100%, 260px); }
+.leatherket-quantity-spinner .input-group-prepend, .leatherket-quantity-spinner .input-group-append { flex: 0 0 24%; }
+.leatherket-quantity-spinner .btn { border: 1px solid var(--lk-border); background: #fff; border-radius: 0 !important; width: 100%; height: 50px; font-size: 24px; color: #222; padding: 0; }
+.leatherket-quantity-spinner input.form-control { flex: 1 1 auto; max-width: none; width: 52%; height: 50px; border: 1px solid var(--lk-border); border-left: 0; border-right: 0; border-radius: 0; font-size: 18px; font-weight: 400; }
+.leatherket-quantity-spinner input::-webkit-inner-spin-button, .leatherket-quantity-spinner input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.leatherket-purchase-buttons { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.leatherket-purchase-buttons button { width: 100% !important; min-height: 54px; border-radius: 0 !important; font-size: 16px; font-weight: 400; }
+.leatherket-purchase-buttons .leatherket-add-cart { background: var(--lk-accent); border-color: var(--lk-accent); color: #fff; }
+.leatherket-purchase-buttons .leatherket-add-cart:hover, .leatherket-purchase-buttons .leatherket-add-cart:focus { background: #117d33; border-color: #117d33; }
+.leatherket-purchase-buttons .leatherket-buy-now { color: var(--lk-accent); border: 1px solid var(--lk-accent); background: #fff; }
+.leatherket-purchase-buttons .leatherket-buy-now:hover, .leatherket-purchase-buttons .leatherket-buy-now:focus { background: #f0f9f2; color: #117d33; }
+.leatherket-purchase-buttons button:disabled { opacity: .5; cursor: not-allowed; }
+
+/* LEATHERKET footer: three columns on desktop, mobile accordion on small screens. */
+.leatherket-store-footer {
+    background: #fff;
+    color: #151515;
+    border-top: 1px solid #efefef;
+    margin-top: 0;
+    padding: 70px 0 24px;
+}
+.leatherket-store-footer a { color: #151515; }
+.leatherket-store-footer a:hover { color: var(--lk-accent); }
+.leatherket-footer-container {
+    width: calc(100% - 96px);
+    max-width: 1280px;
+    margin: 0 auto;
+}
+.leatherket-footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.99fr) minmax(0, 0.99fr);
+    column-gap: clamp(34px, 4.7vw, 70px);
+    align-items: start;
+}
+.leatherket-newsletter { max-width: none; margin: 0; text-align: left; }
+.leatherket-newsletter h2 { font-size: 24px; font-weight: 400; line-height: 1.35; margin: 0 0 18px; }
+.leatherket-newsletter p { font-size: 14px; line-height: 1.6; margin: 0 0 22px; }
+.leatherket-newsletter-form { display: flex; flex-direction: column; gap: 22px; }
+.leatherket-newsletter-form input[type=email] {
+    display: block; width: 100%; background: transparent;
+    border: 0; border-bottom: 1px solid #d9d9d9; border-radius: 0;
+    outline: 0; padding: 12px 0 14px; font-size: 14px; color: #171717;
+}
+.leatherket-newsletter-form input[type=email]:focus { border-bottom-color: var(--lk-accent); }
+.leatherket-newsletter-form .btn {
+    width: 100%; min-height: 53px; background: #080808; color: #fff;
+    border: 1px solid #080808; border-radius: 0; font-size: 14px;
+    font-weight: 400; cursor: pointer;
+}
+.leatherket-newsletter-form .btn:hover,
+.leatherket-newsletter-form .btn:focus { background: #222; border-color: #222; color: #fff; }
+.leatherket-honeypot { position: absolute; left: -9999px; height: 0; width: 0; opacity: 0; }
+.leatherket-newsletter-notice { color: var(--lk-accent); }
+.leatherket-newsletter-error { color: #b52727; }
+.leatherket-footer-links { border: 0; padding: 0; }
+.leatherket-quick-links { padding: 0; margin: 0; border: 0; }
+.leatherket-quick-links summary {
+    display: flex; justify-content: space-between; align-items: center;
+    color: #666; font-size: 12px; text-transform: uppercase;
+    font-weight: 400; line-height: 1.5; padding: 0; margin: 1px 0 24px;
+    cursor: default; list-style: none;
+}
+.leatherket-quick-links summary::-webkit-details-marker { display: none; }
+.leatherket-quick-links summary .fa { display: none; }
+.leatherket-quick-links nav { display: flex; flex-direction: column; align-items: flex-start; gap: 17px; padding: 0; }
+.leatherket-quick-links nav a { font-size: 14px; line-height: 1.45; text-decoration: none; overflow-wrap: anywhere; }
+.leatherket-contact-heading { font-size: 12px; line-height: 1.5; text-transform: uppercase; color: #666; margin: 1px 0 24px; font-weight: 400; }
+.leatherket-contact-details { display: flex; flex-direction: column; gap: 15px; font-style: normal; font-size: 14px; line-height: 1.55; padding: 0; margin: 0 0 23px; }
+.leatherket-contact-details a { text-decoration: none; overflow-wrap: anywhere; }
+.leatherket-contact-details p { white-space: pre-line; overflow-wrap: anywhere; margin: 0; }
+.leatherket-footer-social { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 0; }
+.leatherket-footer-social a { display: inline-flex; align-items: center; justify-content: center; border: 1px solid #999; width: 41px; height: 41px; font-size: 15px; text-decoration: none; }
+.leatherket-footer-social a:hover { border-color: var(--lk-accent); }
+.leatherket-footer-brand { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 69px; }
+.leatherket-footer-brand .leatherket-footer-rule { flex: 1; min-width: 0; border-top: 1px solid #ddd; }
+.leatherket-footer-brand a { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; max-width: 38%; }
+.leatherket-footer-brand img { display: block; max-width: 210px; max-height: 58px; width: auto; height: auto; object-fit: contain; }
+.leatherket-footer-bottom { display: flex; justify-content: center; align-items: center; gap: 15px; min-height: 90px; padding: 15px 0; color: #888; font-size: 15px; }
+.leatherket-back-top { display: inline-flex; justify-content: center; align-items: center; border: 1px solid #aaa; width: 41px; height: 41px; text-decoration: none; color: #222 !important; }
+.leatherket-back-top:hover { border-color: var(--lk-accent); }
+.leatherket-payment-strip { margin: 24px auto 0; padding: 12px 0 0; text-align: center; }
+.leatherket-payment-strip img { display: inline-block; width: auto; height: auto; max-width: 100%; }
+@media (max-width: 991.98px) {
+    .leatherket-store-footer { padding: 60px 0 18px; margin-top: 0; }
+    .leatherket-footer-container { width: calc(100% - 28px); }
+    .leatherket-footer-grid { display: block; }
+    .leatherket-newsletter { max-width: none; margin: 0; padding: 0 0 32px; text-align: center; }
+    .leatherket-newsletter h2 { font-size: 29px; margin-bottom: 20px; }
+    .leatherket-newsletter p { font-size: 16px; line-height: 1.5; margin-bottom: 27px; }
+    .leatherket-newsletter-form { gap: 14px; }
+    .leatherket-newsletter-form input[type=email] { font-size: 16px; padding: 15px 0 19px; }
+    .leatherket-newsletter-form .btn { min-height: 47px; font-size: 15px; }
+    .leatherket-quick-links { border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; }
+    .leatherket-quick-links summary { cursor: pointer; font-size: 23px; color: #111; text-transform: none; padding: 20px 0; margin: 0; line-height: 1.35; }
+    .leatherket-quick-links summary .fa { display: inline-block; font-size: 17px; transition: transform 180ms ease; }
+    .leatherket-quick-links[open] summary .fa { transform: rotate(180deg); }
+    .leatherket-quick-links nav { gap: 15px; padding: 2px 0 25px; }
+    .leatherket-quick-links nav a { font-size: 16px; }
+    .leatherket-footer-contact { padding-top: 35px; }
+    .leatherket-contact-heading { display: none; }
+    .leatherket-contact-details { font-size: 16px; line-height: 1.58; gap: 15px; margin: 0 0 24px; }
+    .leatherket-footer-social a { width: 39px; height: 39px; font-size: 16px; }
+    .leatherket-footer-brand { margin-top: 70px; gap: 10px; }
+    .leatherket-footer-brand a { max-width: 42%; }
+    .leatherket-footer-brand img { max-width: 145px; max-height: 52px; }
+    .leatherket-footer-bottom { min-height: 107px; font-size: 15px; }
+    .leatherket-payment-strip { margin-top: 30px; }
+}
+@media (max-width: 767.98px) {
+    .leatherket-purchase-panel { padding: 16px 0; }
+    .leatherket-quantity-spinner { width: min(100%, 260px); }
+    .card-product-grid .leatherket-price-line { gap: 5px; }
+    .card-product-grid .product-price, .card-product-grid .product-price-old { font-size: 13px; }
+    .leatherket-product-badge { font-size: 12px !important; padding: 7px 9px; }
+}

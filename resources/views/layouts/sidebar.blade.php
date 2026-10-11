@@ -82,6 +82,9 @@
                         <li class="{{ (request()->is('admin/setting')) ? 'active' : '' }}">
                             <a href="{{url('admin/setting ')}}" class="{{ (request()->is('admin/setting')) ? 'active' : '' }}">Settings</a>
                         </li>
+                        <li class="{{ request()->routeIs('admin.newsletter-subscribers.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.newsletter-subscribers.index') }}" class="{{ request()->routeIs('admin.newsletter-subscribers.*') ? 'active' : '' }}">Newsletter Subscribers</a>
+                        </li>
                     </ul>
                 </li>
                 <li>

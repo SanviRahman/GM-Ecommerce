@@ -103,6 +103,7 @@ Route::post('/fraud-check', function (Request $request) {
 
 
 Route::get('/', 'WebsiteController@index')->name('home');
+Route::post('/newsletter/subscribe', 'NewsletterController@store')->middleware('throttle:6,1')->name('newsletter.subscribe');
 Route::get('/product/{id}', 'WebsiteController@product')->name('product');
 Route::get('/category/{slug}', 'WebsiteController@category')->name('category');
 Route::get('/page/{slug}', 'WebsiteController@page')->name('page');
@@ -150,6 +151,9 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin'], fu
     Route::resource('media', 'MediaController');
 });
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'admin']], function () {
+
+    // Newsletter subscriber management (Admin only)
+    Route::resource('newsletter-subscribers', 'NewsletterSubscriberController')->except(['show']);
 
     Route::get('dashboard', 'DashboardController@index')->name('dashboard');
     Route::get('dashboard/getData', 'DashboardController@getData')->name('getData');
@@ -592,8 +596,5 @@ Route::group(['as' => 'user.', 'prefix' => 'user', 'namespace' => 'User', 'middl
 
     // Send Sms
     Route::get('order/sendNumber', 'OrderController@sendNumber')->name('sendNumber');
-
     Route::resource('order', 'OrderController');
-
-
 });

@@ -12,13 +12,7 @@
                         <div href="#" class="card card-product-grid product-box-2">
                             <a href="{{ url('/product/'.$product->productSlug)  }}" class="img-wrap">
                                 <img class="img-fit lazyload"   src="{{ url('public/product/thumbnail/default.jpg') }}"  data-src="{{ url('/public/product/thumbnail/'.$product->productImage)  }}" alt="{{ $product->productName  }}">
-                                @if($product->isStockOut)
-                                    <span class="badge bg-danger position-absolute text-light top-0 start-0 m-0">Stock Out</span>
-                                @else
-                                @if($product->isFreeDelivery)
-                                    <span class="badge bg-danger position-absolute text-light top-0 start-0 m-0">Free Delivery</span>
-                                @endif
-                                @endif
+                                        @include('website.partials.product_badge', ['product' => $product])
                             </a>
                             <figcaption class="info-wrap">
                                 <a href="{{ url('/product/'.$product->productSlug)  }}" class="title text-truncate">{{ $product->productName  }}</a>
@@ -27,9 +21,9 @@
                                 </div>
                             </figcaption>
                             @if ($product->colors->isNotEmpty() || $product->sizes->isNotEmpty() || $product->options->isNotEmpty())
-                                <a  href="{{ url('/product/'.$product->productSlug)  }}" class="btn btn-dark btn-sm btn-block <?php echo ($product->isStockOut)?'disabled':''; ?> "> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
+                                <a  href="{{ url('/product/'.$product->productSlug)  }}" class="btn btn-dark btn-sm btn-block <?php echo ($product->isSoldOut())?'disabled':''; ?> "> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
                             @else
-                            <button <?php echo ($product->isStockOut)?'disabled':''; ?>  class="btn btn-dark btn-sm btn-block" onclick="addToCart({{ $product->id }})">
+                            <button <?php echo ($product->isSoldOut())?'disabled':''; ?>  class="btn btn-dark btn-sm btn-block" onclick="addToCart({{ $product->id }})">
                                 <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
                             </button>
                             @endif
@@ -62,6 +56,4 @@
         }
     });
     </script>
-
-
 @endsection

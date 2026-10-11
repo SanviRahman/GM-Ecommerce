@@ -23,12 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&family=Bebas+Neue&display=swap');
-        *{
-             font-family: "Anek Bangla", sans-serif;
-        }
-    </style>
+    {{-- Typography is defined globally in leatherket-typography.css (icons remain intact). --}}
     <style>
         .shipping-options { display:flex; flex-direction:column; gap:8px; }
         .shipping-option { display:flex; align-items:center; gap:8px; padding:10px 15px; border:1px solid #ccc; border-radius:8px; cursor:pointer; background-color:#f8f9fa; transition:background .2s ease,border .2s ease; }
@@ -586,6 +581,8 @@
         }
     }
     </style>
+    <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
+    <link href="{{ asset('assets/css/leatherket-typography.css') }}?v=1" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -1534,9 +1531,7 @@ function saveInput() {
     });
 }
 
-
 </script>
 @stack('js')
 </body>
-
 </html>

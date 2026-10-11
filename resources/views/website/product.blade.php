@@ -20,13 +20,7 @@
     								</a>
 								</div>
 								@endforeach
-								@if($product->isStockOut)
-                                    <span class="badge bg-danger position-absolute text-light top-0 start-0 m-0">Stock Out</span>
-                                @else
-                                @if($product->isFreeDelivery)
-                                    <span class="badge bg-danger position-absolute text-light top-0 start-0 m-0">Free Delivery</span>
-                                @endif
-                                @endif
+                                @include('website.partials.product_badge', ['product' => $product])
 
 							</div>
 							<ol class="carousel-indicators">
@@ -45,12 +39,6 @@
 					<div class="col-md-7 border-left">
 						<div class="content-body">
 							<h4 class="title">{{ $product->productName  }}</h4>
-							<div class="mb-3">
-							    <div id="product-price">
-							        {!! $product->htmlPrice() !!}
-							    </div>
-                                
-							</div>
 							<div class="row">
 							    
                                 @if ($product->colors->isNotEmpty())
@@ -108,7 +96,7 @@
                                                         autocomplete="off" 
                                                         {{ $index === 0 ? 'checked' : '' }}
                                                          onchange="
-                                                            document.getElementById('product-price').innerText = '৳ ' + '{{$option->pivot->price}}';
+                                                            document.getElementById('product-price').textContent = '৳ ' + Number({{ (float) $option->pivot->price }}).toLocaleString('en-BD', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                                         "
                                                     >
                                                     {{ $option->optionName }}
@@ -118,26 +106,31 @@
                                     </div>
                                 @endif
 
-								<div class=" col-md flex-grow-1">
-									<div class="input-group mb-3 input-spinner">
-										<div class="input-group-prepend">
-											<button class="btn btn-light btn-number" type="button" data-type="plus" data-field="quantity"> + </button>
-										</div>
-										<input type="text" class="form-control input-number" value="1" name="quantity" min="1" max="10">
-										<div class="input-group-append">
-											<button class="btn btn-light btn-number" type="button" data-type="minus" data-field="quantity" > − </button>
-										</div>
-									</div>
-								</div> <!-- col.// -->
-							</div> <!-- row.// -->
-							<div class="single-product-buttons">
-								<button <?php echo ($product->isStockOut)?'disabled':''; ?> class="btn  btn-primary"  onclick="buyNow({{ $product->id }})">  অর্ডার করুন </button>
-								<button <?php echo ($product->isStockOut)?'disabled':''; ?> class="btn  btn-danger"   onclick="addToCart({{ $product->id }})"> <span class="text">কার্টে রাখুন</span>
-                                    <i class="fas fa-shopping-cart"></i> </button>
-							</div>
-							
-                                </a>
-							</div>
+                            </div> <!-- options row -->
+                            <div class="leatherket-purchase-panel">
+                                <div class="leatherket-inventory mb-3" role="status">
+                                    @if($product->isSoldOut())
+                                        <span class="leatherket-stock-label leatherket-stock-empty"><i class="fa fa-times" aria-hidden="true"></i> Sold out</span>
+                                    @else
+                                        <span class="leatherket-stock-label"><i class="fa fa-check" aria-hidden="true"></i> {{ $product->availableStock() }} {{ $product->availableStock() === 1 ? 'product' : 'products' }} in stock</span>
+                                    @endif
+                                </div>
+                                <div class="leatherket-detail-price mb-4" id="product-price">{!! $product->htmlPrice() !!}</div>
+                                <label for="leatherket-product-quantity" class="leatherket-quantity-label">Quantity:</label>
+                                <div class="input-group input-spinner leatherket-quantity-spinner mb-4">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-light lk-qty-btn" type="button" data-type="minus" data-field="quantity" aria-label="Decrease quantity" {{ $product->isSoldOut() ? 'disabled' : '' }}>−</button>
+                                    </div>
+                                    <input type="number" id="leatherket-product-quantity" class="form-control lk-qty-input" value="1" name="quantity" min="1" max="{{ max(1, min(10, $product->availableStock())) }}" inputmode="numeric" aria-label="Quantity" {{ $product->isSoldOut() ? 'disabled' : '' }}>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-light lk-qty-btn" type="button" data-type="plus" data-field="quantity" aria-label="Increase quantity" {{ $product->isSoldOut() ? 'disabled' : '' }}>+</button>
+                                    </div>
+                                </div>
+                                <div class="single-product-buttons leatherket-purchase-buttons">
+                                    <button type="button" {{ $product->isSoldOut() ? 'disabled' : '' }} class="btn btn-primary leatherket-add-cart" onclick="addToCart({{ $product->id }})">Add to cart</button>
+                                    <button type="button" {{ $product->isSoldOut() ? 'disabled' : '' }} class="btn btn-outline-primary leatherket-buy-now" onclick="buyNow({{ $product->id }})">Buy it now</button>
+                                </div>
+                            </div>
                             <div class="col-sm-12 col-md-12  col-xs-12" style="padding: 0">
                                 {!!  Settings::get('product_bottom_text')  !!}
                             </div>
@@ -197,6 +190,7 @@
                         <div href="#" class="card card-product-grid product-box-2">
                             <a href="{{ url('/product/'.$prod->id)  }}" class="img-wrap">
                                 <img class="img-fit lazyload"   src="{{ url('public/product/thumbnail/default.jpg') }}"  data-src="{{ url('/public/product/thumbnail/'.$prod->productImage)  }}" alt="{{ $prod->productName  }}">
+                                @include('website.partials.product_badge', ['product' => $prod])
                             </a>
                             <figcaption class="info-wrap">
                                 <a href="{{ url('/product/'.$prod->id)  }}" class="title text-truncate">{{ $prod->productName  }}</a>
@@ -204,10 +198,10 @@
                                     {!! $prod->htmlPrice() !!}
                                 </div>
                             </figcaption>
-                            @if ($prod->colors->isNotEmpty() || $prod->sizes->isNotEmpty())
-                                <a href="{{ url('/product/'.$prod->productSlug)  }}" class="btn btn-success btn-sm btn-block"> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
+                            @if ($prod->colors->isNotEmpty() || $prod->sizes->isNotEmpty() || $prod->options->isNotEmpty())
+                                <a href="{{ url('/product/'.$prod->productSlug)  }}" class="btn btn-success btn-sm btn-block {{ $prod->isSoldOut() ? 'disabled' : '' }}"> <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন</a>
                             @else
-                            <button class="btn btn-success btn-sm btn-block" onclick="addToCart({{ $prod->id }})">
+                            <button {{ $prod->isSoldOut() ? 'disabled' : '' }} class="btn btn-success btn-sm btn-block" onclick="addToCart({{ $prod->id }})">
                                 <i class="fa fa-shopping-cart"  aria-hidden="true"></i> অর্ডার করুন
                             </button>
                             @endif
@@ -256,4 +250,23 @@
     });
     </script>
 
+<script>
+    (function () {
+        var input = document.querySelector('#leatherket-product-quantity');
+        if (!input) return;
+        var holder = input.closest('.leatherket-quantity-spinner');
+        holder.querySelectorAll('.lk-qty-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                if (input.disabled) return;
+                var min = Number(input.min) || 1;
+                var max = Number(input.max) || 10;
+                var value = Math.min(max, Math.max(min, Number(input.value) || 1));
+                input.value = Math.min(max, Math.max(min, value + (button.dataset.type === 'plus' ? 1 : -1)));
+            });
+        });
+        input.addEventListener('change', function () {
+            input.value = Math.min(Number(input.max) || 10, Math.max(1, Number(input.value) || 1));
+        });
+    }());
+</script>
 @endsection

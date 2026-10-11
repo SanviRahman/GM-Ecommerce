@@ -18,8 +18,12 @@
     <link href="{{asset('assets/css/ui.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{asset('assets/css/responsive.css')}}" rel="stylesheet" type="text/css"  media="only screen and (max-width: 1200px)"  />
     <link href="{{asset('assets/css/style.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/css/mobile-offcanvas.css')}}" rel="stylesheet" type="text/css" />
     <link type="text/css" href="{{ asset('assets/css/sweetalert2.min.css') }}" rel="stylesheet">
     @stack('css')
+    <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
+    <link href="{{ asset('assets/css/leatherket-typography.css') }}?v=1" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/leatherket-commerce.css') }}?v=footer-2" rel="stylesheet" type="text/css" />
     {!! Settings::get('facebook_pixels') !!}
     <!-- CSS for scrolling ticker -->
 
@@ -53,38 +57,27 @@
 
 
     
-<div class="mobile-side-menu d-lg-none hide">
-    <div class="side-menu-overlay " onclick="sideMenuClose()"></div>
+{{-- Full-screen mobile navigation: the fixed header (including AJAX cart) remains above this drawer. --}}
+<div class="mobile-side-menu d-lg-none hide" id="leatherket-mobile-menu" aria-hidden="true">
     <div class="side-menu-wrap">
-        <div class="side-menu closed">
-            <div class="d-flex px-3 py-3 align-items-center bg-success" style=" justify-content: space-between; ">
-                <div class="widget-profile-box  d-flex align-items-center">
-
-                    <img class="logo" src="{{ asset('/public/'.Settings::get('site_logo')) }}" alt="{{ Settings::get('site_name') }}" style="    max-width: 100px;" class="w-50">
-                </div>
-                <div class="side-menu-close">
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                </div>
-            </div>
-            <div class="side-menu-list px-3" style="max-height: 90vh;overflow-y: auto;">
-                
-                <ul>
-                    
-                    <?php $category = Menu::getByName('Category Menu') ?>
+        <div class="side-menu">
+            <nav class="side-menu-list" aria-label="Product categories">
+                <ul class="mobile-nav-categories">
+                    <?php $category = Menu::getByName('Category Menu'); ?>
+                    @if($category)
                         @foreach($category as $menu)
-                            <li class="">
-                                <a href="{{ $menu['link'] }}" title=""><i class="fa fa-dot-circle-o"></i> {{ $menu['label'] }}</a>
+                            <li>
+                                <a href="{{ \App\Support\CategoryMenuUrl::resolve($menu['link'] ?? '') }}">{{ $menu['label'] }}</a>
                             </li>
                         @endforeach
-                    <li>
-                        <a href="tel:{{ Settings::get('phone_number') }}" class="">
-                            <i class="fa fa-phone"></i>
-                            <span class="category-name"> {{ Settings::get('phone_number') }} </span>
-                        </a>
-                    </li>
-
+                    @endif
                 </ul>
-            </div>
+            </nav>
+            @if(Settings::get('phone_number'))
+                <div class="side-menu-footer">
+                    <a href="tel:{{ Settings::get('phone_number') }}">{{ Settings::get('phone_number') }}</a>
+                </div>
+            @endif
         </div>
     </div>
 </div>
@@ -93,10 +86,24 @@
     <section class="header-main border-bottom">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center">
-                    <button class="navbar-toggler menu-toggle d-lg-none d-block mr-2" type="button">
-                        <span class="navbar-toggler-icon"></span>
+                <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center header-brand-column">
+                    <button class="navbar-toggler menu-toggle d-lg-none d-block" type="button"
+                            aria-controls="leatherket-mobile-menu" aria-expanded="false" aria-label="Open menu">
+                        <span class="menu-icon-open leatherket-menu-hamburger" aria-hidden="true">
+                            <span></span><span></span><span></span>
+                        </span>
+                        <svg class="menu-icon-close leatherket-header-icon leatherket-close-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M6 6L18 18M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                        </svg>
                     </button>
+                    <div class="widget-header nav-search-box d-lg-none">
+                        <a href="#" class="mobile-search-trigger" aria-label="Open search">
+                            <svg class="leatherket-header-icon leatherket-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M15.9 15.9L20.4 20.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </a>
+                    </div>
                     <a href="{{ url('/') }}" class="brand-wrap">
                         <img class="logo" src="{{ asset('/public/'.Settings::get('site_logo')) }}" alt="{{ Settings::get('site_name') }}">
                     </a> <!-- brand-wrap.// -->
@@ -104,7 +111,7 @@
                 <div class="col-lg-9 col-md-5 col-sm-12 search-box">
                     <form action="{{ url('/shop') }}" class="search">
                         <div class="input-group w-100">
-                            <div class="d-sm-none search-box-back">
+                            <div class="d-lg-none search-box-back">
                                 <button class="" type="button"><i class="fa fa-arrow-left"></i></button>
                             </div>
                             <input type="text" name="q" class="form-control" placeholder="Search">
@@ -116,18 +123,18 @@
                         </div>
                     </form> <!-- search-wrap .end// -->
                 </div> <!-- col.// -->
-                <div class="col-lg-1 col-md-3 col-sm-6 col-6">
+                <div class="col-lg-1 col-md-3 col-sm-6 col-6 header-cart-column">
                     <div class="widgets-wrap float-right">
-                        <div class="widget-header mr-4 nav-search-box d-lg-none">
-                            <a href="#" class="icon icon-xs rounded-circle border"><i class="fa fa-search"
-                                                                                      aria-hidden="true"></i></a>
-                        </div>
                         <div class="widget-header">
 
                             <div class="nav-cart-box dropdown" id="cart_items">
                                 <span class="badge badge-pill badge-danger notify">0</span>
                                 <a href="" class="icon icon-xs rounded-circle border" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i class="fa fa-shopping-cart d-inline-block nav-box-icon"></i>
+                                    <i class="fa fa-shopping-cart d-inline-block nav-box-icon desktop-cart-icon" aria-hidden="true"></i>
+                                    <svg class="mobile-cart-bag-icon d-lg-none" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <path d="M6.7 8.7H17.3L18.3 20H5.7L6.7 8.7Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
+                                        <path d="M9 9V7.2C9 5.45 10.34 4 12 4C13.66 4 15 5.45 15 7.2V9" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+                                    </svg>
                                     <span class="badge badge-pill badge-danger notify">0</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-right px-0" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-328px, 32px, 0px);">
@@ -189,38 +196,108 @@
 
 @yield('content')
 
-<footer class="section-footer border-top">
-    <div class="container">
-        <?php $footer = Menu::getByName('Footer Menu') ?>
-        @if($footer)
-        <section class="footer-top  padding-top-sm padding-bottom-sm">
-            <div class="row">
-                <div class="col-12">
-                    <p class="mb-0 text-center">
-                        @foreach($footer as $menu)
-                            <a href="{{ $menu['link'] }}">{{ $menu['label'] }}</a>
-                        @endforeach
-                    </p>
+<footer class="section-footer leatherket-store-footer" id="leatherket-footer">
+    <div class="leatherket-footer-container">
+        <div class="leatherket-footer-grid">
+            <section class="leatherket-newsletter" aria-labelledby="leatherket-newsletter-heading">
+                <h2 id="leatherket-newsletter-heading">Newsletter</h2>
+                <p id="leatherket-newsletter-description">{{ Settings::get('footer_newsletter_text') ?: 'Subscribe for exclusive offers, new arrivals and updates from Leatherket.' }}</p>
+                @if(session('newsletter_success'))
+                    <p class="leatherket-newsletter-notice" role="status">{{ session('newsletter_success') }}</p>
+                @endif
+                <form action="{{ route('newsletter.subscribe') }}" method="POST" class="leatherket-newsletter-form">
+                    @csrf
+                    <label for="leatherket-newsletter-email" class="sr-only">Email address</label>
+                    <input id="leatherket-newsletter-email" name="newsletter_email" type="email" placeholder="Enter email address..." autocomplete="email" required maxlength="254" aria-describedby="leatherket-newsletter-description" value="{{ old('newsletter_email') }}">
+                    <input type="text" name="website" class="leatherket-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+                @error('newsletter_email')
+                    <p class="leatherket-newsletter-error" role="alert">{{ $message }}</p>
+                @enderror
+            </section>
+
+            <section class="leatherket-footer-links" aria-label="Quick links">
+                <?php $footer = Menu::getByName('Footer Menu'); ?>
+                <details class="leatherket-quick-links" id="leatherket-footer-quick-links" open>
+                    <summary>Quick Links <i class="fa fa-chevron-down" aria-hidden="true"></i></summary>
+                    <nav aria-label="Footer navigation">
+                        <a href="{{ url('/') }}">Home</a>
+                        <a href="{{ url('/shop') }}">All Products</a>
+                        @if($footer)
+                            @foreach($footer as $menu)
+                                <a href="{{ \App\Support\CategoryMenuUrl::resolve($menu['link'] ?? '') }}">{{ $menu['label'] }}</a>
+                            @endforeach
+                        @endif
+                    </nav>
+                </details>
+            </section>
+
+            <section class="leatherket-footer-contact" aria-label="Contact information">
+                <h3 class="leatherket-contact-heading">Contact</h3>
+                <address class="leatherket-contact-details">
+                    @if(Settings::get('footer_contact_email'))
+                        <a href="mailto:{{ Settings::get('footer_contact_email') }}">{{ Settings::get('footer_contact_email') }}</a>
+                    @endif
+                    @if(Settings::get('phone_number'))
+                        <a href="tel:{{ Settings::get('phone_number') }}">{{ Settings::get('phone_number') }}</a>
+                    @endif
+                    @if(Settings::get('footer_contact_address'))
+                        <p>{{ Settings::get('footer_contact_address') }}</p>
+                    @endif
+                </address>
+                <div class="leatherket-footer-social" aria-label="Social media">
+                    @foreach(['social_facebook' => ['fab fa-facebook-f', 'Facebook'], 'social_instagram' => ['fab fa-instagram', 'Instagram'], 'social_twitter' => ['fab fa-twitter', 'Twitter'], 'social_linkedin' => ['fab fa-linkedin-in', 'LinkedIn']] as $key => $social)
+                        @if(Settings::get($key))
+                            <a href="{{ Settings::get($key) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $social[1] }}"><i class="{{ $social[0] }}" aria-hidden="true"></i></a>
+                        @endif
+                    @endforeach
                 </div>
-            </div>
-        </section>
-            @endif
-        <section class="footer-bottom border-top row">
-            <div class="col-md-2">
-                <p class="text-muted"> <?php echo date("Y"); ?> &copy  {{ Settings::get('site_name') }} </p>
-            </div>
-            <div class="col-md-6 text-md-center">
-                {!! Settings::get('footer_copyright_text') !!} 
-            </div>
-            <div class="col-md-4 text-md-right text-muted">
-               Design & Developed By <a href="https://digitalvai.com/" target="_blank">DIGITAL VAI</a> 
-            </div>
-        </section>
+            </section>
+        </div>
+
+        <div class="leatherket-footer-brand">
+            <span class="leatherket-footer-rule" aria-hidden="true"></span>
+            <a href="{{ url('/') }}" aria-label="Leatherket home"><img src="{{ asset('/public/'.Settings::get('site_logo')) }}" alt="{{ Settings::get('site_name') }}"></a>
+            <span class="leatherket-footer-rule" aria-hidden="true"></span>
+        </div>
+        <div class="leatherket-footer-bottom">
+            <span>Copyright &copy; {{ date('Y') }}.</span>
+            <a href="#leatherket-footer" class="leatherket-back-top" aria-label="Back to top"><i class="fa fa-angle-up" aria-hidden="true"></i></a>
+        </div>
+        <div class="leatherket-payment-strip"><img src="{{ asset('assets/images/ssl.png') }}" alt="Supported payment providers" loading="lazy"></div>
     </div>
 </footer>
+<script>
+(function () {
+    'use strict';
+    var footerLinks = document.getElementById('leatherket-footer-quick-links');
+    if (!footerLinks || !window.matchMedia) return;
+    var desktopView = window.matchMedia('(min-width: 992px)');
+    function syncFooterLinks() {
+        footerLinks.open = desktopView.matches;
+    }
+    footerLinks.querySelector('summary').addEventListener('click', function (event) {
+        if (desktopView.matches) event.preventDefault();
+    });
+    syncFooterLinks();
+    if (desktopView.addEventListener) {
+        desktopView.addEventListener('change', syncFooterLinks);
+    } else if (desktopView.addListener) {
+        desktopView.addListener(syncFooterLinks);
+    }
+    var scrollToTop = document.querySelector('#leatherket-footer .leatherket-back-top');
+    if (scrollToTop) {
+        scrollToTop.addEventListener('click', function (event) {
+            event.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+})();
+</script>
 <script src="{{asset('assets/js/lazyload.js')}}"></script>
 <script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
-<script src="{{asset('assets/js/script.js')}}"></script>
+<script src="{{asset('assets/js/script.js')}}?v=mobile-nav-2"></script>
 <script>
     $(document).ready(function() {
         updateNavCart();
@@ -312,7 +389,8 @@
             console.log(data.message);
             showFrontendAlert(data.status, data.message);
             updateNavCart();
-          
+        }).fail(function (xhr) {
+            showFrontendAlert('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Could not add product to cart.');
         });
     }
 
@@ -344,7 +422,8 @@
             if(data.status == 'success'){
                 window.location.href = '{{url('/checkout')}}';
             }
-            
+        }).fail(function (xhr) {
+            showFrontendAlert('error', (xhr.responseJSON && xhr.responseJSON.message) || 'Could not proceed to checkout.');
         });
     }
 
@@ -425,10 +504,7 @@
             }
         });
     }
-
-
 </script>
 @stack('js')
 </body>
-
 </html>

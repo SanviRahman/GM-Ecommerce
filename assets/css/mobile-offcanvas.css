@@ -1,0 +1,451 @@
+/* Leatherket mobile navigation — Comfort Park screenshot-matched v2.
+   Scope: mobile/tablet only. Desktop header/navigation stays untouched. */
+@media (max-width: 991.98px) {
+    :root {
+        --leatherket-mobile-header-height: 49px;
+        --leatherket-mobile-gutter-left: 14px;
+        --leatherket-mobile-gutter-right: 10px;
+    }
+
+    /* Full-screen off-canvas panel. It slides from the left and never fades. */
+    .mobile-side-menu {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        max-width: none;
+        height: 100vh;
+        height: 100dvh;
+        background: #fff;
+        z-index: 2000;
+        opacity: 1;
+        visibility: hidden;
+        pointer-events: none;
+        overflow: hidden;
+        transform: translate3d(-100%, 0, 0);
+        will-change: transform;
+        transition:
+            transform 400ms cubic-bezier(.25, .46, .45, .94),
+            visibility 0s linear 400ms;
+    }
+
+    .mobile-side-menu.show {
+        opacity: 1;
+        visibility: visible !important;
+        pointer-events: auto;
+        transform: translate3d(0, 0, 0);
+        transition:
+            transform 400ms cubic-bezier(.25, .46, .45, .94),
+            visibility 0s;
+    }
+
+    .mobile-side-menu .side-menu-wrap {
+        height: 100%;
+        padding-top: var(--leatherket-mobile-header-height);
+    }
+
+    .mobile-side-menu .side-menu {
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+    }
+
+    /* Screenshot target: first menu title starts about 18px below the header. */
+    .mobile-side-menu .side-menu-list {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        padding: 11px var(--leatherket-mobile-gutter-left) 8px;
+    }
+
+    .mobile-side-menu .side-menu-list ul,
+    .mobile-side-menu .mobile-nav-categories {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .mobile-side-menu .side-menu-list ul > li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+    }
+
+    /* Screenshot target: ~24px regular, plain black, ~45px vertical rhythm. */
+    .mobile-side-menu .side-menu-list ul > li > a {
+        display: block;
+        margin: 0;
+        padding: 0 0 12px;
+        color: #111;
+        background: transparent;
+        border: 0;
+        font-family: var(--leatherket-font, "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif);
+        font-size: 24px;
+        font-weight: 400;
+        line-height: 1.36;
+        letter-spacing: -0.35px;
+        text-align: left;
+        text-decoration: none;
+        white-space: normal;
+        overflow-wrap: break-word;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-side-menu .side-menu-list ul > li > a:hover,
+    .mobile-side-menu .side-menu-list ul > li > a:focus-visible {
+        color: #111;
+        text-decoration: none;
+    }
+
+    .mobile-side-menu .side-menu-footer {
+        flex: 0 0 auto;
+        padding: 4px var(--leatherket-mobile-gutter-left) max(9px, env(safe-area-inset-bottom));
+        color: #8b8b8b;
+        font-family: var(--leatherket-font, "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif);
+        font-size: 10px;
+        font-weight: 400;
+        line-height: 1.55;
+    }
+
+    .mobile-side-menu .side-menu-footer a,
+    .mobile-side-menu .side-menu-footer a:hover,
+    .mobile-side-menu .side-menu-footer a:focus {
+        color: #8b8b8b;
+        text-decoration: none;
+    }
+
+    body.mobile-nav-open {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    /* While the drawer is open, the same real header stays above it.
+       This keeps the existing AJAX cart visible and clickable. */
+    body.mobile-nav-open .section-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        z-index: 2010;
+        background: #fff;
+    }
+
+    .section-header .header-main {
+        padding-top: 0;
+        padding-bottom: 0;
+        background: #fff;
+    }
+
+    .section-header .header-main .container {
+        max-width: 100%;
+        padding-left: var(--leatherket-mobile-gutter-left);
+        padding-right: var(--leatherket-mobile-gutter-right);
+    }
+
+    .section-header .header-main .row {
+        min-height: var(--leatherket-mobile-header-height);
+        height: var(--leatherket-mobile-header-height);
+        margin: 0;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .section-header .header-main .header-brand-column {
+        position: static;
+        flex: 1 1 auto;
+        max-width: none;
+        min-width: 0;
+        width: auto;
+        height: 100%;
+        padding: 0;
+    }
+
+    /* Menu/close button geometry matched to the reference header. */
+    .section-header .header-main .menu-toggle {
+        flex: 0 0 16px;
+        width: 16px;
+        min-width: 16px;
+        height: 40px;
+        min-height: 40px;
+        margin: 0;
+        padding: 0;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        color: #171717;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        line-height: 1;
+        position: relative;
+        z-index: 3;
+        outline: 0;
+        box-shadow: none;
+    }
+
+    .leatherket-menu-hamburger {
+        width: 17px;
+        height: 14px;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .leatherket-menu-hamburger span {
+        display: block;
+        width: 17px;
+        height: 1.4px;
+        background: currentColor;
+        border-radius: 2px;
+    }
+
+    .leatherket-header-icon {
+        display: block;
+        width: 19px;
+        height: 19px;
+        color: currentColor;
+    }
+
+    .menu-toggle .menu-icon-close {
+        display: none;
+        width: 18px;
+        height: 18px;
+    }
+
+    body.mobile-nav-open .menu-toggle .menu-icon-open {
+        display: none;
+    }
+
+    body.mobile-nav-open .menu-toggle .menu-icon-close {
+        display: block;
+    }
+
+    .section-header .header-main .nav-search-box {
+        flex: 0 0 20px;
+        width: 20px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 0 0 15px;
+        position: relative;
+        z-index: 3;
+    }
+
+    .section-header .header-main .mobile-search-trigger,
+    .section-header .header-main .mobile-search-trigger:hover,
+    .section-header .header-main .mobile-search-trigger:focus {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 40px;
+        padding: 0;
+        color: #171717;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        text-decoration: none;
+        outline: 0;
+        box-shadow: none;
+    }
+
+    .leatherket-search-icon {
+        width: 19px;
+        height: 19px;
+    }
+
+    /* True center of the usable header row, like the reference screenshot. */
+    .section-header .header-main .brand-wrap {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        width: auto;
+        max-width: calc(100% - 154px);
+        z-index: 1;
+    }
+
+    .section-header .header-main .brand-wrap .logo {
+        display: block;
+        width: auto !important;
+        height: auto;
+        max-width: 100%;
+        max-height: 28px;
+        margin: 0;
+        object-fit: contain;
+    }
+
+    .section-header .header-main .header-cart-column {
+        position: relative;
+        z-index: 4;
+        flex: 0 0 44px;
+        width: 44px;
+        max-width: 44px;
+        height: 100%;
+        padding: 0;
+    }
+
+    .section-header .header-main .widgets-wrap {
+        float: none !important;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .section-header .header-main .widget-header {
+        margin: 0;
+    }
+
+    .section-header .header-main .widget-header.nav-search-box {
+        margin-left: 15px !important;
+    }
+
+    .section-header .header-main #cart_items {
+        position: relative;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        min-height: 44px;
+    }
+
+    /* Empty state renders an old outer badge as well; hide only that duplicate. */
+    .section-header .header-main #cart_items > .notify {
+        display: none !important;
+    }
+
+    .section-header .header-main #cart_items > a[data-toggle="dropdown"] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        line-height: normal !important;
+        color: #171717 !important;
+        background: transparent;
+        border: 0 !important;
+        border-radius: 0 !important;
+        text-decoration: none;
+        outline: 0;
+        box-shadow: none;
+    }
+
+    .section-header .header-main #cart_items .desktop-cart-icon {
+        display: none !important;
+    }
+
+    .section-header .header-main #cart_items .mobile-cart-bag-icon {
+        flex: 0 0 19px;
+        display: block !important;
+        width: 19px;
+        height: 19px;
+        color: #171717;
+    }
+
+    .section-header .header-main #cart_items > a > .notify {
+        position: static;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 17px;
+        width: 17px;
+        min-width: 17px;
+        height: 17px;
+        margin: 0;
+        padding: 0;
+        background: #efefef;
+        color: #555;
+        border: 0;
+        border-radius: 50%;
+        font-family: var(--leatherket-font, "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif);
+        font-size: 9px;
+        font-weight: 400;
+        line-height: 17px;
+        box-shadow: none;
+    }
+
+    .section-header .header-main #cart_items .dropdown-menu {
+        top: calc(100% + 4px) !important;
+        right: 0 !important;
+        left: auto !important;
+        transform: none !important;
+        width: min(350px, calc(100vw - 20px));
+        min-width: 0;
+        max-width: calc(100vw - 20px);
+        max-height: calc(100dvh - 64px);
+        overflow-y: auto;
+        z-index: 2020;
+    }
+
+    .section-header .header-main #cart_items .dropdown-cart {
+        min-width: 0;
+    }
+
+    /* Search replaces only the left/center header area; cart remains clickable. */
+    .section-header .header-main .search-box {
+        position: absolute;
+        width: calc(100% - 54px);
+        height: 100%;
+        left: 0;
+        top: 0;
+        display: flex;
+        align-items: center;
+        background: #fff;
+        padding: 4px 10px 4px 14px !important;
+        z-index: 6;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 180ms ease, visibility 0s linear 180ms;
+    }
+
+    .section-header .header-main .search-box.show {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transition: opacity 180ms ease;
+    }
+
+    .section-header .header-main .search-box .search,
+    .section-header .header-main .search-box .input-group {
+        width: 100%;
+        margin: 0;
+    }
+
+    .section-header .header-main .search-box .search-box-back button {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 359.98px) {
+    .section-header .header-main .brand-wrap {
+        max-width: calc(100% - 145px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-side-menu,
+    .mobile-side-menu.show {
+        transition-duration: 0.01ms;
+    }
+}
