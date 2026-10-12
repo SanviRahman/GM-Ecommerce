@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    /** Customer-facing listings should never render inactive catalog entries. */
+    public function scopeVisible($query)
+    {
+        return $query->where('status', 'Active');
+    }
+
     // Many-to-Many relationship with Color
     public function colors()
     {

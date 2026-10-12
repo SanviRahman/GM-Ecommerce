@@ -27,6 +27,25 @@
                 />
             </div>
             <div class="form-group">
+                <label for="lk_topbar_enabled">Show Top Announcement</label>
+                <select class="form-control" id="lk_topbar_enabled" name="lk_topbar_enabled">
+                    <option value="1" {{ Settings::get('lk_topbar_enabled') !== '0' ? 'selected' : '' }}>On</option>
+                    <option value="0" {{ Settings::get('lk_topbar_enabled') === '0' ? 'selected' : '' }}>Off</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="lk_topbar_text">Top Announcement Text</label>
+                <textarea class="form-control" rows="2" maxlength="255" id="lk_topbar_text" name="lk_topbar_text" placeholder="Write any store announcement">{{ Settings::get('lk_topbar_text') }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="lk_topbar_call_enabled">Show Call Link in Top Announcement</label>
+                <select class="form-control" id="lk_topbar_call_enabled" name="lk_topbar_call_enabled">
+                    <option value="1" {{ Settings::get('lk_topbar_call_enabled') !== '0' ? 'selected' : '' }}>On</option>
+                    <option value="0" {{ Settings::get('lk_topbar_call_enabled') === '0' ? 'selected' : '' }}>Off</option>
+                </select>
+                <small class="form-text text-muted">Phone Number below is used for calling.</small>
+            </div>
+            <div class="form-group">
                 <label class="control-label" for="phone_number">Phone Number</label>
                 <input
                     class="form-control"

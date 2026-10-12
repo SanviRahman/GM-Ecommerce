@@ -7,6 +7,7 @@ use App\Product;
 use App\Slider;
 use App\ShippingCharge;
 use App\Campaign;
+use App\Page;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
 class WebsiteController extends Controller
@@ -20,7 +21,7 @@ class WebsiteController extends Controller
         $otherProducts = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->latest()->paginate(30);
         $otherProducts->withPath('shop/');
         $slides = Slider::where('status','Active')->get();
-        $sections = Section::with('category','category.products.stockRecord', 'category.products.colors', 'category.products.sizes', 'category.products.options')->where('status','Active')->orderBy('sort')->get();
+        $sections = Section::with(['category', 'category.products' => function ($query) { $query->visible()->with('stockRecord', 'colors', 'sizes', 'options', 'media'); }])->where('status','Active')->orderBy('sort')->get();
      
         return view('website.home',compact('slug','topProducts','otherProducts','slides','sections'));
     }
@@ -31,6 +32,9 @@ class WebsiteController extends Controller
         $product = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->where('products.id','like',$id)->first();
         if(!$product){
             $product = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')->where('products.productSlug','like',$id)->first();
+        }
+        if (!$product) {
+            abort(404);
         }
         $relatedProducts = Product::where('status','Active')->with('media','categories','stockRecord','colors','sizes','options')
         ->where('products.id','!=',$product->id)
@@ -86,8 +90,8 @@ class WebsiteController extends Controller
 
         // Prefer the new ordered many-to-many campaign products. Existing
         // campaigns that only have product_id continue to work unchanged.
-        $campaignProducts = $campaign_data->products;
-        if ($campaignProducts->isEmpty() && $campaign_data->product) {
+        $campaignProducts = $campaign_data->products->filter(function ($p) { return $p->status === 'Active'; })->values();
+        if ($campaignProducts->isEmpty() && $campaign_data->product && $campaign_data->product->status === 'Active') {
             $campaignProducts = collect([$campaign_data->product]);
         }
 

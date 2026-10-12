@@ -70,7 +70,7 @@ class CartController extends Controller
                 'errors' => $e->validator->errors()
             ]);
         }
-        $product = Product::with('stockRecord')->findOrFail($request->id);
+        $product = Product::visible()->with('stockRecord')->findOrFail($request->id);
         $qty = filter_var($request->input('quantity', 1), FILTER_VALIDATE_INT);
         if ($qty === false || $qty < 1) {
             return response()->json(['status' => 'error', 'message' => 'Please select a valid quantity.'], 422);
@@ -373,17 +373,28 @@ class CartController extends Controller
             $orderId = DB::transaction(function () use ($request, $sessionId, $ipAddress, $user) {
                 $cartItems = Cart::content();
                 $freeDelivery = false;
+                $requestedQuantities = [];
                 foreach ($cartItems as $item) {
                     // Resolve the live product for the final inventory decision.
                     $product = Product::find($item->id);
-                    if (!$product || (int) $product->isStockOut === 1) {
+                    if (!$product || $product->status !== 'Active' || (int) $product->isStockOut === 1) {
                         throw new \RuntimeException('A product in your cart is no longer available.');
                     }
                     if ((int) $item->qty < 1) {
                         throw new \RuntimeException('Invalid cart quantity.');
                     }
+                    $requestedQuantities[$product->id] = ($requestedQuantities[$product->id] ?? 0) + (int) $item->qty;
                     if ((int) $product->isFreeDelivery === 1) {
                         $freeDelivery = true;
+                    }
+                }
+
+                // Recheck current stock before saving a pending order, without
+                // reserving/deducting anything. Final allocation happens on Customer Confirm.
+                foreach ($requestedQuantities as $productId => $quantity) {
+                    $liveProduct = Product::visible()->with('stockRecord')->findOrFail($productId);
+                    if ($liveProduct->isSoldOut() || $quantity > $liveProduct->availableStock()) {
+                        throw new \RuntimeException('Not enough stock for ' . $liveProduct->productName . '. Please adjust your cart.');
                     }
                 }
 
@@ -417,7 +428,7 @@ class CartController extends Controller
                 $customer->save();
 
                 foreach ($cartItems as $item) {
-                    $product = Product::findOrFail($item->id);
+                    $product = Product::visible()->findOrFail($item->id);
                     $line = new OrderProducts();
                     $line->order_id = $order->id;
                     $line->product_id = $product->id;
@@ -431,7 +442,8 @@ class CartController extends Controller
                     $line->save();
                 }
 
-                app(\App\Services\OrderStockService::class)->reserve($order);
+                // Stock is reduced only when Admin marks an order Customer Confirm.
+                // Do NOT allocate/deduct inventory on checkout submission.
 
                 $notification = new Notification();
                 $notification->order_id = $order->id;
@@ -653,7 +665,7 @@ class CartController extends Controller
         $productId = (int) $request->input('product_id');
         $campaignProduct = $campaignProducts->firstWhere('id', $productId);
 
-        if (!$campaignProduct) {
+        if (!$campaignProduct || $campaignProduct->status !== 'Active') {
             return response()->json([
                 'status' => 'error',
                 'message' => 'The selected product is not part of this campaign.',

@@ -2,7 +2,7 @@
 @section('content')
 	<section class="section-name bg mt-2">
 		<div class="container">
-			<div class="card">
+			<div class="card lk-product-detail-card">
 				<div class="row no-gutters single-product">
 					<div class="col-md-5">
 						<div id="single-product-galary" class="slider-home-banner carousel slide" data-ride="carousel">
@@ -108,10 +108,11 @@
                             </div> <!-- options row -->
                             <div class="leatherket-purchase-panel">
                                 <div class="leatherket-inventory mb-3" role="status">
+                                    <span class="lk-product-code">Product Code: {{ $product->productCode }}</span>
                                     @if($product->isSoldOut())
                                         <span class="leatherket-stock-label leatherket-stock-empty"><i class="fa fa-times" aria-hidden="true"></i> Sold out</span>
                                     @else
-                                        <span class="leatherket-stock-label"><i class="fa fa-check" aria-hidden="true"></i> {{ $product->availableStock() }} {{ $product->availableStock() === 1 ? 'product' : 'products' }} in stock</span>
+                                        <span class="leatherket-stock-label"><i class="fa fa-check" aria-hidden="true"></i> Available</span>
                                     @endif
                                 </div>
                                 <div class="leatherket-detail-price mb-4" id="product-price">{!! $product->htmlPrice() !!}</div>

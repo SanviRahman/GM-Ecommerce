@@ -147,7 +147,7 @@
                 </header><!-- sect-heading -->
                 <div class="popular-product-slider lk-home-products-slider" aria-label="Products in collection">
                     <?php if($section->category && $section->category->products->isNotEmpty()): ?>
-                        <?php $__currentLoopData = $section->category->products->sortBy('productCode')->take($section->max); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $section->category->products->filter(function ($p) { return $p->status === 'Active'; })->sortBy('productCode')->take($section->max); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="lk-product-slide">
                                 <?php echo $__env->make('website.partials.product_card', ['product' => $product], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                             </div>

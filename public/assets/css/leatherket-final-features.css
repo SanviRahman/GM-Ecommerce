@@ -1,0 +1,61 @@
+/* LEATHERKET 2026-10-12: scoped updates, V1 mobile offcanvas retained. */
+.lk-sticky-site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    width: 100%;
+    isolation: isolate;
+    background: #f3f0ec;
+    box-shadow: 0 2px 9px rgba(0,0,0,.07);
+}
+.lk-top-announcement { background:#050505; color:#fff; width:100%; }
+.lk-top-announcement-inner { display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:40px;padding-top:5px;padding-bottom:5px; }
+.lk-top-call { display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;color:#fff !important;text-decoration:none;white-space:nowrap; }
+.lk-top-call:hover,.lk-top-call:focus { color:#f3d7bb !important; }
+.lk-top-announcement-message { flex:1 1 auto;min-width:0;text-align:center;line-height:1.35;overflow-wrap:anywhere; }
+/* Price and stock label on product detail page. */
+.lk-product-code { display:block;font-size:14px;font-weight:600;margin:0 0 9px;color:#303030;line-height:1.45;overflow-wrap:anywhere; }
+.leatherket-inventory .leatherket-stock-label {display:inline-flex;align-items:center;gap:7px;}
+.leatherket-purchase-buttons .leatherket-add-cart,
+.leatherket-purchase-buttons .leatherket-buy-now { background:#101114 !important;color:#fff !important;border:1px solid #101114 !important; }
+.leatherket-purchase-buttons .leatherket-add-cart:hover,
+.leatherket-purchase-buttons .leatherket-add-cart:focus,
+.leatherket-purchase-buttons .leatherket-buy-now:hover,
+.leatherket-purchase-buttons .leatherket-buy-now:focus {background:#142c56 !important;border-color:#142c56 !important;color:#fff !important;}
+.leatherket-purchase-buttons .leatherket-free-delivery-order {background:#179b46 !important;color:#fff !important;border-color:#179b46 !important;}
+.leatherket-purchase-buttons .leatherket-free-delivery-order:hover,
+.leatherket-purchase-buttons .leatherket-free-delivery-order:focus {background:#107437 !important;border-color:#107437 !important;}
+.leatherket-purchase-buttons button:disabled { opacity:.5;cursor:not-allowed; }
+/* Product images: fuller portrait presentation, no legacy frame or internal image padding. */
+.lk-product-card-image { aspect-ratio:2 / 3; border:0 !important;padding:0 !important;margin:0 !important; }
+.lk-product-card-image img {object-fit:cover;object-position:center top;padding:0 !important;margin:0 !important;border:0 !important;}
+.lk-product-card {border:0 !important;margin:0;box-shadow:none !important;}
+/* Detail image is uncropped so tall clothing can be seen in full. */
+.single-product #single-product-galary .carousel-item > a {display:block;width:100%;background:transparent;}
+.single-product #single-product-galary .carousel-item img.img-thumbnail {
+    display:block;width:100%;height:auto;max-height:720px;object-fit:contain;object-position:center top;
+    padding:0 !important;margin:0 !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;
+}
+/* Remove only the detail photo's inherited padding and borders, not form spacing. */
+.lk-product-detail-card {padding:0 !important;margin:0 !important;border:0 !important;box-shadow:none !important;}
+.single-product > .col-md-5 {border:0 !important;padding:0 !important;margin:0 !important;}
+.single-product #single-product-galary {border:0;padding:0;margin:0;}
+.single-product #single-product-galary .carousel-inner {border:0;border-radius:0 !important;}
+.lk-checkout-free-delivery {
+    display:flex;gap:9px;align-items:center;min-height:44px;margin:0 0 20px;padding:10px 14px;
+    border:1px solid #bedfc8;background:#e6f6e9;color:#146b30;font-size:15px;font-weight:600;line-height:1.5;
+}
+@media (max-width:991.98px) {
+    .lk-top-announcement-inner {flex-wrap:wrap;justify-content:center;gap:3px 10px;padding:6px 12px;}
+    .lk-top-call {justify-content:center;flex:1 1 100%;white-space:normal;font-size:13px;line-height:1.35;overflow-wrap:anywhere;}
+    .lk-top-announcement-message {flex:1 1 100%;font-size:12px;line-height:1.35;text-align:center;}
+    /* Drawer must stay viewport-aligned even when header container is sticky. */
+    body.mobile-nav-open .lk-sticky-site-nav {z-index:2010;}
+    body.mobile-nav-open .lk-top-announcement {display:none;}
+    body.mobile-nav-open .mobile-side-menu {z-index:2000;}
+    .lk-products-grid {grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:16px 10px;}
+    .lk-product-card-image {aspect-ratio:2 / 3 !important;}
+    .lk-product-card-details {padding:9px 0 10px;}
+    .lk-related-products .lk-related-product {flex:0 0 calc((100% - 12px)/2) !important;}
+}
+@media(max-width:370px){.lk-top-call {font-size:12px;}.lk-top-announcement-message{font-size:11px;}.lk-product-card-action{white-space:normal;overflow-wrap:anywhere;}}

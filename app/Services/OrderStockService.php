@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 /**
- * Stock is allocated when a frontend order is confirmed, not when the cart is filled.
- * Call inside DB::transaction(). Uses row locks for concurrent checkouts.
+ * Stock deducted ONLY when Admin/Manager changes status to Customer Confirm.
+ * Call inside a DB::transaction(). Uses row locks to prevent overselling.
  */
 class OrderStockService
 {
@@ -62,7 +62,7 @@ class OrderStockService
         $order->stock_deducted = false;
     }
 
-    /** Prevent double deductions when Admin/Manager/User changes status. */
+    /** Stock changes are idempotent across all Order Status controllers. */
     public function onStatusChange(Order $order, string $newStatus): void
     {
         if (in_array($newStatus, ['Canceled', 'Cancelled', 'Return'], true)) {
@@ -70,9 +70,9 @@ class OrderStockService
             return;
         }
 
-        // Old admin-created orders allocated stock at Delivered; retain that support.
-        // Reactivated canceled/returned orders need new allocation.
-        if ($newStatus === 'Delivered' || in_array($order->status, ['Canceled', 'Cancelled', 'Return'], true)) {
+        // Explicit confirmation is the ONLY event that deducts inventory.
+        // Existing pre-upgrade deductions retain stock_deducted=1 and won't deduct twice.
+        if ($newStatus === 'Customer Confirm') {
             $this->reserve($order);
         }
     }

@@ -28,34 +28,29 @@
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-collections.css')); ?>?v=1">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-product-cards.css')); ?>?v=2">
     <link href="<?php echo e(asset('assets/css/leatherket-font-sizes.css')); ?>?v=20261011-readable2" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/leatherket-final-features.css')); ?>?v=20261012-1" rel="stylesheet" type="text/css" />
     <?php echo Settings::get('facebook_pixels'); ?>
 
     <!-- CSS for scrolling ticker -->
 
 </head>
 
-<body>   
-  <div style="background-color:black; color:white;">
-    <div class="container d-flex align-items-center py-2">
-        <!-- Left side: Hotline -->
-        <div class="me-4 d-flex align-items-center " style="min-width:210px">
-            <i class="fas fa-headset me-2"></i> 
-            কল করুন: 
-            <a class="text-white ms-1 pr-4" href="tel:<?php echo e(Settings::get('phone_number')); ?>">
-                <?php echo e(Settings::get('phone_number')); ?> 
-            </a>
-        </div>
+<body>
 
-        <!-- Right side: Scrolling news ticker -->
-        <div class="flex-grow-1 overflow-hidden">
-            <marquee behavior="scroll" direction="left" scrollamount="5">
-                ⚡  LEATHERKET ওয়েবসাইটে আপনাকে সাগতম &nbsp;&nbsp;|&nbsp;&nbsp; 
-                প্রোডাক্ট অবশ্যই চেক করে রিসিভ করবেন &nbsp;&nbsp;|&nbsp;&nbsp; 
-                ক্যান্সেল করলে ডেলিভারি চার্জ দিয়ে রিটার্ন করতে হবে ⚡ 
-            </marquee>
+<div class="lk-sticky-site-nav">
+    <?php if(Settings::get('lk_topbar_enabled') !== '0'): ?>
+    <div class="lk-top-announcement" role="region" aria-label="Store announcement">
+        <div class="container lk-top-announcement-inner">
+            <?php if(Settings::get('lk_topbar_call_enabled') !== '0' && Settings::get('phone_number')): ?>
+                <a class="lk-top-call" href="tel:<?php echo e(preg_replace('/[^0-9+]/', '', (string) Settings::get('phone_number'))); ?>">
+                    <i class="fa fa-phone" aria-hidden="true"></i>
+                    <span>কল করুন: <?php echo e(Settings::get('phone_number')); ?></span>
+                </a>
+            <?php endif; ?>
+            <div class="lk-top-announcement-message"><?php echo e(Settings::get('lk_topbar_text') ?: 'LEATHERKET ওয়েবসাইটে আপনাকে স্বাগতম।'); ?></div>
         </div>
     </div>
-</div>
+    <?php endif; ?>
 
 
 
@@ -213,6 +208,7 @@
     </div>
 </nav>
 <?php endif; ?>
+</div>
 
 <?php echo $__env->yieldContent('content'); ?>
 

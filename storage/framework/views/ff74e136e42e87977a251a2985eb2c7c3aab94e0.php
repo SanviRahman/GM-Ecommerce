@@ -31,6 +31,11 @@
     }
 
 </style>
+    <?php
+        $lkFreeDeliveryCheckout = Cart::content()->contains(function ($item) {
+            return $item->model && (int) $item->model->isFreeDelivery === 1;
+        });
+    ?>
     <?php if(Cart::count() > 0): ?>
     <section class="section-content padding-y bg slidetop">
         <div class="container">
@@ -38,6 +43,9 @@
                 <div class="col-md-6">
                     <aside class="card mb-4">
                         <article class="card-body">
+                            <?php if($lkFreeDeliveryCheckout): ?>
+                                <div class="lk-checkout-free-delivery" role="status"><i class="fa fa-truck" aria-hidden="true"></i> ফ্রী ডেলিভারি — এই অর্ডারে ডেলিভারি চার্জ ৳ ০</div>
+                            <?php endif; ?>
                             <header class="mb-4">
                                 <p class="text-center" style="font-size: 16px;">অর্ডারটি কনফার্ম করতে আপনার নাম, ঠিকানা,
                                     মোবাইল নাম্বার, লিখে <span class="text-danger">অর্ডার কনফার্ম করুন</span> বাটনে
@@ -178,10 +186,10 @@
                                 <dd class="col-sm-4 text-right"><strong>TK <?php echo Cart::total('0') ?></strong></dd>
 
                                 <dt class="col-sm-8">Delivery charge: </dt>
-                                <dd class="col-sm-4 text-danger text-right"><strong>TK <?php echo $_SESSION['delivery'] ?></strong></dd>
+                                <dd class="col-sm-4 text-danger text-right"><strong>TK <?php echo $lkFreeDeliveryCheckout ? 0 : $_SESSION['delivery'] ?></strong></dd>
 
                                 <dt class="col-sm-8">Total:</dt>
-                                <dd class="col-sm-4 text-right"><strong class="h5 text-dark">TK <?php echo Cart::subtotal('0','','')+$_SESSION['delivery']; ?></strong></dd>                            </dl>
+                                <dd class="col-sm-4 text-right"><strong class="h5 text-dark">TK <?php echo Cart::subtotal('0','','')+($lkFreeDeliveryCheckout ? 0 : $_SESSION['delivery']); ?></strong></dd>                            </dl>
 
                         </article>
 

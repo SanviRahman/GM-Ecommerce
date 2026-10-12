@@ -714,6 +714,11 @@ class OrderController extends Controller
                     "icon" => "fe-tag",
                     "color" => "bg-primary"
                 ),
+                "Customer Confirm" => array(
+                    "name" => "Customer Confirm",
+                    "icon" => "fe-check-circle",
+                    "color" => "bg-success"
+                ),
                 "On Hold" => array(
                     "name" => "On Hold",
                     "icon" => "far fa-stop-circle",
@@ -1021,7 +1026,7 @@ class OrderController extends Controller
         try {
             DB::transaction(function () use ($request, $status) {
                 $order = Order::whereKey($request->input('id'))->lockForUpdate()->firstOrFail();
-                if (!$order->courier_id && !in_array($status, ['Canceled', 'On Hold', 'Payment Pending'], true)) {
+                if (!$order->courier_id && !in_array($status, ['Canceled', 'On Hold', 'Payment Pending', 'Customer Confirm'], true)) {
                     throw new \RuntimeException('Please Update order courier and try again !');
                 }
                 app(OrderStockService::class)->onStatusChange($order, $status);

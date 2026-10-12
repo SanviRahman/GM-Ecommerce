@@ -15,6 +15,7 @@
     <link href="<?php echo e(asset('css/app.min.css')); ?>" rel="stylesheet" type="text/css" />
     <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
     <link href="<?php echo e(asset('assets/css/leatherket-typography.css')); ?>?v=1" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/leatherket-font-sizes.css')); ?>?v=20261011-readable2" rel="stylesheet" type="text/css" />
 </head>
 
 

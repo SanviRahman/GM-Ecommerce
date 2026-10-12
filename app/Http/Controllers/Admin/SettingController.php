@@ -14,6 +14,13 @@ class SettingController extends Controller
     }
     public function store(Request $request)
     {
+        if ($request->has('lk_topbar_enabled')) {
+            $request->validate([
+                'lk_topbar_enabled' => 'required|in:0,1',
+                'lk_topbar_call_enabled' => 'required|in:0,1',
+                'lk_topbar_text' => 'nullable|string|max:255',
+            ]);
+        }
         if ($request->has('lk_collection_enabled')) {
             $request->validate([
                 'lk_collection_enabled' => 'required|in:0,1',
