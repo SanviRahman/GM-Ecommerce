@@ -8,7 +8,7 @@
     <?php if(session('error')): ?><div class="alert alert-danger"><?php echo e(session('error')); ?></div><?php endif; ?>
     <?php if($errors->any()): ?><div class="alert alert-danger"><?php echo e($errors->first()); ?></div><?php endif; ?>
     <div class="table-responsive"><table id="stockTable" class="table table-centered table-hover" width="100%">
-        <thead class="thead-light"><tr><th>ID</th><th>Product Name</th><th>In a Stock</th><th>Available Stock</th><th>Actions</th></tr></thead>
+        <thead class="thead-light"><tr><th>Product Code</th><th>Product Name</th><th>In a Stock</th><th>Available Stock</th><th>Actions</th></tr></thead>
     </table></div>
 </div></div></div></div>
 
@@ -16,12 +16,18 @@
     <div class="modal-dialog modal-dialog-centered" role="document"><div class="modal-content">
         <form id="lkStockEditForm" method="POST" action="">
             <?php echo csrf_field(); ?> <?php echo method_field('PUT'); ?>
-            <div class="modal-header"><h5 id="lkStockEditTitle" class="modal-title">Adjust Available Stock</h5>
+            <div class="modal-header"><h5 id="lkStockEditTitle" class="modal-title">Edit Product Stock</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
             <div class="modal-body">
                 <p class="mb-3">Product: <strong id="lkStockProductLabel"></strong><br>
+                Product Code: <strong id="lkStockCode"></strong><br>
+                Current In a Stock: <strong id="lkStockPurchased"></strong><br>
                 Current Available: <strong id="lkStockCurrent"></strong></p>
-                <div class="form-group"><label for="lkStockOperation">Adjustment</label>
+                <div class="form-group">
+                    <label for="lkStockPurchaseTotal">In a Stock (Total Purchased)</label>
+                    <input id="lkStockPurchaseTotal" class="form-control" type="number" min="0" max="100000000" step="1" name="purchase_total" required>
+                </div>
+                <div class="form-group"><label for="lkStockOperation">Available Stock Adjustment</label>
                     <select class="form-control" id="lkStockOperation" name="operation" required>
                         <option value="add">Add quantity (+)</option>
                         <option value="subtract">Subtract quantity (-)</option>
@@ -29,7 +35,7 @@
                     </select></div>
                 <div class="form-group"><label for="lkStockQuantity">Quantity</label>
                     <input id="lkStockQuantity" class="form-control" type="number" min="0" max="1000000" step="1" value="1" name="quantity" required></div>
-                <p class="text-muted small mb-0">Purchase history (In a Stock) remains unchanged. Subtract cannot make available stock negative.</p>
+                <p class="text-muted small mb-0">In a Stock is a manually editable total. Changing it does not alter existing Purchase invoices or automatically add stock. Available Stock is adjusted separately. All corrections are logged. Stock cannot be negative.</p>
             </div>
             <div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn btn-primary">Update Stock</button></div>
@@ -47,7 +53,7 @@ $(function () {
         pageLength: 50,
         ordering: false,
         columns: [
-            {data: 'id'}, {data: 'productName', render: $.fn.dataTable.render.text()}, {data: 'purchase'}, {data: 'stock'},
+            {data: 'productCode', render: $.fn.dataTable.render.text()}, {data: 'productName', render: $.fn.dataTable.render.text()}, {data: 'purchase'}, {data: 'stock'},
             {data: null, searchable: false, render: function () {
                 return '<button type="button" class="btn btn-primary btn-sm mr-1 lk-stock-edit">Edit</button>' +
                     '<button type="button" class="btn btn-danger btn-sm lk-stock-delete">Delete</button>';
@@ -60,6 +66,9 @@ $(function () {
         if (!row) return;
         $('#lkStockEditForm').attr('action', stockBase + '/' + encodeURIComponent(row.id));
         $('#lkStockProductLabel').text(row.productName);
+        $('#lkStockCode').text(row.productCode || '—');
+        $('#lkStockPurchased').text(row.purchase);
+        $('#lkStockPurchaseTotal').val(row.purchase);
         $('#lkStockCurrent').text(row.stock);
         $('#lkStockOperation').val('add');
         $('#lkStockQuantity').val('1');

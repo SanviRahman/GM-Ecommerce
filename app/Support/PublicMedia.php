@@ -12,6 +12,28 @@ namespace App\Support;
  */
 final class PublicMedia
 {
+    /**
+     * Prefer the untouched image stored by the media uploader at public/<name>.
+     * Product/thumbnail copies can be cropped squares, losing portrait details.
+     * Products without an original keep the existing product/<name> fallback.
+     */
+    public static function productOriginalUrl($imageName)
+    {
+        $imageName = basename(str_replace('\\', '/', (string) $imageName));
+
+        // Image names are internal filenames, never paths or remote URLs.
+        if (! preg_match('/\A[a-zA-Z0-9_.-]+\.(?:jpg|jpeg|png|webp|gif)\z/i', $imageName)
+            || $imageName === '.' || $imageName === '..') {
+            return self::url('images/clear.png');
+        }
+
+        if (is_file(public_path($imageName))) {
+            return self::url($imageName);
+        }
+
+        return self::url('product/' . $imageName);
+    }
+
     public static function url($relativePath)
     {
         $relativePath = str_replace('\\', '/', (string) $relativePath);

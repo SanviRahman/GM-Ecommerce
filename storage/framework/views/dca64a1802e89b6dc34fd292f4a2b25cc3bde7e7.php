@@ -9,7 +9,7 @@
 ?>
 <article class="lk-product-card">
     <a class="lk-product-card-image" href="<?php echo e($productUrl); ?>" aria-label="<?php echo e($product->productName); ?>">
-        <img src="<?php echo e(\App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)); ?>"
+        <img src="<?php echo e(\App\Support\PublicMedia::productOriginalUrl($product->productImage)); ?>"
              alt="<?php echo e($product->productName); ?>" loading="lazy">
         <?php echo $__env->make('website.partials.product_badge', ['product' => $product], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     </a>

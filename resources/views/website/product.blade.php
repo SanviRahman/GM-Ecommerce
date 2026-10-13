@@ -9,13 +9,13 @@
 							<div class="carousel-inner rounded">
 								<div class="carousel-item active">
 									<a href="javascript:void(0)" data-toggle="modal" data-target="#lightbox">
-										<img src="{{ \App\Support\PublicMedia::url('product/'.$product->productImage)  }}" alt="First slide" class="img-responsive img-thumbnail">
+										<img src="{{ \App\Support\PublicMedia::productOriginalUrl($product->productImage)  }}" alt="First slide" class="img-responsive img-thumbnail">
 									</a>
 								</div>
 								@foreach($product->media as $index =>$photo)
 								<div class="carousel-item">
     								<a href="javascript:void(0)" data-toggle="modal" data-target="#lightbox">
-    									<img src="{{ \App\Support\PublicMedia::url('product/'.$photo->url)  }}" alt="First slide" class="img-responsive img-thumbnail">
+    									<img src="{{ \App\Support\PublicMedia::productOriginalUrl($photo->url)  }}" alt="First slide" class="img-responsive img-thumbnail">
     								</a>
 								</div>
 								@endforeach
@@ -24,11 +24,11 @@
 							</div>
 							<ol class="carousel-indicators">
 								<li data-target="#single-product-galary" data-slide-to="0" class="active">
-									<img class="img-thumbnail" alt="" src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)  }}">
+									<img class="img-thumbnail" alt="" src="{{ \App\Support\PublicMedia::productOriginalUrl($product->productImage)  }}">
 								</li>
 								@foreach($product->media as $index =>$photo)
 								<li data-target="#single-product-galary" data-slide-to="{{$index+1}}">
-								    <img class="img-thumbnail" alt="" src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$photo->url)  }}">
+								    <img class="img-thumbnail" alt="" src="{{ \App\Support\PublicMedia::productOriginalUrl($photo->url)  }}">
 								</li>
 								@endforeach
 								

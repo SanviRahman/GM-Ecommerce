@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-collections.css')); ?>?v=1">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-product-cards.css')); ?>?v=2">
     <link href="<?php echo e(asset('assets/css/leatherket-font-sizes.css')); ?>?v=20261011-readable2" rel="stylesheet" type="text/css" />
-    <link href="<?php echo e(asset('assets/css/leatherket-final-features.css')); ?>?v=20261012-1" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/leatherket-final-features.css')); ?>?v=20261013-full-photos-v3" rel="stylesheet" type="text/css" />
     <?php echo Settings::get('facebook_pixels'); ?>
 
     <!-- CSS for scrolling ticker -->
@@ -47,7 +47,9 @@
                     <span>কল করুন: <?php echo e(Settings::get('phone_number')); ?></span>
                 </a>
             <?php endif; ?>
-            <div class="lk-top-announcement-message"><?php echo e(Settings::get('lk_topbar_text') ?: 'LEATHERKET ওয়েবসাইটে আপনাকে স্বাগতম।'); ?></div>
+            <div class="lk-top-announcement-ticker" aria-label="Store news">
+                <div class="lk-top-announcement-message"><?php echo e(Settings::get('lk_topbar_text') ?: 'LEATHERKET ওয়েবসাইটে আপনাকে স্বাগতম।'); ?></div>
+            </div>
         </div>
     </div>
     <?php endif; ?>

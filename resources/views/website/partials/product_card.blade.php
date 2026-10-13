@@ -9,7 +9,7 @@
 @endphp
 <article class="lk-product-card">
     <a class="lk-product-card-image" href="{{ $productUrl }}" aria-label="{{ $product->productName }}">
-        <img src="{{ \App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage) }}"
+        <img src="{{ \App\Support\PublicMedia::productOriginalUrl($product->productImage) }}"
              alt="{{ $product->productName }}" loading="lazy">
         @include('website.partials.product_badge', ['product' => $product])
     </a>

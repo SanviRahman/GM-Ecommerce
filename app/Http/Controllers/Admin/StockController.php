@@ -23,7 +23,7 @@ class StockController extends Controller
         return [
             'data' => DB::table('stocks')
                 ->join('products', 'stocks.product_id', '=', 'products.id')
-                ->select('stocks.id', 'stocks.product_id', 'stocks.purchase', 'stocks.stock', 'products.productName')
+                ->select('stocks.id', 'stocks.product_id', 'stocks.purchase', 'stocks.stock', 'products.productName', 'products.productCode')
                 ->orderByDesc('stocks.created_at')->get(),
         ];
     }
@@ -39,11 +39,14 @@ class StockController extends Controller
         $data = $request->validate([
             'operation' => 'required|in:add,subtract,set',
             'quantity' => 'required|integer|min:0|max:1000000',
+            'purchase_total' => 'required|integer|min:0|max:100000000',
         ]);
         try {
             DB::transaction(function () use ($id, $data) {
                 $stock = Stock::whereKey($id)->lockForUpdate()->firstOrFail();
                 $old = (int) $stock->stock;
+                $oldPurchase = (int) $stock->purchase;
+                $newPurchase = (int) $data['purchase_total'];
                 $amount = (int) $data['quantity'];
                 $new = $data['operation'] === 'add' ? $old + $amount
                     : ($data['operation'] === 'subtract' ? $old - $amount : $amount);
@@ -51,14 +54,17 @@ class StockController extends Controller
                     throw new RuntimeException('Available Stock must remain between 0 and 100,000,000.');
                 }
                 $stock->stock = $new;
+                // Manual total correction; original purchase invoices are not changed.
+                $stock->purchase = $newPurchase;
                 $stock->save();
                 Log::info('Admin inventory adjustment', [
                     'user_id' => auth()->id(), 'stock_id' => $stock->id,
                     'product_id' => $stock->product_id, 'old' => $old, 'new' => $new,
                     'operation' => $data['operation'],
+                    'purchase_old' => $oldPurchase, 'purchase_new' => $newPurchase,
                 ]);
             }, 3);
-            return redirect()->route('admin.stock.index')->with('success', 'Available stock updated.');
+            return redirect()->route('admin.stock.index')->with('success', 'Stock totals updated.');
         } catch (RuntimeException $e) {
             return redirect()->route('admin.stock.index')->with('error', $e->getMessage());
         }

@@ -8,13 +8,13 @@
 							<div class="carousel-inner rounded">
 								<div class="carousel-item active">
 									<a href="javascript:void(0)" data-toggle="modal" data-target="#lightbox">
-										<img src="<?php echo e(\App\Support\PublicMedia::url('product/'.$product->productImage)); ?>" alt="First slide" class="img-responsive img-thumbnail">
+										<img src="<?php echo e(\App\Support\PublicMedia::productOriginalUrl($product->productImage)); ?>" alt="First slide" class="img-responsive img-thumbnail">
 									</a>
 								</div>
 								<?php $__currentLoopData = $product->media; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index =>$photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 								<div class="carousel-item">
     								<a href="javascript:void(0)" data-toggle="modal" data-target="#lightbox">
-    									<img src="<?php echo e(\App\Support\PublicMedia::url('product/'.$photo->url)); ?>" alt="First slide" class="img-responsive img-thumbnail">
+    									<img src="<?php echo e(\App\Support\PublicMedia::productOriginalUrl($photo->url)); ?>" alt="First slide" class="img-responsive img-thumbnail">
     								</a>
 								</div>
 								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -23,11 +23,11 @@
 							</div>
 							<ol class="carousel-indicators">
 								<li data-target="#single-product-galary" data-slide-to="0" class="active">
-									<img class="img-thumbnail" alt="" src="<?php echo e(\App\Support\PublicMedia::url('product/thumbnail/'.$product->productImage)); ?>">
+									<img class="img-thumbnail" alt="" src="<?php echo e(\App\Support\PublicMedia::productOriginalUrl($product->productImage)); ?>">
 								</li>
 								<?php $__currentLoopData = $product->media; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index =>$photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 								<li data-target="#single-product-galary" data-slide-to="<?php echo e($index+1); ?>">
-								    <img class="img-thumbnail" alt="" src="<?php echo e(\App\Support\PublicMedia::url('product/thumbnail/'.$photo->url)); ?>">
+								    <img class="img-thumbnail" alt="" src="<?php echo e(\App\Support\PublicMedia::productOriginalUrl($photo->url)); ?>">
 								</li>
 								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 								

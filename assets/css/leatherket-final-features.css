@@ -1,7 +1,7 @@
 /* LEATHERKET 2026-10-12: scoped updates, V1 mobile offcanvas retained. */
 .lk-sticky-site-nav {
-    position: sticky;
-    top: 0;
+    position: static;
+    top: auto;
     z-index: 1100;
     width: 100%;
     isolation: isolate;
@@ -12,7 +12,24 @@
 .lk-top-announcement-inner { display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:40px;padding-top:5px;padding-bottom:5px; }
 .lk-top-call { display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;color:#fff !important;text-decoration:none;white-space:nowrap; }
 .lk-top-call:hover,.lk-top-call:focus { color:#f3d7bb !important; }
-.lk-top-announcement-message { flex:1 1 auto;min-width:0;text-align:center;line-height:1.35;overflow-wrap:anywhere; }
+/* The hotline stays fixed while the announcement itself travels from right to left. */
+.lk-top-announcement-ticker { flex:1 1 auto; min-width:0; overflow:hidden; position:relative; }
+.lk-top-announcement-message {
+    display:inline-block; box-sizing:content-box; width:max-content; max-width:none;
+    white-space:nowrap; padding-left:100%; text-align:left; line-height:1.35;
+    animation:lk-announcement-scroll 22s linear infinite;
+    will-change:transform;
+}
+@keyframes lk-announcement-scroll {
+    from {transform:translateX(0);}
+    to {transform:translateX(-100%);}
+}
+.lk-top-announcement-ticker:hover .lk-top-announcement-message,
+.lk-top-announcement-ticker:focus-within .lk-top-announcement-message { animation-play-state:paused; }
+@media (prefers-reduced-motion:reduce) {
+    .lk-top-announcement-message {animation:none; padding-left:0; width:auto; max-width:100%; white-space:normal;}
+    .lk-top-announcement-ticker {overflow:visible;}
+}
 /* Price and stock label on product detail page. */
 .lk-product-code { display:block;font-size:14px;font-weight:600;margin:0 0 9px;color:#303030;line-height:1.45;overflow-wrap:anywhere; }
 .leatherket-inventory .leatherket-stock-label {display:inline-flex;align-items:center;gap:7px;}
@@ -33,8 +50,22 @@
 /* Detail image is uncropped so tall clothing can be seen in full. */
 .single-product #single-product-galary .carousel-item > a {display:block;width:100%;background:transparent;}
 .single-product #single-product-galary .carousel-item img.img-thumbnail {
-    display:block;width:100%;height:auto;max-height:720px;object-fit:contain;object-position:center top;
+    display:block;width:100%;height:auto;max-height:none;object-fit:contain;object-position:center;
     padding:0 !important;margin:0 !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;
+}
+/* Taller portrait media viewport: allows tall clothing to fit without cropping. */
+.single-product #single-product-galary .carousel-inner {
+    aspect-ratio: 3 / 4;
+    min-height: 520px;
+    background: transparent;
+}
+.single-product #single-product-galary .carousel-item,
+.single-product #single-product-galary .carousel-item > a {height:100%;}
+.single-product #single-product-galary .carousel-item img.img-thumbnail {
+    height:100% !important; max-height:none !important; object-fit:contain !important;
+}
+@media (max-width:767.98px) {
+    .single-product #single-product-galary .carousel-inner {min-height:0; aspect-ratio:3 / 4;}
 }
 /* Remove only the detail photo's inherited padding and borders, not form spacing. */
 .lk-product-detail-card {padding:0 !important;margin:0 !important;border:0 !important;box-shadow:none !important;}
@@ -46,9 +77,11 @@
     border:1px solid #bedfc8;background:#e6f6e9;color:#146b30;font-size:15px;font-weight:600;line-height:1.5;
 }
 @media (max-width:991.98px) {
+    .lk-sticky-site-nav {position:sticky;top:0;}
     .lk-top-announcement-inner {flex-wrap:wrap;justify-content:center;gap:3px 10px;padding:6px 12px;}
     .lk-top-call {justify-content:center;flex:1 1 100%;white-space:normal;font-size:13px;line-height:1.35;overflow-wrap:anywhere;}
-    .lk-top-announcement-message {flex:1 1 100%;font-size:12px;line-height:1.35;text-align:center;}
+    .lk-top-announcement-ticker {flex:1 1 100%;width:100%;min-height:22px;}
+    .lk-top-announcement-message {font-size:12px;line-height:1.35;text-align:left;}
     /* Drawer must stay viewport-aligned even when header container is sticky. */
     body.mobile-nav-open .lk-sticky-site-nav {z-index:2010;}
     body.mobile-nav-open .lk-top-announcement {display:none;}
@@ -59,3 +92,51 @@
     .lk-related-products .lk-related-product {flex:0 0 calc((100% - 12px)/2) !important;}
 }
 @media(max-width:370px){.lk-top-call {font-size:12px;}.lk-top-announcement-message{font-size:11px;}.lk-product-card-action{white-space:normal;overflow-wrap:anywhere;}}
+
+/* LEATHERKET 2026-10-13: show the *entire* image on storefront, never crop.
+   This override is scoped to product cards and product details; unrelated
+   category/hero/banner image design remains unchanged. */
+.lk-product-card-image {
+    aspect-ratio: 3 / 4 !important;
+    background: #f3f0ec;
+    overflow: hidden;
+}
+.lk-product-card-image > img {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    transform: none !important; /* hover zoom previously clipped the photo */
+}
+.lk-product-card-image:hover > img { transform: none !important; }
+
+/* Use each uploaded image's intrinsic portrait ratio on the details page.
+   The old 3:4 forced viewport/min-height created blank bands and clipped
+   pictures when combined with the site's older carousel CSS. */
+.single-product #single-product-galary .carousel-inner {
+    aspect-ratio: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden;
+    background: transparent;
+}
+.single-product #single-product-galary .carousel-item,
+.single-product #single-product-galary .carousel-item > a {
+    height: auto !important;
+    min-height: 0 !important;
+}
+.single-product #single-product-galary .carousel-item img.img-thumbnail {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    padding: 0 !important;
+    border: 0 !important;
+    margin: 0 !important;
+}
