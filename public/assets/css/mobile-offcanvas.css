@@ -449,3 +449,14 @@
         transition-duration: 0.01ms;
     }
 }
+
+/* Keep the mobile contact comfortably above the browser safe area. */
+@media (max-width: 991.98px) {
+    .mobile-side-menu .side-menu-footer {
+        padding: 8px var(--leatherket-mobile-gutter-left)
+            calc(36px + env(safe-area-inset-bottom, 0px));
+        font-size: 16px;
+        line-height: 1.4;
+    }
+    .mobile-side-menu .side-menu-footer a { font-size: inherit; line-height: inherit; }
+}
