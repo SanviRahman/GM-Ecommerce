@@ -14,6 +14,12 @@ class SettingController extends Controller
     }
     public function store(Request $request)
     {
+        if ($request->has('footer_open_days') || $request->has('footer_open_hours')) {
+            $request->validate([
+                'footer_open_days' => 'nullable|string|max:100',
+                'footer_open_hours' => 'nullable|string|max:100',
+            ]);
+        }
         if ($request->has('lk_topbar_enabled')) {
             $request->validate([
                 'lk_topbar_enabled' => 'required|in:0,1',

@@ -26,6 +26,19 @@
                 <textarea class="form-control" id="footer_contact_address" name="footer_contact_address" rows="2" placeholder="Your shop address">{{ Settings::get('footer_contact_address') }}</textarea>
             </div>
             <div class="form-group">
+                <label for="footer_open_days">Business Days / Opening Days</label>
+                <input class="form-control" id="footer_open_days" name="footer_open_days" type="text"
+                       maxlength="100" placeholder="e.g. Sat-Thu"
+                       value="{{ old('footer_open_days', Settings::get('footer_open_days')) }}">
+            </div>
+            <div class="form-group">
+                <label for="footer_open_hours">Business Hours / Opening Time</label>
+                <input class="form-control" id="footer_open_hours" name="footer_open_hours" type="text"
+                       maxlength="100" placeholder="e.g. 10 am - 6 pm"
+                       value="{{ old('footer_open_hours', Settings::get('footer_open_hours')) }}">
+                <small class="form-text text-muted">Shows as: Sat-Thu (10 am - 6 pm). Leave both blank to hide.</small>
+            </div>
+            <div class="form-group">
                 <label for="footer_newsletter_text">Newsletter Description</label>
                 <textarea class="form-control" id="footer_newsletter_text" name="footer_newsletter_text" rows="2" placeholder="Subscribe to receive offers and updates">{{ Settings::get('footer_newsletter_text') }}</textarea>
             </div>

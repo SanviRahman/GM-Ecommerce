@@ -18,17 +18,17 @@
     <link href="<?php echo e(asset('assets/css/ui.css')); ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(asset('assets/css/responsive.css')); ?>" rel="stylesheet" type="text/css"  media="only screen and (max-width: 1200px)"  />
     <link href="<?php echo e(asset('assets/css/style.css')); ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo e(asset('assets/css/mobile-offcanvas.css')); ?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/mobile-offcanvas.css')); ?>?v=20261013-mobile-polish" rel="stylesheet" type="text/css" />
     <link type="text/css" href="<?php echo e(asset('assets/css/sweetalert2.min.css')); ?>" rel="stylesheet">
     <?php echo $__env->yieldPushContent('css'); ?>
     <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
     <link href="<?php echo e(asset('assets/css/leatherket-typography.css')); ?>?v=1" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(asset('assets/css/leatherket-commerce.css')); ?>?v=image-badge-fix-3" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(asset('assets/css/leatherket-desktop-header.css')); ?>?v=2" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-collections.css')); ?>?v=1">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-collections.css')); ?>?v=20261013-mobile-polish">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/leatherket-product-cards.css')); ?>?v=2">
     <link href="<?php echo e(asset('assets/css/leatherket-font-sizes.css')); ?>?v=20261011-readable2" rel="stylesheet" type="text/css" />
-    <link href="<?php echo e(asset('assets/css/leatherket-final-features.css')); ?>?v=20261013-full-photos-v3" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/leatherket-final-features.css')); ?>?v=20261013-mobile-polish" rel="stylesheet" type="text/css" />
     <?php echo Settings::get('facebook_pixels'); ?>
 
     <!-- CSS for scrolling ticker -->
@@ -531,6 +531,6 @@ unset($__errorArgs, $__bag); ?>
     }
 </script>
 <?php echo $__env->yieldPushContent('js'); ?>
-<script src="<?php echo e(asset('assets/js/leatherket-collections.js')); ?>?v=1"></script>
+<script src="<?php echo e(asset('assets/js/leatherket-collections.js')); ?>?v=20261013-mobile-polish"></script>
 </body>
 </html><?php /**PATH D:\public_html leatherket\resources\views/website/layout.blade.php ENDPATH**/ ?>

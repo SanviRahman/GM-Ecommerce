@@ -25,7 +25,7 @@
     <link href="{{ asset('assets/css/leatherket-typography.css') }}?v=1" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/leatherket-commerce.css') }}?v=image-badge-fix-3" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/leatherket-desktop-header.css') }}?v=2" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="{{ asset('assets/css/leatherket-collections.css') }}?v=20261013-mobile-polish">
+    <link rel="stylesheet" href="{{ asset('assets/css/leatherket-collections.css') }}?v=20261014-2x2-grid">
     <link rel="stylesheet" href="{{ asset('assets/css/leatherket-product-cards.css') }}?v=2">
     <link href="{{ asset('assets/css/leatherket-font-sizes.css') }}?v=20261011-readable2" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/leatherket-final-features.css') }}?v=20261013-mobile-polish" rel="stylesheet" type="text/css" />
@@ -261,6 +261,17 @@
                     @endif
                     @if(Settings::get('footer_contact_address'))
                         <p>{{ Settings::get('footer_contact_address') }}</p>
+                    @endif
+                    @php
+                        $footerOpenDays = trim((string) Settings::get('footer_open_days'));
+                        $footerOpenHours = trim((string) Settings::get('footer_open_hours'));
+                    @endphp
+                    @if($footerOpenDays !== '' || $footerOpenHours !== '')
+                        <p class="leatherket-business-hours">
+                            {{ $footerOpenDays !== '' && $footerOpenHours !== ''
+                                ? $footerOpenDays . ' (' . $footerOpenHours . ')'
+                                : ($footerOpenDays !== '' ? $footerOpenDays : $footerOpenHours) }}
+                        </p>
                     @endif
                 </address>
                 <div class="leatherket-footer-social" aria-label="Social media">
@@ -523,6 +534,6 @@
     }
 </script>
 @stack('js')
-<script src="{{ asset('assets/js/leatherket-collections.js') }}?v=20261013-mobile-polish"></script>
+<script src="{{ asset('assets/js/leatherket-collections.js') }}?v=20261014-2x2-grid"></script>
 </body>
 </html>

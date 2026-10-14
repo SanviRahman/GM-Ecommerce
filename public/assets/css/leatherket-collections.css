@@ -7,9 +7,10 @@ body .bg, body .section-name.bg, body .section-main.bg { background-color: #f3f0
 .lk-collections-heading small { color: #ac8661; letter-spacing: .28em; font-size: 10px; }
 .lk-collections-heading h2 { margin: 12px 0; font-weight: 400; font-size: clamp(30px,3.5vw,48px); }
 .lk-collections-heading p { font-size: 15px; line-height: 1.65; }
-.lk-collections-track { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; padding-bottom: 5px; }
+.lk-collections-track { display: flex; gap: 0; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; padding-bottom: 5px; }
+.lk-collection-page { flex: 0 0 100%; width: 100%; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-content: start; gap: 20px; scroll-snap-align: start; scroll-snap-stop: always; }
 .lk-collections-track::-webkit-scrollbar { display:none; }
-.lk-collection-item { flex: 0 0 calc((100% - 60px)/4); min-width: 0; scroll-snap-align: start; text-decoration: none !important; color: #fff !important; }
+.lk-collection-item { display: block; width: 100%; min-width: 0; text-decoration: none !important; color: #fff !important; }
 .lk-collection-image { height: clamp(280px,29vw,430px); overflow: hidden; position: relative; background: #6e5446; }
 .lk-collection-image img { display:block; width:100%;height:100%;object-fit:cover;transition:transform .35s ease; }
 .lk-collection-item:hover img { transform: scale(1.035); }
@@ -26,10 +27,9 @@ body .bg, body .section-name.bg, body .section-main.bg { background-color: #f3f0
 .lk-contact-actions {display:flex;flex-direction:column;gap:12px;margin-top:12px;}
 .lk-contact-action {display:flex;align-items:center;justify-content:center;gap:10px;min-height:54px;border:1px solid var(--lk-accent,#19a047);color:var(--lk-accent,#19a047);text-decoration:none !important;font-size:16px;}
 .lk-contact-action:hover {background:var(--lk-accent,#19a047);color:white;}
-/* Responsive collection carousel: exactly two visible cards (touch/arrow scrolling kept). */
+/* Four cards per slide: 4-across desktop, 2x2 mobile/tablet; touch/arrow paging. */
 @media (max-width: 991.98px) {
-    .lk-collections-track { gap: 16px; }
-    .lk-collections-track .lk-collection-item { flex: 0 0 calc((100% - 16px) / 2); }
+    .lk-collection-page { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
     .lk-collection-image { height: auto; aspect-ratio: 3 / 4; }
     .lk-collection-overlay { left: 14px; right: 10px; bottom: 15px; }
     body .lk-collections-track .lk-collection-overlay h3 { font-size: 18px; line-height: 1.2; overflow-wrap: anywhere; }
@@ -39,8 +39,7 @@ body .bg, body .section-name.bg, body .section-main.bg { background-color: #f3f0
     .lk-collections { padding: 34px 0; }
     .lk-collections-inner { width: calc(100% - 28px); }
     .lk-collections-heading { margin-bottom: 28px; }
-    .lk-collections-track { gap: 12px; }
-    .lk-collections-track .lk-collection-item { flex-basis: calc((100% - 12px) / 2); }
+    .lk-collection-page { gap: 12px; }
     .lk-collection-overlay { left: 10px; right: 8px; bottom: 12px; }
     body .lk-collections-track .lk-collection-overlay h3 { font-size: clamp(14px, 4.2vw, 17px); margin-top: 4px; }
     body .lk-collections-track .lk-collection-overlay span { font-size: 8px; letter-spacing: .04em; }
