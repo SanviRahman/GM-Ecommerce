@@ -18,7 +18,7 @@
     <link href="{{asset('assets/css/ui.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{asset('assets/css/responsive.css')}}" rel="stylesheet" type="text/css"  media="only screen and (max-width: 1200px)"  />
     <link href="{{asset('assets/css/style.css')}}" rel="stylesheet" type="text/css" />
-    <link href="{{asset('assets/css/mobile-offcanvas.css')}}?v=20261013-mobile-polish" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/css/mobile-offcanvas.css')}}?v=20261014-sidebar-hours-v1" rel="stylesheet" type="text/css" />
     <link type="text/css" href="{{ asset('assets/css/sweetalert2.min.css') }}" rel="stylesheet">
     @stack('css')
     <!-- LEATHERKET shared Palatino typography: after vendor/theme styles. -->
@@ -74,9 +74,23 @@
                     @endif
                 </ul>
             </nav>
-            @if(Settings::get('phone_number'))
-                <div class="side-menu-footer">
-                    <a href="tel:{{ Settings::get('phone_number') }}">{{ Settings::get('phone_number') }}</a>
+            @php
+                $sidebarPhone = trim((string) Settings::get('phone_number'));
+                $sidebarOpenDays = trim((string) Settings::get('footer_open_days'));
+                $sidebarOpenHours = trim((string) Settings::get('footer_open_hours'));
+            @endphp
+            @if($sidebarPhone !== '' || $sidebarOpenDays !== '' || $sidebarOpenHours !== '')
+                <div class="side-menu-footer" aria-label="Store contact and opening hours">
+                    @if($sidebarPhone !== '')
+                        <a class="leatherket-sidebar-phone" href="tel:{{ preg_replace('/[^0-9+]/', '', $sidebarPhone) }}">{{ $sidebarPhone }}</a>
+                    @endif
+                    @if($sidebarOpenDays !== '' || $sidebarOpenHours !== '')
+                        <span class="leatherket-sidebar-hours">
+                            {{ $sidebarOpenDays !== '' && $sidebarOpenHours !== ''
+                                ? $sidebarOpenDays . ' (' . $sidebarOpenHours . ')'
+                                : ($sidebarOpenDays !== '' ? $sidebarOpenDays : $sidebarOpenHours) }}
+                        </span>
+                    @endif
                 </div>
             @endif
         </div>
